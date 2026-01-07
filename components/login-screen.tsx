@@ -1,25 +1,40 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Loader2 } from "lucide-react"
+import { signIn } from "@/lib/auth"
 
 interface LoginScreenProps {
-  onLogin: () => void
+  onLogin: (email: string) => void
 }
 
 export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // For demo purposes, any credentials work
-    onLogin()
+    setError(null)
+    setIsLoading(true)
+
+    try {
+      const data = await signIn(email, password)
+      if (data.user) {
+        onLogin(data.user.email || email)
+      }
+    } catch (err: any) {
+      console.error('Login error:', err)
+      setError(err.message || 'Invalid email or password')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -44,6 +59,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
                 required
               />
             </div>
@@ -55,11 +71,30 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
                 required
               />
             </div>
-            <Button type="submit" className="w-full bg-[#4644B6] hover:bg-[#4644B6]/90 text-white">
-              Sign In
+            
+            {error && (
+              <div className="text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-md">
+                {error}
+              </div>
+            )}
+            
+            <Button 
+              type="submit" 
+              className="w-full bg-[#4644B6] hover:bg-[#4644B6]/90 text-white"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                "Sign In"
+              )}
             </Button>
           </form>
         </CardContent>

@@ -1,0 +1,162 @@
+# Advertorial Builder - Quick Feature Reference
+
+## Project Overview
+A 6-step wizard that helps users build advertorials. Users control the structure, AI generates the content.
+
+## User Flow
+```
+Login → Setup → URLs → Insights → Blocks → Review → Generate → Success
+```
+
+---
+
+## Step 1: Campaign Setup
+**What:** Define campaign basics  
+**Inputs:**
+- Topic (textarea)
+- Campaign type (Lead Gen | E-commerce)
+- Niche (10 options: Beauty, Finance, Health, etc.)
+- Country (US | UK | Canada)
+- Language (English)
+- Word count (500-5000)
+- Paragraph length (4 options)
+- Compliance (optional: None | ERGO)
+
+**Button:** "Continue to Product Info" (disabled until all required fields filled)
+
+---
+
+## Step 2: Product Info
+**What:** Add reference URLs to scrape  
+**Inputs:** Unlimited URL fields with + Add / × Remove  
+**Button:** "Scrape & Continue" → Loading state → Success banner → Navigate to Step 3
+
+**API:** `POST /api/analyze/batch` with URL array
+
+---
+
+## Step 3: Insights
+**What:** Select extracted insights from scraped pages  
+**UI:** 5 collapsible categories with checkboxes:
+1. **USPs** - Key selling points
+2. **Pricing** - Price info
+3. **Main Angle** - Messaging approach
+4. **Tone of Voice** - Writing style
+5. **Key Hooks** - Attention grabbers
+
+**Features per category:**
+- Multi-select checkboxes
+- Inline edit (✏️ pencil icon)
+- Delete (🗑️ trash icon)
+- "Add your own" custom insights
+
+**Validation:** At least 1 insight selected  
+**Button:** "Continue to Building Blocks"
+
+---
+
+## Step 4: Building Blocks
+**What:** Drag & drop content blocks to build structure
+
+**Layout:**
+- **Top:** Campaign summary (read-only)
+- **Left sidebar:** Available blocks (26 types in 6 categories)
+- **Right area:** Structure (drag & drop zone)
+
+**Blocks (26 total):**
+- Opening: Lede (3 variants), Teaser, Subheadline
+- Authority: Authority*, Expert Quote, Trust, Social Proof
+- Problem/Solution: X Reasons*, Problem, Listicle, Solution, Mechanism, Concerns
+- Benefits: Bullet Points (2 variants), Future Me, Price, Discount*
+- Urgency: Call to Urgency, Scarcity, Next Steps, CTA
+- Supporting: FAQ, Image Placeholder
+
+*Requires input field
+
+**Interactions:**
+- Drag block from left → Drop in structure
+- Or click + icon to add to bottom
+- Reorder with drag handle (⣿)
+- Remove with × button
+
+**Tech:** @dnd-kit library  
+**Button:** "Review & Generate" (disabled if 0 blocks)
+
+---
+
+## Step 5: Review
+**What:** Final check before generation
+
+**5 Editable Sections:**
+1. Topic - Inline edit
+2. Campaign Setup - Inline edit
+3. Reference Pages - Edit with warning (clears steps 3-4)
+4. Insights - Navigate to Step 3
+5. Structure - Navigate to Step 4
+
+**Button:** "Generate Advertorial"
+
+---
+
+## Step 6: Generation & Success
+
+**Loading:**
+- Purple spinner
+- "Generating Your Advertorial"
+- ~30-60 seconds
+
+**Success:**
+- ✓ Checkmark
+- Document card with Google Doc link
+- "Open in Google Docs" button
+- "Create Another Advertorial" button
+
+**API:** `POST /api/generate/complete` with full campaign data
+
+---
+
+## Supporting Features
+
+### Request History (Clock icon)
+- Sidebar drawer from right
+- List of past campaigns
+- Shows: name, niche, country, date, Google Doc link
+
+### Account Menu (User icon)
+- Sidebar drawer from right
+- Shows current email
+- Sign out button
+
+---
+
+## Design System
+
+**Colors:**
+- Teal: #0dadb7 (icons, accents)
+- Purple: #4644B6 (CTA buttons)
+- Gray: #F6F6F6 (backgrounds)
+
+**Icons:** Lucide React  
+**Styling:** Tailwind + shadcn/ui  
+**Font:** Inter
+
+---
+
+## State Management
+Simple React useState in main container (`app/page.tsx`):
+```typescript
+const [currentStep, setCurrentStep] = useState(1);
+const [campaignData, setCampaignData] = useState({
+  step1: {}, step2: {}, step3: {}, step4: {}, step5: {}
+});
+```
+
+---
+
+## Current Status
+✅ Complete: All UI/UX, drag & drop, demo mode  
+🚧 Needed: Real auth, API integration, backend workflows
+
+---
+
+**Note:** This is a quick reference. Ask questions if you need details about any specific feature!

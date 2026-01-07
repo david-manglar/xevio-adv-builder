@@ -1,42 +1,89 @@
 "use client"
 
-import { X, FileText, ExternalLink, Clock } from "lucide-react"
+import { useState, useEffect } from "react"
+import { X, FileText, ExternalLink, Clock, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface HistoryMenuProps {
   isOpen: boolean
   onClose: () => void
+  userId: string | null
 }
 
-// Hardcoded previous requests for demo
-const previousRequests = [
-  {
-    id: 1,
-    title: "Dental Insurance - UK",
-    niche: "Finance/Insurance",
-    country: "United Kingdom",
-    createdAt: "Dec 8, 2025 - 14:32",
-    docUrl: "https://docs.google.com/document/d/dental-insurance-uk",
-  },
-  {
-    id: 2,
-    title: "Weight Loss Supplements - US",
-    niche: "Weight Loss",
-    country: "United States",
-    createdAt: "Dec 6, 2025 - 09:15",
-    docUrl: "https://docs.google.com/document/d/weight-loss-us",
-  },
-  {
-    id: 3,
-    title: "Home Security System - CA",
-    niche: "Tech/Gadgets",
-    country: "Canada",
-    createdAt: "Dec 4, 2025 - 16:48",
-    docUrl: "https://docs.google.com/document/d/home-security-ca",
-  },
-]
+interface CampaignHistory {
+  id: string
+  title: string
+  campaignType: string
+  niche: string
+  country: string
+  createdAt: string
+  docUrl: string
+}
 
-export function HistoryMenu({ isOpen, onClose }: HistoryMenuProps) {
+export function HistoryMenu({ isOpen, onClose, userId }: HistoryMenuProps) {
+  const [campaigns, setCampaigns] = useState<CampaignHistory[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
+  const [total, setTotal] = useState(0)
+  const [offset, setOffset] = useState(0)
+
+  // Fetch history when menu opens
+  useEffect(() => {
+    if (isOpen && userId) {
+      fetchHistory(true)
+    }
+  }, [isOpen, userId])
+
+  // Reset state when menu closes
+  useEffect(() => {
+    if (!isOpen) {
+      setCampaigns([])
+      setOffset(0)
+      setHasMore(false)
+      setTotal(0)
+    }
+  }, [isOpen])
+
+  const fetchHistory = async (reset: boolean = false) => {
+    if (!userId) return
+
+    const currentOffset = reset ? 0 : offset
+    
+    if (reset) {
+      setIsLoading(true)
+    } else {
+      setIsLoadingMore(true)
+    }
+
+    try {
+      const response = await fetch(`/api/history?userId=${userId}&offset=${currentOffset}`)
+      const data = await response.json()
+
+      if (response.ok) {
+        if (reset) {
+          setCampaigns(data.campaigns)
+        } else {
+          setCampaigns((prev) => [...prev, ...data.campaigns])
+        }
+        setHasMore(data.hasMore)
+        setTotal(data.total)
+        setOffset(currentOffset + data.campaigns.length)
+      } else {
+        console.error('Failed to fetch history:', data.error)
+      }
+    } catch (error) {
+      console.error('Error fetching history:', error)
+    } finally {
+      setIsLoading(false)
+      setIsLoadingMore(false)
+    }
+  }
+
+  const handleLoadMore = () => {
+    fetchHistory(false)
+  }
+
   if (!isOpen) return null
 
   return (
@@ -59,38 +106,79 @@ export function HistoryMenu({ isOpen, onClose }: HistoryMenuProps) {
 
         {/* Request List */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {previousRequests.map((request) => (
-            <div key={request.id} className="bg-[#F6F6F6] rounded-lg p-4 space-y-3">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-[#0dadb7] shrink-0" />
-                  <span className="font-medium text-sm">{request.title}</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                <div>
-                  Niche: <span className="text-foreground">{request.niche}</span>
-                </div>
-                <div>
-                  Country: <span className="text-foreground">{request.country}</span>
-                </div>
-                <div className="col-span-2">
-                  Created: <span className="text-foreground">{request.createdAt}</span>
-                </div>
-              </div>
-
-              <a
-                href={request.docUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-[#4644B6] hover:underline font-medium"
-              >
-                <ExternalLink className="h-4 w-4" />
-                Open Google Doc
-              </a>
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <Loader2 className="h-6 w-6 animate-spin text-[#0dadb7]" />
+              <p className="text-sm text-muted-foreground mt-2">Loading history...</p>
             </div>
-          ))}
+          ) : campaigns.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <FileText className="h-10 w-10 text-muted-foreground/40 mb-3" />
+              <p className="text-sm font-medium text-muted-foreground">No completed campaigns yet</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Your generated advertorials will appear here
+              </p>
+            </div>
+          ) : (
+            <>
+              {campaigns.map((campaign) => (
+                <div key={campaign.id} className="bg-[#F6F6F6] rounded-lg p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-[#0dadb7] shrink-0" />
+                      <span className="font-medium text-sm">{campaign.title}</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                    <div>
+                      Type: <span className="text-foreground">{campaign.campaignType}</span>
+                    </div>
+                    <div>
+                      Niche: <span className="text-foreground">{campaign.niche}</span>
+                    </div>
+                    <div>
+                      Country: <span className="text-foreground">{campaign.country}</span>
+                    </div>
+                    <div>
+                      Created: <span className="text-foreground">{campaign.createdAt}</span>
+                    </div>
+                  </div>
+
+                  <a
+                    href={campaign.docUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-[#4644B6] hover:underline font-medium"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Open Google Doc
+                  </a>
+                </div>
+              ))}
+
+              {/* Load More Button */}
+              {hasMore && (
+                <div className="pt-2">
+                  <Button
+                    variant="outline"
+                    className="w-full bg-transparent"
+                    onClick={handleLoadMore}
+                    disabled={isLoadingMore}
+                  >
+                    {isLoadingMore ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      `Load More (${campaigns.length} of ${total})`
+                    )}
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </>

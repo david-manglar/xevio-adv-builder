@@ -26,6 +26,7 @@ import {
   DollarSign,
   Layers,
   Globe,
+  Loader2,
 } from "lucide-react"
 import {
   DndContext,
@@ -41,6 +42,7 @@ import {
 } from "@dnd-kit/core"
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
+import { CampaignData, StepFourState, AddedBlock as AddedBlockType } from "@/lib/types"
 
 type BlockType = {
   id: string
@@ -49,6 +51,7 @@ type BlockType = {
   category: string
   hasInput?: boolean
   inputLabel?: string
+  inputType?: 'text' | 'number'
   hasSelect?: boolean
   selectOptions?: string[]
   selectLabel?: string
@@ -113,11 +116,12 @@ const buildingBlocks: BlockType[] = [
   // Problem & Solution
   {
     id: "x-reasons",
-    name: "X Reasons For…",
+    name: "(X) Reasons For…",
     icon: <List className="h-4 w-4" />,
     category: "Problem & Solution",
     hasInput: true,
     inputLabel: "Number of Reasons (X)",
+    inputType: "number",
   },
   {
     id: "problem-awareness",
@@ -126,10 +130,19 @@ const buildingBlocks: BlockType[] = [
     category: "Problem & Solution",
   },
   {
-    id: "listicle",
-    name: "Listicle (Intro & Product Comparison)",
+    id: "listicle-intro",
+    name: "Listicle Intro",
     icon: <List className="h-4 w-4" />,
     category: "Problem & Solution",
+  },
+  {
+    id: "listicle-comparison",
+    name: "Listicle (Product Comparison)",
+    icon: <List className="h-4 w-4" />,
+    category: "Problem & Solution",
+    hasInput: true,
+    inputLabel: "Number of Competitors",
+    inputType: "number",
   },
   {
     id: "solution",
@@ -289,6 +302,7 @@ function SortableStructureBlock({
             {item.block.hasInput && (
               <div className="mt-2">
                 <Input
+                  type={item.block.inputType || "text"}
                   placeholder={item.block.inputLabel}
                   value={item.inputValue || ""}
                   onChange={(e) => onUpdateInput(e.target.value)}
@@ -372,13 +386,70 @@ function DroppableStructureArea({
 interface StepFourProps {
   onBack: () => void
   onNext: () => void
+  campaignData: CampaignData
+  data: StepFourState
+  updateData: (data: StepFourState) => void
 }
 
-export function StepFour({ onBack, onNext }: StepFourProps) {
-  const [addedBlocks, setAddedBlocks] = useState<AddedBlock[]>([])
+export function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }: StepFourProps) {
+  // Convert from parent state format to local AddedBlock format
+  const initializeBlocks = (): AddedBlock[] => {
+    if (stepData.initialized && stepData.blocks.length > 0) {
+      return stepData.blocks.map(b => {
+        const blockDef = buildingBlocks.find(bb => bb.id === b.blockId)
+        return {
+          uid: b.uid,
+          block: blockDef || { 
+            id: b.blockId, 
+            name: b.name, 
+            icon: <FileText className="h-4 w-4" />, 
+            category: b.category,
+            hasInput: b.hasInput,
+            inputLabel: b.inputLabel,
+            hasSelect: b.hasSelect,
+            selectLabel: b.selectLabel,
+            selectOptions: b.selectOptions,
+          },
+          inputValue: b.inputValue || "",
+          selectValue: b.selectValue || "",
+        }
+      })
+    }
+    return []
+  }
+
+  const [addedBlocks, setAddedBlocksLocal] = useState<AddedBlock[]>(initializeBlocks)
   const [activeId, setActiveId] = useState<string | null>(null)
   const [activePaletteBlock, setActivePaletteBlock] = useState<BlockType | null>(null)
   const [overDropZone, setOverDropZone] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+
+  // Helper to update both local and parent state
+  const setAddedBlocks = (newBlocks: AddedBlock[] | ((prev: AddedBlock[]) => AddedBlock[])) => {
+    const updated = typeof newBlocks === 'function' ? newBlocks(addedBlocks) : newBlocks
+    setAddedBlocksLocal(updated)
+    syncToParent(updated)
+  }
+
+  // Sync local state to parent
+  const syncToParent = (blocks: AddedBlock[]) => {
+    updateData({
+      blocks: blocks.map(b => ({
+        uid: b.uid,
+        blockId: b.block.id,
+        name: b.block.name,
+        category: b.block.category,
+        inputValue: b.inputValue,
+        selectValue: b.selectValue,
+        hasInput: b.block.hasInput,
+        inputLabel: b.block.inputLabel,
+        hasSelect: b.block.hasSelect,
+        selectLabel: b.block.selectLabel,
+        selectOptions: b.block.selectOptions,
+      })),
+      initialized: true,
+    })
+  }
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -471,6 +542,34 @@ export function StepFour({ onBack, onNext }: StepFourProps) {
   }
 
   const isOverMainArea = overDropZone === null && activeId !== null && activePaletteBlock !== null
+
+  const handleNext = async () => {
+    setIsSaving(true)
+    try {
+      if (campaignData.id) {
+        await fetch("/api/save-progress", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            campaignId: campaignData.id,
+            structureBlocks: addedBlocks.map(b => ({
+              blockId: b.block.id,
+              name: b.block.name,
+              inputValue: b.inputValue,
+              selectValue: b.selectValue,
+            })),
+          }),
+        })
+      }
+      onNext()
+    } catch (error) {
+      console.error("Failed to save progress:", error)
+      // Proceed anyway to not block the user
+      onNext()
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
@@ -587,8 +686,15 @@ export function StepFour({ onBack, onNext }: StepFourProps) {
           <Button variant="outline" onClick={onBack}>
             Back
           </Button>
-          <Button size="lg" disabled={addedBlocks.length === 0} onClick={onNext}>
-            Review & Generate
+          <Button size="lg" disabled={addedBlocks.length === 0 || isSaving} onClick={handleNext}>
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Review & Generate"
+            )}
           </Button>
         </div>
       </div>

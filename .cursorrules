@@ -1,0 +1,32 @@
+# Advertorial Builder - Development Rules
+
+## Tech Stack
+- Next.js 16 (App Router)
+- React 19 + TypeScript
+- Tailwind CSS v4
+- shadcn/ui components
+- @dnd-kit for drag-and-drop
+- Supabase for backend (planned)
+
+## Design Tokens
+- Brand Teal: #0dadb7 (icons, accents)
+- Brand Purple: #4644B6 (CTAs, active states)
+- Brand Gray: #F6F6F6 (backgrounds)
+
+## Key Principles
+- Keep components simple and maintainable
+- Use shadcn/ui for UI primitives
+- Follow existing design patterns from prototype
+- All state management via React hooks (no Redux/Zustand yet)
+- Mobile-first responsive design
+
+## File Structure
+- app/ - Next.js pages and layouts
+- components/ - React components (step-one.tsx, step-two.tsx, etc.)
+- components/ui/ - shadcn/ui primitives
+- lib/ - Utility functions (to be created)
+
+## Current Status
+- Frontend prototype complete (6-step wizard)
+- Backend integration needed (n8n workflows)
+- Authentication planned (Supabase Auth)

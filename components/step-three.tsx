@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,86 +21,26 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  Loader2,
 } from "lucide-react"
+import { CampaignData, StepThreeState, EditableItem, CategoryKey } from "@/lib/types"
 
 interface StepThreeProps {
   onBack: () => void
   onNext: () => void
+  campaignData: CampaignData
+  data: StepThreeState
+  updateData: (data: StepThreeState) => void
 }
 
-interface EditableItem {
-  id: string
-  text: string
-  selected: boolean
-  isCustom: boolean
+// Fallback initial data (can be empty or keep the demo data as fallback)
+const defaultScrapedData: Record<CategoryKey, EditableItem[]> = {
+  usps: [],
+  pricing: [],
+  mainAngle: [],
+  toneOfVoice: [],
+  keyHooks: [],
 }
-
-const initialScrapedData = {
-  usps: [
-    {
-      id: "usp-1",
-      text: "Plans from just £7.50 per month – budget-friendly dental protection",
-      selected: true,
-      isCustom: false,
-    },
-    {
-      id: "usp-2",
-      text: "Covers NHS charges, private treatment, and dental emergencies",
-      selected: true,
-      isCustom: false,
-    },
-    { id: "usp-3", text: "No health questionnaires or medical checks required", selected: false, isCustom: false },
-    { id: "usp-4", text: "Immediate cover for accidents – no waiting period", selected: true, isCustom: false },
-    { id: "usp-5", text: "Access to 24/7 dental advice helpline", selected: true, isCustom: false },
-    { id: "usp-6", text: "Cashback on routine check-ups and hygienist visits", selected: false, isCustom: false },
-    { id: "usp-7", text: "Family plans available with multi-person discounts", selected: false, isCustom: false },
-  ],
-  pricing: [
-    { id: "price-1", text: "Budget Plan: £7.50/month – covers NHS charges only", selected: true, isCustom: false },
-    {
-      id: "price-2",
-      text: "Standard Plan: £12.99/month – NHS + private treatments up to £500/year",
-      selected: true,
-      isCustom: false,
-    },
-    {
-      id: "price-3",
-      text: "Premium Plan: £24.99/month – comprehensive cover up to £1,500/year",
-      selected: false,
-      isCustom: false,
-    },
-    { id: "price-4", text: "Family add-on: £4.99 per additional family member", selected: false, isCustom: false },
-  ],
-  mainAngle: [
-    {
-      id: "angle-1",
-      text: "Price-Value with emphasis on peace of mind and avoiding unexpected dental bills",
-      selected: true,
-      isCustom: false,
-    },
-  ],
-  toneOfVoice: [
-    {
-      id: "tone-1",
-      text: "Friendly, reassuring, and straightforward – avoids jargon, speaks to everyday concerns about dental costs",
-      selected: true,
-      isCustom: false,
-    },
-  ],
-  keyHooks: [
-    { id: "hook-1", text: '"NHS dentists are hard to find – don\'t get caught out"', selected: true, isCustom: false },
-    {
-      id: "hook-2",
-      text: '"One crown can cost over £300 privately – are you covered?"',
-      selected: false,
-      isCustom: false,
-    },
-    { id: "hook-3", text: '"Stop dreading the dentist bill"', selected: true, isCustom: false },
-    { id: "hook-4", text: '"Protect your smile without breaking the bank"', selected: false, isCustom: false },
-  ],
-}
-
-type CategoryKey = keyof typeof initialScrapedData
 
 interface CategoryConfig {
   key: CategoryKey
@@ -149,13 +88,88 @@ const categories: CategoryConfig[] = [
   },
 ]
 
-export function StepThree({ onBack, onNext }: StepThreeProps) {
-  const [data, setData] = useState(initialScrapedData)
+export function StepThree({ onBack, onNext, campaignData, data: stepData, updateData }: StepThreeProps) {
+  // Use local state that syncs with parent
+  const [localData, setLocalData] = useState<Record<CategoryKey, EditableItem[]>>(stepData.data)
+  
+  // Initialize from scrapingResult only if not already initialized
+  useEffect(() => {
+    if (!stepData.initialized && campaignData?.scrapingResult) {
+      const result = campaignData.scrapingResult
+      const newData: Record<CategoryKey, EditableItem[]> = { ...defaultScrapedData }
+
+      // Iterate through our known categories and populate from the scraping result
+      categories.forEach(cat => {
+        if (Array.isArray(result[cat.key])) {
+          newData[cat.key] = result[cat.key].map((text: string, index: number) => ({
+            id: `${cat.key}-${index}`,
+            text: text,
+            selected: false,
+            isCustom: false
+          }))
+        }
+      })
+      // Use setData to update both local and parent state
+      setData(newData)
+    } else if (stepData.initialized) {
+      // Sync local state with parent state if it changes externally
+      // Note: We use JSON.stringify to avoid deep equality check issues, 
+      // but simple reference check might be enough if parent state is immutable.
+      // However, since we want to avoid infinite loops, we only set if different.
+      // For now, we trust the parent state passed in props is the source of truth on mount.
+      if (localData !== stepData.data) {
+        setLocalData(stepData.data)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [campaignData, stepData.initialized])
+
+  // Helper to update both local and parent state
+  const setData = (newData: Record<CategoryKey, EditableItem[]> | ((prev: Record<CategoryKey, EditableItem[]>) => Record<CategoryKey, EditableItem[]>)) => {
+    const updated = typeof newData === 'function' ? newData(localData) : newData
+    setLocalData(updated)
+    updateData({ data: updated, initialized: true })
+  }
+
+  // Use localData for rendering
+  const data = localData
+
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editText, setEditText] = useState("")
   const [addingTo, setAddingTo] = useState<CategoryKey | null>(null)
   const [newItemText, setNewItemText] = useState("")
-  const [expandedCategories, setExpandedCategories] = useState<CategoryKey[]>(["usps", "pricing", "keyHooks"])
+  const [expandedCategories, setExpandedCategories] = useState<CategoryKey[]>([
+    "usps",
+    "pricing",
+    "mainAngle",
+    "toneOfVoice",
+    "keyHooks"
+  ])
+
+  const [isSaving, setIsSaving] = useState(false)
+
+  const handleNext = async () => {
+    setIsSaving(true)
+    try {
+      if (campaignData.id) {
+        await fetch("/api/save-progress", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            campaignId: campaignData.id,
+            selectedInsights: data,
+          }),
+        })
+      }
+      onNext()
+    } catch (error) {
+      console.error("Failed to save progress:", error)
+      // Proceed anyway to not block the user
+      onNext()
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   const toggleCategory = (key: CategoryKey) => {
     setExpandedCategories((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]))
@@ -430,8 +444,15 @@ export function StepThree({ onBack, onNext }: StepThreeProps) {
         <Button variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button size="lg" onClick={onNext}>
-          Continue to Building Blocks
+        <Button size="lg" onClick={handleNext} disabled={isSaving}>
+          {isSaving ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            "Continue to Building Blocks"
+          )}
         </Button>
       </div>
     </div>

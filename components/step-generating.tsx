@@ -1,26 +1,20 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Loader2, FileText, CheckCircle2, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 
 interface StepGeneratingProps {
   onComplete: () => void
+  status: 'generating' | 'completed'
+  documentUrl?: string
+  documentName?: string
+  topic?: string
 }
 
-export function StepGenerating({ onComplete }: StepGeneratingProps) {
-  const [isComplete, setIsComplete] = useState(false)
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsComplete(true)
-    }, 5000)
-
-    return () => clearTimeout(timer)
-  }, [])
-
-  if (!isComplete) {
+export function StepGenerating({ onComplete, status = 'generating', documentUrl, documentName, topic }: StepGeneratingProps) {
+  
+  if (status === 'generating') {
     return (
       <div className="flex flex-col items-center justify-center py-24">
         <div className="relative mb-8">
@@ -33,7 +27,7 @@ export function StepGenerating({ onComplete }: StepGeneratingProps) {
         <p className="text-muted-foreground text-center max-w-md">Be patient, the writer is working on it...</p>
         <div className="mt-8 flex items-center gap-2 text-sm text-muted-foreground">
           <FileText className="h-4 w-4" />
-          <span>Creating content for UK Dental Insurance advertorial</span>
+          <span>Creating content for: {topic ? (topic.length > 40 ? topic.substring(0, 40) + '...' : topic) : 'New Campaign'}</span>
         </div>
       </div>
     )
@@ -70,15 +64,15 @@ export function StepGenerating({ onComplete }: StepGeneratingProps) {
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-foreground">UK Dental Insurance Advertorial</p>
-              <p className="text-sm text-muted-foreground mt-0.5">Google Docs • 1,500 words</p>
+              <p className="font-medium text-foreground">{documentName || "Generated Advertorial"}</p>
+              <p className="text-sm text-muted-foreground mt-0.5">Google Docs</p>
               <p className="text-xs text-muted-foreground mt-1">Created just now</p>
             </div>
           </div>
 
           <Button className="w-full mt-4 bg-[#4644B6] hover:bg-[#3a38a0]" asChild>
             <a
-              href="https://docs.google.com/document/d/example-dental-insurance-uk"
+              href={documentUrl || "#"}
               target="_blank"
               rel="noopener noreferrer"
             >

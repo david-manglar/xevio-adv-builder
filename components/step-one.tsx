@@ -8,22 +8,55 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Globe, FileText, Shield, Lightbulb } from "lucide-react"
+import { StepOneState } from "@/lib/types"
+import { cn } from "@/lib/utils"
 
 interface StepOneProps {
+  data: StepOneState
+  updateData: (data: StepOneState) => void
   onNext: () => void
 }
 
-export function StepOne({ onNext }: StepOneProps) {
-  const [formData, setFormData] = useState({
-    topic: "How UK residents can save up to 40% on dental care with the right insurance plan",
-    campaignType: "Lead Generation",
-    niche: "Finance/Insurance",
-    country: "United Kingdom",
-    language: "English",
-    length: "1500",
-    paragraphLength: "Normal (3-4 lines)",
-    guidelines: "None",
-  })
+export function StepOne({ data, updateData, onNext }: StepOneProps) {
+  const [errors, setErrors] = useState<Partial<Record<keyof StepOneState, boolean>>>({})
+
+  const validate = () => {
+    const newErrors: Partial<Record<keyof StepOneState, boolean>> = {}
+    let isValid = true
+
+    const mandatoryFields: (keyof StepOneState)[] = [
+      "topic",
+      "campaignType",
+      "niche",
+      "country",
+      "language",
+      "length",
+      "paragraphLength",
+      "guidelines",
+    ]
+
+    mandatoryFields.forEach((key) => {
+      if (!data[key] || data[key].trim() === "") {
+        newErrors[key] = true
+        isValid = false
+      }
+    })
+
+    setErrors(newErrors)
+    return isValid
+  }
+
+  const handleNext = () => {
+    if (validate()) {
+      onNext()
+    }
+  }
+
+  const clearError = (field: keyof StepOneState) => {
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }))
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -44,10 +77,14 @@ export function StepOne({ onNext }: StepOneProps) {
             <Textarea
               id="topic"
               placeholder="Describe the topic of your advertorial in detail..."
-              className="min-h-[120px] resize-y"
-              value={formData.topic}
-              onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
+              className={cn("min-h-[120px] resize-y", errors.topic && "border-destructive")}
+              value={data.topic}
+              onChange={(e) => {
+                updateData({ ...data, topic: e.target.value })
+                clearError("topic")
+              }}
             />
+            {errors.topic && <p className="text-sm text-destructive">This field is required</p>}
           </div>
         </CardContent>
       </Card>
@@ -68,26 +105,36 @@ export function StepOne({ onNext }: StepOneProps) {
                 Campaign Type <span className="text-destructive">*</span>
               </Label>
               <Select
-                value={formData.campaignType}
-                onValueChange={(v) => setFormData({ ...formData, campaignType: v })}
+                value={data.campaignType}
+                onValueChange={(v) => {
+                  updateData({ ...data, campaignType: v })
+                  clearError("campaignType")
+                }}
               >
-                <SelectTrigger id="campaign-type">
-                  <SelectValue />
+                <SelectTrigger id="campaign-type" className={cn(errors.campaignType && "border-destructive")}>
+                  <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Lead Generation">Lead Generation</SelectItem>
                   <SelectItem value="E-commerce">E-commerce</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.campaignType && <p className="text-sm text-destructive">Required</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="niche">
                 Campaign Niche <span className="text-destructive">*</span>
               </Label>
-              <Select value={formData.niche} onValueChange={(v) => setFormData({ ...formData, niche: v })}>
-                <SelectTrigger id="niche">
-                  <SelectValue />
+              <Select
+                value={data.niche}
+                onValueChange={(v) => {
+                  updateData({ ...data, niche: v })
+                  clearError("niche")
+                }}
+              >
+                <SelectTrigger id="niche" className={cn(errors.niche && "border-destructive")}>
+                  <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Beauty">Beauty</SelectItem>
@@ -102,15 +149,22 @@ export function StepOne({ onNext }: StepOneProps) {
                   <SelectItem value="Weight Loss">Weight Loss</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.niche && <p className="text-sm text-destructive">Required</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="country">
                 Country <span className="text-destructive">*</span>
               </Label>
-              <Select value={formData.country} onValueChange={(v) => setFormData({ ...formData, country: v })}>
-                <SelectTrigger id="country">
-                  <SelectValue />
+              <Select
+                value={data.country}
+                onValueChange={(v) => {
+                  updateData({ ...data, country: v })
+                  clearError("country")
+                }}
+              >
+                <SelectTrigger id="country" className={cn(errors.country && "border-destructive")}>
+                  <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="United States">United States</SelectItem>
@@ -118,20 +172,28 @@ export function StepOne({ onNext }: StepOneProps) {
                   <SelectItem value="Canada">Canada</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.country && <p className="text-sm text-destructive">Required</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="language">
                 Language <span className="text-destructive">*</span>
               </Label>
-              <Select value={formData.language} onValueChange={(v) => setFormData({ ...formData, language: v })}>
-                <SelectTrigger id="language">
-                  <SelectValue />
+              <Select
+                value={data.language}
+                onValueChange={(v) => {
+                  updateData({ ...data, language: v })
+                  clearError("language")
+                }}
+              >
+                <SelectTrigger id="language" className={cn(errors.language && "border-destructive")}>
+                  <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="English">English</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.language && <p className="text-sm text-destructive">Required</p>}
             </div>
           </div>
         </CardContent>
@@ -157,9 +219,14 @@ export function StepOne({ onNext }: StepOneProps) {
                   id="length"
                   type="number"
                   placeholder="e.g., 1500"
-                  value={formData.length}
-                  onChange={(e) => setFormData({ ...formData, length: e.target.value })}
+                  className={cn(errors.length && "border-destructive")}
+                  value={data.length}
+                  onChange={(e) => {
+                    updateData({ ...data, length: e.target.value })
+                    clearError("length")
+                  }}
                 />
+                {errors.length && <p className="text-sm text-destructive">Required</p>}
               </div>
 
               <div className="space-y-2 flex-1 min-w-[180px]">
@@ -167,11 +234,14 @@ export function StepOne({ onNext }: StepOneProps) {
                   Paragraph Length <span className="text-destructive">*</span>
                 </Label>
                 <Select
-                  value={formData.paragraphLength}
-                  onValueChange={(v) => setFormData({ ...formData, paragraphLength: v })}
+                  value={data.paragraphLength}
+                  onValueChange={(v) => {
+                    updateData({ ...data, paragraphLength: v })
+                    clearError("paragraphLength")
+                  }}
                 >
-                  <SelectTrigger id="paragraph-length">
-                    <SelectValue />
+                  <SelectTrigger id="paragraph-length" className={cn(errors.paragraphLength && "border-destructive")}>
+                    <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Very Short (1 sentence)">Very Short (1 sentence)</SelectItem>
@@ -180,6 +250,7 @@ export function StepOne({ onNext }: StepOneProps) {
                     <SelectItem value="Long (4-6 lines)">Long (4-6 lines)</SelectItem>
                   </SelectContent>
                 </Select>
+                {errors.paragraphLength && <p className="text-sm text-destructive">Required</p>}
               </div>
             </div>
           </CardContent>
@@ -196,16 +267,25 @@ export function StepOne({ onNext }: StepOneProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Label htmlFor="guidelines">Client Guidelines</Label>
-              <Select value={formData.guidelines} onValueChange={(v) => setFormData({ ...formData, guidelines: v })}>
-                <SelectTrigger id="guidelines">
-                  <SelectValue />
+              <Label htmlFor="guidelines">
+                Client Guidelines <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={data.guidelines}
+                onValueChange={(v) => {
+                  updateData({ ...data, guidelines: v })
+                  clearError("guidelines")
+                }}
+              >
+                <SelectTrigger id="guidelines" className={cn(errors.guidelines && "border-destructive")}>
+                  <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="None">None</SelectItem>
                   <SelectItem value="ERGO">ERGO</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.guidelines && <p className="text-sm text-destructive">Required</p>}
             </div>
           </CardContent>
         </Card>
@@ -213,7 +293,7 @@ export function StepOne({ onNext }: StepOneProps) {
 
       {/* Navigation */}
       <div className="flex justify-end pt-4">
-        <Button onClick={onNext} size="lg" className="bg-[#4644B6] hover:bg-[#3a38a0]">
+        <Button onClick={handleNext} size="lg" className="bg-[#4644B6] hover:bg-[#3a38a0]">
           Continue to Product Info
         </Button>
       </div>
