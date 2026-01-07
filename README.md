@@ -1,30 +1,77 @@
-# Advertorial builder UI
+# Xevio Advertorial Builder
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+A powerful tool for building high-converting advertorials with an intuitive 6-step wizard interface.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/davids-projects-28a7746a/v0-xevio)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/cdXn9SKcD2t)
+## Tech Stack
 
-## Overview
+- **Framework:** Next.js 16 (App Router)
+- **UI:** React 19 + TypeScript
+- **Styling:** Tailwind CSS v4
+- **Components:** shadcn/ui
+- **Drag & Drop:** @dnd-kit
+- **Backend:** Supabase
+- **Deployment:** Vercel
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+## Getting Started
 
-## Deployment
+### Prerequisites
 
-Your project is live at:
+- Node.js 18+
+- pnpm (recommended) or npm
 
-**[https://vercel.com/davids-projects-28a7746a/v0-xevio](https://vercel.com/davids-projects-28a7746a/v0-xevio)**
+### Installation
 
-## Build your app
+```bash
+# Install dependencies
+pnpm install
 
-Continue building your app on:
+# Start development server
+pnpm dev
+```
 
-**[https://v0.app/chat/cdXn9SKcD2t](https://v0.app/chat/cdXn9SKcD2t)**
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## How It Works
+## Project Structure
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+```
+├── app/                  # Next.js App Router pages
+│   ├── api/              # API routes
+│   ├── globals.css       # Global styles & Tailwind config
+│   ├── layout.tsx        # Root layout
+│   └── page.tsx          # Main page
+├── components/           # React components
+│   ├── ui/               # shadcn/ui primitives
+│   ├── step-one.tsx      # Wizard steps
+│   ├── step-two.tsx
+│   ├── step-three.tsx
+│   ├── step-four.tsx
+│   ├── step-five.tsx
+│   └── ...
+├── lib/                  # Utilities
+│   ├── auth.ts           # Authentication helpers
+│   ├── supabase.ts       # Supabase client
+│   ├── types.ts          # TypeScript types
+│   └── utils.ts          # Utility functions
+└── public/               # Static assets
+```
+
+## Design Tokens
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| Brand Teal | `#0dadb7` | Icons, accents |
+| Brand Purple | `#4644b6` | CTAs, active states |
+| Brand Gray | `#f6f6f6` | Backgrounds |
+
+## Scripts
+
+```bash
+pnpm dev      # Start development server
+pnpm build    # Build for production
+pnpm start    # Start production server
+pnpm lint     # Run ESLint
+```
+
+## License
+
+Private - All rights reserved.

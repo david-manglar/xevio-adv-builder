@@ -12,7 +12,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Advertorial Builder",
   description: "Build high-converting advertorials",
-  generator: "v0.app",
 }
 
 export default function RootLayout({
