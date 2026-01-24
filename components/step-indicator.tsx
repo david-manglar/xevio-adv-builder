@@ -7,8 +7,8 @@ interface StepIndicatorProps {
 const steps = [
   { number: 1, title: "Campaign Setup", description: "Define your campaign parameters" },
   { number: 2, title: "Product Info", description: "Add reference pages" },
-  { number: 3, title: "Insights", description: "Select key insights & USPs" },
-  { number: 4, title: "Building Blocks", description: "Structure your advertorial" },
+  { number: 3, title: "Building Blocks", description: "Structure your advertorial" },
+  { number: 4, title: "Insights", description: "Select key insights & USPs" },
   { number: 5, title: "Review", description: "Confirm and generate" },
 ]
 

@@ -41,11 +41,11 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 │   └── page.tsx          # Main page
 ├── components/           # React components
 │   ├── ui/               # shadcn/ui primitives
-│   ├── step-one.tsx      # Wizard steps
-│   ├── step-two.tsx
-│   ├── step-three.tsx
-│   ├── step-four.tsx
-│   ├── step-five.tsx
+│   ├── step-campaign-setup.tsx    # Step 1: Campaign Setup
+│   ├── step-reference-pages.tsx   # Step 2: Reference Pages
+│   ├── step-building-blocks.tsx   # Step 3: Building Blocks
+│   ├── step-insights.tsx          # Step 4: Insights
+│   ├── step-review.tsx            # Step 5: Review
 │   └── ...
 ├── lib/                  # Utilities
 │   ├── auth.ts           # Authentication helpers

@@ -5,7 +5,7 @@ A 6-step wizard that helps users build advertorials. Users control the structure
 
 ## User Flow
 ```
-Login → Setup → URLs → Insights → Blocks → Review → Generate → Success
+Login → Setup → URLs → Blocks → Insights → Review → Generate → Success
 ```
 
 ---
@@ -20,7 +20,7 @@ Login → Setup → URLs → Insights → Blocks → Review → Generate → Suc
 - Language (English)
 - Word count (500-5000)
 - Paragraph length (4 options)
-- Compliance (optional: None | ERGO)
+- Compliance (None | ERGO | Custom with textarea)
 
 **Button:** "Continue to Product Info" (disabled until all required fields filled)
 
@@ -29,13 +29,50 @@ Login → Setup → URLs → Insights → Blocks → Review → Generate → Suc
 ## Step 2: Product Info
 **What:** Add reference URLs to scrape  
 **Inputs:** Unlimited URL fields with + Add / × Remove  
-**Button:** "Scrape & Continue" → Loading state → Success banner → Navigate to Step 3
+**Button:** "Scrape & Continue" → Scraping starts in background → Proceeds immediately to Step 3
 
-**API:** `POST /api/analyze/batch` with URL array
+**Behavior:**
+- Scraping happens asynchronously in background (no blocking dialog)
+- User can proceed to Building Blocks while scraping completes
+- Scraping results available when user reaches Insights (Step 4)
+- Status updates via Supabase Realtime subscriptions
+
+**API:** `POST /api/scrape` creates campaign and triggers n8n webhook
 
 ---
 
-## Step 3: Insights
+## Step 3: Building Blocks
+**What:** Drag & drop content blocks to build structure
+
+**Layout:**
+- **Top:** Campaign summary (read-only)
+- **Left sidebar:** Available blocks (27 types in 6 categories)
+- **Right area:** Structure (drag & drop zone)
+
+**Block Categories (in sidebar order):**
+1. **Opening:** Lede (3 variants), Teaser, Subheadline, Authority*
+2. **Problem & Solution:** X Reasons*, Problem, Listicle, Solution, Mechanism, Concerns
+3. **Benefits & Features:** Bullet Points (2 variants), Future Me
+4. **Authority & Credibility:** Expert Testimonial, Trust Elements, Social Proof, Studies/Research*
+5. **Urgency & CTA:** Call to Urgency, Scarcity, Discount*, Price Explainer, Next Steps, CTA
+6. **Other:** FAQ, Image Placeholder
+
+**Total:** 27 blocks
+
+*Requires input field
+
+**Interactions:**
+- Drag block from left → Drop in structure
+- Or click + icon to add to bottom
+- Reorder with drag handle (⣿)
+- Remove with × button
+
+**Tech:** @dnd-kit library  
+**Button:** "Continue to Insights" (disabled if 0 blocks)
+
+---
+
+## Step 4: Insights
 **What:** Select extracted insights from scraped pages  
 **UI:** 5 collapsible categories with checkboxes:
 1. **USPs** - Key selling points
@@ -50,37 +87,14 @@ Login → Setup → URLs → Insights → Blocks → Review → Generate → Suc
 - Delete (🗑️ trash icon)
 - "Add your own" custom insights
 
+**Loading State:**
+- If scraping not complete when user reaches this step, shows "Finalizing Analysis" dialog
+- Dialog uses "finalizing" variant with patient messaging ("Almost there...", "Processing final details...", etc.)
+- Auto-populates when scraping completes via Supabase Realtime subscription
+- Dialog automatically closes when `status: 'urls_processed'` received
+
 **Validation:** At least 1 insight selected  
-**Button:** "Continue to Building Blocks"
-
----
-
-## Step 4: Building Blocks
-**What:** Drag & drop content blocks to build structure
-
-**Layout:**
-- **Top:** Campaign summary (read-only)
-- **Left sidebar:** Available blocks (26 types in 6 categories)
-- **Right area:** Structure (drag & drop zone)
-
-**Blocks (26 total):**
-- Opening: Lede (3 variants), Teaser, Subheadline
-- Authority: Authority*, Expert Quote, Trust, Social Proof
-- Problem/Solution: X Reasons*, Problem, Listicle, Solution, Mechanism, Concerns
-- Benefits: Bullet Points (2 variants), Future Me, Price, Discount*
-- Urgency: Call to Urgency, Scarcity, Next Steps, CTA
-- Supporting: FAQ, Image Placeholder
-
-*Requires input field
-
-**Interactions:**
-- Drag block from left → Drop in structure
-- Or click + icon to add to bottom
-- Reorder with drag handle (⣿)
-- Remove with × button
-
-**Tech:** @dnd-kit library  
-**Button:** "Review & Generate" (disabled if 0 blocks)
+**Button:** "Continue to Review"
 
 ---
 
@@ -89,10 +103,10 @@ Login → Setup → URLs → Insights → Blocks → Review → Generate → Suc
 
 **5 Editable Sections:**
 1. Topic - Inline edit
-2. Campaign Setup - Inline edit
+2. Campaign Setup - Inline edit (includes Custom compliance guidelines)
 3. Reference Pages - Edit with warning (clears steps 3-4)
-4. Insights - Navigate to Step 3
-5. Structure - Navigate to Step 4
+4. Structure - Navigate to Step 3
+5. Insights - Navigate to Step 4
 
 **Button:** "Generate Advertorial"
 
@@ -111,7 +125,7 @@ Login → Setup → URLs → Insights → Blocks → Review → Generate → Suc
 - "Open in Google Docs" button
 - "Create Another Advertorial" button
 
-**API:** `POST /api/generate/complete` with full campaign data
+**API:** `POST /api/generate` with full campaign data
 
 ---
 

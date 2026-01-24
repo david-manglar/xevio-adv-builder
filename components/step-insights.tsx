@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,6 +27,9 @@ import {
   Layers,
   Globe,
   Loader2,
+  BookOpen,
+  Info,
+  AlertCircle,
 } from "lucide-react"
 import {
   DndContext,
@@ -42,7 +45,7 @@ import {
 } from "@dnd-kit/core"
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { CampaignData, StepFourState, AddedBlock as AddedBlockType } from "@/lib/types"
+import { CampaignData, StepFourState, StepOneState, AddedBlock as AddedBlockType } from "@/lib/types"
 
 type BlockType = {
   id: string
@@ -83,15 +86,15 @@ const buildingBlocks: BlockType[] = [
   },
   { id: "teaser", name: "Teaser", icon: <Lightbulb className="h-4 w-4" />, category: "Opening" },
   { id: "subheadline", name: "Subheadline", icon: <FileText className="h-4 w-4" />, category: "Opening" },
-  // Authority & Credibility
   {
     id: "authority",
     name: "Authority",
     icon: <ShieldCheck className="h-4 w-4" />,
-    category: "Authority & Credibility",
+    category: "Opening",
     hasInput: true,
     inputLabel: "Authority Name / Role",
   },
+  // Authority & Credibility
   {
     id: "expert-testimonial",
     name: "Expert Testimonial (Quote)",
@@ -112,6 +115,14 @@ const buildingBlocks: BlockType[] = [
     name: "Social Proof (Reviews)",
     icon: <Star className="h-4 w-4" />,
     category: "Authority & Credibility",
+  },
+  {
+    id: "studies-research",
+    name: "Studies/Research",
+    icon: <BookOpen className="h-4 w-4" />,
+    category: "Authority & Credibility",
+    hasInput: true,
+    inputLabel: "Study URL / Description / Topic",
   },
   // Problem & Solution
   {
@@ -216,9 +227,9 @@ type AddedBlock = {
 
 const categories = [
   "Opening",
-  "Authority & Credibility",
   "Problem & Solution",
   "Benefits & Features",
+  "Authority & Credibility",
   "Urgency & CTA",
   "Other",
 ]
@@ -228,23 +239,101 @@ function DraggablePaletteBlock({ block, onAdd }: { block: BlockType; onAdd: () =
     id: `palette-${block.id}`,
     data: { type: "palette", block },
   })
+  const [showTooltip, setShowTooltip] = useState(false)
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 })
+  const iconRef = useRef<HTMLDivElement>(null)
+  const isFirstPersonLede = block.id === "lede-story"
+
+  const updateTooltipPosition = useCallback(() => {
+    if (iconRef.current) {
+      const rect = iconRef.current.getBoundingClientRect()
+      const tooltipWidth = 256 // w-64 = 256px
+      const viewportWidth = window.innerWidth
+      
+      // Calculate horizontal position (centered on icon, but keep within viewport)
+      let left = rect.left + rect.width / 2
+      const minLeft = tooltipWidth / 2 + 16 // 16px padding from edge
+      const maxLeft = viewportWidth - tooltipWidth / 2 - 16
+      left = Math.max(minLeft, Math.min(maxLeft, left))
+      
+      // Position above the icon
+      const top = rect.top - 8
+      
+      setTooltipPosition({
+        top,
+        left,
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    if (showTooltip) {
+      updateTooltipPosition()
+      
+      // Update position on scroll or resize
+      window.addEventListener('scroll', updateTooltipPosition, true)
+      window.addEventListener('resize', updateTooltipPosition)
+      
+      return () => {
+        window.removeEventListener('scroll', updateTooltipPosition, true)
+        window.removeEventListener('resize', updateTooltipPosition)
+      }
+    }
+  }, [showTooltip, updateTooltipPosition])
 
   return (
-    <Button
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      variant="outline"
-      size="sm"
-      className={`h-auto py-1.5 px-2 text-xs bg-white border-[#0dadb7]/30 hover:bg-[#0dadb7]/10 hover:border-[#0dadb7] cursor-grab active:cursor-grabbing ${
-        isDragging ? "opacity-50" : ""
-      }`}
-      onClick={onAdd}
-    >
-      <Plus className="mr-1 h-3 w-3 text-[#0dadb7]" />
-      {block.name}
-      {block.required && <span className="ml-1 text-destructive">*</span>}
-    </Button>
+    <>
+      <div className="relative inline-flex items-center gap-1.5">
+        <Button
+          ref={setNodeRef}
+          {...listeners}
+          {...attributes}
+          variant="outline"
+          size="sm"
+          className={`h-auto py-1.5 px-2 text-xs bg-white border-[#0dadb7]/30 hover:bg-[#0dadb7]/10 hover:border-[#0dadb7] cursor-grab active:cursor-grabbing ${
+            isDragging ? "opacity-50" : ""
+          }`}
+          onClick={onAdd}
+        >
+          <Plus className="mr-1 h-3 w-3 text-[#0dadb7]" />
+          {block.name}
+          {block.required && <span className="ml-1 text-destructive">*</span>}
+        </Button>
+        {isFirstPersonLede && (
+          <div
+            ref={iconRef}
+            className="relative flex items-center"
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+            onClick={(e) => {
+              e.stopPropagation()
+              e.preventDefault()
+            }}
+            onPointerDown={(e) => {
+              e.stopPropagation()
+            }}
+          >
+            <Info className="h-3.5 w-3.5 text-[#0dadb7] cursor-help hover:text-[#0dadb7]/80 transition-colors" />
+          </div>
+        )}
+      </div>
+      {/* Tooltip rendered outside container using fixed positioning */}
+      {showTooltip && isFirstPersonLede && (
+        <div
+          className="fixed w-64 p-3 bg-foreground text-background text-xs rounded-md shadow-lg z-[9999] pointer-events-none"
+          style={{
+            top: `${tooltipPosition.top}px`,
+            left: `${tooltipPosition.left}px`,
+            transform: 'translate(-50%, -100%)',
+            marginTop: '-8px',
+          }}
+        >
+          <p className="font-medium mb-1.5">1st Person Perspective</p>
+          <p className="leading-relaxed">The entire advertorial will be written from a 1st person perspective when this block is selected.</p>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-foreground"></div>
+        </div>
+      )}
+    </>
   )
 }
 
@@ -387,11 +476,12 @@ interface StepFourProps {
   onBack: () => void
   onNext: () => void
   campaignData: CampaignData
+  stepOneData: StepOneState
   data: StepFourState
   updateData: (data: StepFourState) => void
 }
 
-export function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }: StepFourProps) {
+export function StepFour({ onBack, onNext, campaignData, stepOneData, data: stepData, updateData }: StepFourProps) {
   // Convert from parent state format to local AddedBlock format
   const initializeBlocks = (): AddedBlock[] => {
     if (stepData.initialized && stepData.blocks.length > 0) {
@@ -581,20 +671,27 @@ export function StepFour({ onBack, onNext, campaignData, data: stepData, updateD
             <span className="text-sm font-medium text-foreground">Campaign Summary</span>
           </div>
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              <span className="text-foreground font-medium">Topic:</span> Why UK residents are switching to private
-              dental insurance plans amid rising NHS waiting times and limited coverage options
-            </p>
+            {stepOneData.topic && (
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                <span className="text-foreground font-medium">Topic:</span> {stepOneData.topic}
+              </p>
+            )}
             <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground">
-              <span>
-                <span className="text-foreground font-medium">Niche:</span> Finance/Insurance
-              </span>
-              <span>
-                <span className="text-foreground font-medium">Market:</span> United Kingdom
-              </span>
-              <span>
-                <span className="text-foreground font-medium">Length:</span> 1500 words
-              </span>
+              {stepOneData.niche && (
+                <span>
+                  <span className="text-foreground font-medium">Niche:</span> {stepOneData.niche}
+                </span>
+              )}
+              {stepOneData.country && (
+                <span>
+                  <span className="text-foreground font-medium">Market:</span> {stepOneData.country}
+                </span>
+              )}
+              {stepOneData.length && (
+                <span>
+                  <span className="text-foreground font-medium">Length:</span> {stepOneData.length} words
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -626,6 +723,21 @@ export function StepFour({ onBack, onNext, campaignData, data: stepData, updateD
               <h3 className="font-semibold text-foreground">Advertorial Structure</h3>
               <Badge variant="secondary">{addedBlocks.length} blocks</Badge>
             </div>
+
+            {/* Warning banner for 1st person lede */}
+            {addedBlocks.some((b) => b.block.id === "lede-story") && (
+              <div className="flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-50 dark:bg-amber-950/20 p-3">
+                <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-amber-900 dark:text-amber-50">
+                    Note: 1st Person Perspective
+                  </p>
+                  <p className="text-xs text-amber-800 dark:text-amber-100 mt-0.5">
+                    The entire advertorial will be written from a 1st person perspective.
+                  </p>
+                </div>
+              </div>
+            )}
 
             <div className="rounded-lg bg-[#F6F6F6] border border-border p-4">
               <DroppableStructureArea isEmpty={addedBlocks.length === 0} isOver={isOverMainArea}>
@@ -693,7 +805,7 @@ export function StepFour({ onBack, onNext, campaignData, data: stepData, updateD
                 Saving...
               </>
             ) : (
-              "Review & Generate"
+              "Continue to Insights"
             )}
           </Button>
         </div>

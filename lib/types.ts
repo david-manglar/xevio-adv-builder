@@ -7,10 +7,16 @@ export interface StepOneState {
   length: string
   paragraphLength: string
   guidelines: string
+  customGuidelines?: string
+}
+
+export interface ReferenceUrl {
+  url: string
+  description?: string
 }
 
 export interface StepTwoState {
-  referenceUrls: string[]
+  referenceUrls: ReferenceUrl[]
 }
 
 // Step 3: Editable insight item
@@ -53,6 +59,8 @@ export interface CampaignData {
   id?: string
   status?: 'draft' | 'scraping' | 'urls_processed' | 'analyzing' | 'generating' | 'completed' | 'failed'
   scrapingResult?: any
+  scrapedUrls?: string[]  // Track which URLs have been scraped
+  scrapedStepOneData?: StepOneState  // Track Step 1 data used during scraping
   generated_content?: string
   doc_name?: string
 }

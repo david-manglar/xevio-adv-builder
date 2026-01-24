@@ -63,8 +63,21 @@ export async function POST(request: Request) {
       paragraphLength: finalSettings.paragraphLength || stepOneData?.paragraphLength,
       guidelines: finalSettings.guidelines || stepOneData?.guidelines,
 
-      // Reference URLs from Step 2
-      referenceUrls: (stepTwoData?.referenceUrls || []).filter((url: string) => url.trim() !== ''),
+      // Reference URLs from Step 2 (with descriptions)
+      referenceUrls: (stepTwoData?.referenceUrls || [])
+        .filter((ref: any) => {
+          const url = typeof ref === 'string' ? ref : ref?.url
+          return url && url.trim() !== ''
+        })
+        .map((ref: any) => {
+          if (typeof ref === 'string') {
+            return { url: ref.trim(), description: null }
+          }
+          return { 
+            url: ref.url.trim(), 
+            description: ref.description?.trim() || null 
+          }
+        }),
 
       // Only selected insights from Step 3
       selectedInsights,

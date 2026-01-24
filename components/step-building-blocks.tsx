@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,11 +24,15 @@ import {
   Loader2,
 } from "lucide-react"
 import { CampaignData, StepThreeState, EditableItem, CategoryKey } from "@/lib/types"
+import { ScrapingDialog } from "@/components/scraping-dialog"
+import { supabase } from "@/lib/supabase"
+import { RealtimeChannel } from "@supabase/supabase-js"
 
 interface StepThreeProps {
   onBack: () => void
   onNext: () => void
   campaignData: CampaignData
+  updateCampaignData: (data: CampaignData) => void
   data: StepThreeState
   updateData: (data: StepThreeState) => void
 }
@@ -88,9 +92,88 @@ const categories: CategoryConfig[] = [
   },
 ]
 
-export function StepThree({ onBack, onNext, campaignData, data: stepData, updateData }: StepThreeProps) {
+export function StepThree({ onBack, onNext, campaignData, updateCampaignData, data: stepData, updateData }: StepThreeProps) {
   // Use local state that syncs with parent
   const [localData, setLocalData] = useState<Record<CategoryKey, EditableItem[]>>(stepData.data)
+  const [isWaitingForScraping, setIsWaitingForScraping] = useState(false)
+  const channelRef = useRef<RealtimeChannel | null>(null)
+  
+  // Check if scraping is still in progress
+  const scrapingInProgress = campaignData.status === "scraping" && !campaignData.scrapingResult
+
+  // Subscribe to scraping updates if still in progress
+  useEffect(() => {
+    if (scrapingInProgress && campaignData.id && !channelRef.current) {
+      setIsWaitingForScraping(true)
+      
+      const channel = supabase
+        .channel(`campaign-insights-${campaignData.id}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "campaigns",
+            filter: `id=eq.${campaignData.id}`,
+          },
+          (payload) => {
+            const newStatus = payload.new.status
+            const scrapingResult = payload.new.scraping_result
+            
+            if (newStatus === "urls_processed" && scrapingResult) {
+              updateCampaignData({
+                ...campaignData,
+                status: "urls_processed",
+                scrapingResult: scrapingResult
+              })
+              setIsWaitingForScraping(false)
+            } else if (newStatus === "failed") {
+              setIsWaitingForScraping(false)
+              alert("Scraping failed. Please go back and try again.")
+            }
+          }
+        )
+        .subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            // Check current status in case it updated while we were connecting
+            const { data: currentCampaign } = await supabase
+              .from('campaigns')
+              .select('status, scraping_result')
+              .eq('id', campaignData.id)
+              .single()
+            
+            if (currentCampaign?.status === "urls_processed" && currentCampaign.scraping_result) {
+              updateCampaignData({
+                ...campaignData,
+                status: "urls_processed",
+                scrapingResult: currentCampaign.scraping_result
+              })
+              setIsWaitingForScraping(false)
+            } else if (currentCampaign?.status === "failed") {
+              setIsWaitingForScraping(false)
+              alert("Scraping failed. Please go back and try again.")
+            }
+          }
+        })
+      
+      channelRef.current = channel
+    }
+    
+    // Cleanup subscription on unmount
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current)
+        channelRef.current = null
+      }
+    }
+  }, [scrapingInProgress, campaignData, updateCampaignData])
+
+  // When scraping completes, close the waiting state
+  useEffect(() => {
+    if (!scrapingInProgress && isWaitingForScraping) {
+      setIsWaitingForScraping(false)
+    }
+  }, [scrapingInProgress, isWaitingForScraping])
   
   // Initialize from scrapingResult only if not already initialized
   useEffect(() => {
@@ -104,7 +187,7 @@ export function StepThree({ onBack, onNext, campaignData, data: stepData, update
           newData[cat.key] = result[cat.key].map((text: string, index: number) => ({
             id: `${cat.key}-${index}`,
             text: text,
-            selected: false,
+            selected: true, // All insights selected by default - users deselect unwanted items
             isCustom: false
           }))
         }
@@ -113,10 +196,6 @@ export function StepThree({ onBack, onNext, campaignData, data: stepData, update
       setData(newData)
     } else if (stepData.initialized) {
       // Sync local state with parent state if it changes externally
-      // Note: We use JSON.stringify to avoid deep equality check issues, 
-      // but simple reference check might be enough if parent state is immutable.
-      // However, since we want to avoid infinite loops, we only set if different.
-      // For now, we trust the parent state passed in props is the source of truth on mount.
       if (localData !== stepData.data) {
         setLocalData(stepData.data)
       }
@@ -451,10 +530,17 @@ export function StepThree({ onBack, onNext, campaignData, data: stepData, update
               Saving...
             </>
           ) : (
-            "Continue to Building Blocks"
+            "Continue to Review"
           )}
         </Button>
       </div>
+      
+      {/* Show dialog if waiting for scraping to complete */}
+      <ScrapingDialog 
+        open={isWaitingForScraping} 
+        onOpenChange={() => {}} 
+        variant="finalizing"
+      />
     </div>
   )
 }

@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { StepIndicator } from "@/components/step-indicator"
-import { StepOne } from "@/components/step-one"
-import { StepTwo } from "@/components/step-two"
-import { StepThree } from "@/components/step-three"
-import { StepFour } from "@/components/step-four"
-import { StepFive } from "@/components/step-five"
+import { StepOne } from "@/components/step-campaign-setup"
+import { StepTwo } from "@/components/step-reference-pages"
+import { StepThree } from "@/components/step-building-blocks"
+import { StepFour } from "@/components/step-insights"
+import { StepFive } from "@/components/step-review"
 import { StepGenerating } from "@/components/step-generating"
 import { HistoryMenu } from "@/components/history-menu"
 import { UserMenu } from "@/components/user-menu"
@@ -41,7 +41,7 @@ export default function AdvertorialBuilder() {
   })
 
   const [stepTwoData, setStepTwoData] = useState<StepTwoState>({
-    referenceUrls: [""],
+    referenceUrls: [{ url: "", description: "" }],
   })
 
   const [stepThreeData, setStepThreeData] = useState<StepThreeState>({
@@ -116,7 +116,7 @@ export default function AdvertorialBuilder() {
         paragraphLength: "",
         guidelines: "",
       })
-      setStepTwoData({ referenceUrls: [""] })
+      setStepTwoData({ referenceUrls: [{ url: "", description: "" }] })
       setStepThreeData({
         data: { usps: [], pricing: [], mainAngle: [], toneOfVoice: [], keyHooks: [] },
         initialized: false,
@@ -169,6 +169,20 @@ export default function AdvertorialBuilder() {
 
   const handleJumpToStep = (step: number) => {
     setCurrentStep(step)
+  }
+
+  // Reset insights data when a full re-scrape is triggered
+  const handleResetInsights = () => {
+    setStepThreeData({
+      data: { usps: [], pricing: [], mainAngle: [], toneOfVoice: [], keyHooks: [] },
+      initialized: false,
+    })
+    // Clear the cached scraping result so Step 3 will wait for new data
+    setCampaignData(prev => ({ 
+      ...prev, 
+      scrapingResult: undefined,
+      status: undefined,
+    }))
   }
 
   // Listen for campaign updates when generating
@@ -304,7 +318,8 @@ export default function AdvertorialBuilder() {
           <StepOne 
             data={stepOneData} 
             updateData={setStepOneData} 
-            onNext={handleNextStep} 
+            onNext={handleNextStep}
+            campaignData={campaignData}
           />
         )}
         {currentStep === 2 && (
@@ -315,26 +330,30 @@ export default function AdvertorialBuilder() {
             onNext={handleNextStep}
             onBack={handlePrevStep}
             isLoading={isLoading}
-            onCampaignCreated={(data) => setCampaignData(data)}
+            onCampaignCreated={(data) => setCampaignData(prev => ({ ...prev, ...data }))}
+            onResetInsights={handleResetInsights}
             userId={userId}
+            campaignData={campaignData}
           />
         )}
         {currentStep === 3 && (
-          <StepThree 
-            onBack={handlePrevStep} 
-            onNext={handleNextStep}
-            campaignData={campaignData}
-            data={stepThreeData}
-            updateData={setStepThreeData}
-          />
-        )}
-        {currentStep === 4 && (
           <StepFour 
             onBack={handlePrevStep} 
             onNext={handleNextStep} 
             campaignData={campaignData}
+            stepOneData={stepOneData}
             data={stepFourData}
             updateData={setStepFourData}
+          />
+        )}
+        {currentStep === 4 && (
+          <StepThree 
+            onBack={handlePrevStep} 
+            onNext={handleNextStep}
+            campaignData={campaignData}
+            updateCampaignData={setCampaignData}
+            data={stepThreeData}
+            updateData={setStepThreeData}
           />
         )}
         {currentStep === 5 && (

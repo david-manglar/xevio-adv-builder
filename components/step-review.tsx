@@ -118,6 +118,7 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
     length: stepOneData.length || "1500",
     paragraphLength: stepOneData.paragraphLength || "Normal (3-4 lines)",
     guidelines: stepOneData.guidelines || "None",
+    customGuidelines: stepOneData.customGuidelines || "",
   })
   const [tempCampaignData, setTempCampaignData] = useState(campaignData)
 
@@ -134,7 +135,17 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
   const structureBlocks = stepFourData.blocks.map(b => b.name)
 
   // Get reference URLs from Step 2
-  const referenceUrls = stepTwoData.referenceUrls.filter(url => url.trim() !== "")
+  const referenceUrls = stepTwoData.referenceUrls
+    .filter((ref) => {
+      const url = typeof ref === 'string' ? ref : ref?.url
+      return url && url.trim() !== ''
+    })
+    .map((ref) => {
+      if (typeof ref === 'string') {
+        return { url: ref.trim(), description: null }
+      }
+      return { url: ref.url.trim(), description: ref.description?.trim() || null }
+    })
 
   const handleCampaignEdit = () => {
     setTempCampaignData(campaignData)
@@ -393,24 +404,44 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground w-24 shrink-0">Guidelines</span>
-                  <Select
-                    value={tempCampaignData.guidelines}
-                    onValueChange={(v) => setTempCampaignData({ ...tempCampaignData, guidelines: v })}
-                  >
-                    <SelectTrigger className="h-8 text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="text-xs">
-                      <SelectItem className="text-xs" value="None">
-                        None
-                      </SelectItem>
-                      <SelectItem className="text-xs" value="ERGO">
-                        ERGO
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground w-24 shrink-0">Guidelines</span>
+                    <Select
+                      value={tempCampaignData.guidelines}
+                      onValueChange={(v) => setTempCampaignData({ 
+                        ...tempCampaignData, 
+                        guidelines: v,
+                        customGuidelines: v === "Custom" ? tempCampaignData.customGuidelines : ""
+                      })}
+                    >
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="text-xs">
+                        <SelectItem className="text-xs" value="None">
+                          None
+                        </SelectItem>
+                        <SelectItem className="text-xs" value="ERGO">
+                          ERGO
+                        </SelectItem>
+                        <SelectItem className="text-xs" value="Custom">
+                          Custom
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {tempCampaignData.guidelines === "Custom" && (
+                    <div className="flex items-start gap-2">
+                      <span className="text-xs text-muted-foreground w-24 shrink-0 pt-2">Custom</span>
+                      <Textarea
+                        placeholder="Enter custom compliance guidelines..."
+                        className="min-h-[80px] resize-y text-xs"
+                        value={tempCampaignData.customGuidelines || ""}
+                        onChange={(e) => setTempCampaignData({ ...tempCampaignData, customGuidelines: e.target.value })}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (
@@ -452,11 +483,19 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
                   </span>
                 </div>
                 {campaignData.guidelines !== "None" && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground w-24 shrink-0">Guidelines</span>
-                    <span className="inline-flex items-center rounded-md bg-[#F6F6F6] px-2.5 py-1 text-xs font-medium text-muted-foreground">
-                      {campaignData.guidelines}
-                    </span>
+                  <div className="flex items-start gap-2">
+                    <span className="text-xs text-muted-foreground w-24 shrink-0 pt-1">Guidelines</span>
+                    <div className="flex-1">
+                      {campaignData.guidelines === "Custom" && campaignData.customGuidelines ? (
+                        <div className="rounded-md bg-[#F6F6F6] px-2.5 py-1.5 text-xs font-medium text-muted-foreground whitespace-pre-wrap">
+                          {campaignData.customGuidelines}
+                        </div>
+                      ) : (
+                        <span className="inline-flex items-center rounded-md bg-[#F6F6F6] px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                          {campaignData.guidelines}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -474,10 +513,15 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
           </CardHeader>
           <CardContent className="space-y-2">
             {referenceUrls.length > 0 ? (
-              referenceUrls.map((url, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm">
-                  <CheckCircle2 className="h-4 w-4 text-[#0dadb7]" />
-                  <span className="text-muted-foreground truncate">{url.replace(/^https?:\/\//, '')}</span>
+              referenceUrls.map((ref, index) => (
+                <div key={index} className="space-y-1">
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle2 className="h-4 w-4 text-[#0dadb7] shrink-0" />
+                    <span className="text-muted-foreground truncate">{ref.url.replace(/^https?:\/\//, '')}</span>
+                  </div>
+                  {ref.description && (
+                    <p className="text-xs text-muted-foreground ml-6 italic">{ref.description}</p>
+                  )}
                 </div>
               ))
             ) : (
@@ -492,7 +536,7 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
             <CardTitle className="text-base flex items-center gap-2">
               <Target className="h-4 w-4 text-[#0dadb7]" />
               Selected Insights
-              <EditButton onClick={() => onJumpToStep(3)} />
+              <EditButton onClick={() => onJumpToStep(4)} />
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -523,7 +567,7 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
             <span className="inline-flex items-center rounded-md bg-[#F6F6F6] px-2.5 py-1 text-xs font-medium text-muted-foreground">
               {structureBlocks.length} blocks
             </span>
-            <EditButton onClick={() => onJumpToStep(4)} />
+            <EditButton onClick={() => onJumpToStep(3)} />
           </CardTitle>
         </CardHeader>
         <CardContent>

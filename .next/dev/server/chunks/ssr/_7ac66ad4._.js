@@ -23,13 +23,13 @@ const steps = [
     },
     {
         number: 3,
-        title: "Insights",
-        description: "Select key insights & USPs"
+        title: "Building Blocks",
+        description: "Structure your advertorial"
     },
     {
         number: 4,
-        title: "Building Blocks",
-        description: "Structure your advertorial"
+        title: "Insights",
+        description: "Select key insights & USPs"
     },
     {
         number: 5,
@@ -639,6 +639,11 @@ function StepOne({ data, updateData, onNext }) {
                 isValid = false;
             }
         });
+        // If Custom is selected, customGuidelines is required
+        if (data.guidelines === "Custom" && (!data.customGuidelines || data.customGuidelines.trim() === "")) {
+            newErrors.customGuidelines = true;
+            isValid = false;
+        }
         setErrors(newErrors);
         return isValid;
     };
@@ -670,7 +675,7 @@ function StepOne({ data, updateData, onNext }) {
                                         className: "h-5 w-5 text-[#0dadb7]"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-one.tsx",
-                                        lineNumber: 67,
+                                        lineNumber: 73,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardTitle"], {
@@ -678,26 +683,26 @@ function StepOne({ data, updateData, onNext }) {
                                         children: "Advertorial Topic"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-one.tsx",
-                                        lineNumber: 68,
+                                        lineNumber: 74,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/step-one.tsx",
-                                lineNumber: 66,
+                                lineNumber: 72,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
                                 children: "Describe in plain language what your advertorial is about"
                             }, void 0, false, {
                                 fileName: "[project]/components/step-one.tsx",
-                                lineNumber: 70,
+                                lineNumber: 76,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-one.tsx",
-                        lineNumber: 65,
+                        lineNumber: 71,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -713,13 +718,13 @@ function StepOne({ data, updateData, onNext }) {
                                             children: "*"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 75,
+                                            lineNumber: 81,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-one.tsx",
-                                    lineNumber: 74,
+                                    lineNumber: 80,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -736,7 +741,7 @@ function StepOne({ data, updateData, onNext }) {
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-one.tsx",
-                                    lineNumber: 77,
+                                    lineNumber: 83,
                                     columnNumber: 13
                                 }, this),
                                 errors.topic && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -744,24 +749,24 @@ function StepOne({ data, updateData, onNext }) {
                                     children: "This field is required"
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-one.tsx",
-                                    lineNumber: 87,
+                                    lineNumber: 93,
                                     columnNumber: 30
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/step-one.tsx",
-                            lineNumber: 73,
+                            lineNumber: 79,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/step-one.tsx",
-                        lineNumber: 72,
+                        lineNumber: 78,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/step-one.tsx",
-                lineNumber: 64,
+                lineNumber: 70,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -776,7 +781,7 @@ function StepOne({ data, updateData, onNext }) {
                                         className: "h-5 w-5 text-[#0dadb7]"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-one.tsx",
-                                        lineNumber: 96,
+                                        lineNumber: 102,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardTitle"], {
@@ -784,26 +789,26 @@ function StepOne({ data, updateData, onNext }) {
                                         children: "Campaign Type & Geo"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-one.tsx",
-                                        lineNumber: 97,
+                                        lineNumber: 103,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/step-one.tsx",
-                                lineNumber: 95,
+                                lineNumber: 101,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
                                 children: "Define your campaign's market and type"
                             }, void 0, false, {
                                 fileName: "[project]/components/step-one.tsx",
-                                lineNumber: 99,
+                                lineNumber: 105,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-one.tsx",
-                        lineNumber: 94,
+                        lineNumber: 100,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -822,13 +827,13 @@ function StepOne({ data, updateData, onNext }) {
                                                     children: "*"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 105,
+                                                    lineNumber: 111,
                                                     columnNumber: 31
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 104,
+                                            lineNumber: 110,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -848,12 +853,12 @@ function StepOne({ data, updateData, onNext }) {
                                                         placeholder: "Select"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/step-one.tsx",
-                                                        lineNumber: 115,
+                                                        lineNumber: 121,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 114,
+                                                    lineNumber: 120,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -863,7 +868,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "Lead Generation"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 118,
+                                                            lineNumber: 124,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -871,19 +876,19 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "E-commerce"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 119,
+                                                            lineNumber: 125,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 117,
+                                                    lineNumber: 123,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 107,
+                                            lineNumber: 113,
                                             columnNumber: 15
                                         }, this),
                                         errors.campaignType && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -891,13 +896,13 @@ function StepOne({ data, updateData, onNext }) {
                                             children: "Required"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 122,
+                                            lineNumber: 128,
                                             columnNumber: 39
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-one.tsx",
-                                    lineNumber: 103,
+                                    lineNumber: 109,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -912,13 +917,13 @@ function StepOne({ data, updateData, onNext }) {
                                                     children: "*"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 127,
+                                                    lineNumber: 133,
                                                     columnNumber: 32
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 126,
+                                            lineNumber: 132,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -938,12 +943,12 @@ function StepOne({ data, updateData, onNext }) {
                                                         placeholder: "Select"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/step-one.tsx",
-                                                        lineNumber: 137,
+                                                        lineNumber: 143,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 136,
+                                                    lineNumber: 142,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -953,7 +958,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "Beauty"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 140,
+                                                            lineNumber: 146,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -961,7 +966,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "Education"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 141,
+                                                            lineNumber: 147,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -969,7 +974,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "Fashion/Clothing"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 142,
+                                                            lineNumber: 148,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -977,7 +982,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "Finance/Insurance"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 143,
+                                                            lineNumber: 149,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -985,7 +990,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "Gaming"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 144,
+                                                            lineNumber: 150,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -993,7 +998,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "Health Supplements"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 145,
+                                                            lineNumber: 151,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1001,7 +1006,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "Home Improvement"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 146,
+                                                            lineNumber: 152,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1009,7 +1014,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "Medical"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 147,
+                                                            lineNumber: 153,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1017,7 +1022,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "Tech/Gadgets"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 148,
+                                                            lineNumber: 154,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1025,19 +1030,19 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "Weight Loss"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 149,
+                                                            lineNumber: 155,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 139,
+                                                    lineNumber: 145,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 129,
+                                            lineNumber: 135,
                                             columnNumber: 15
                                         }, this),
                                         errors.niche && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1045,13 +1050,13 @@ function StepOne({ data, updateData, onNext }) {
                                             children: "Required"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 152,
+                                            lineNumber: 158,
                                             columnNumber: 32
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-one.tsx",
-                                    lineNumber: 125,
+                                    lineNumber: 131,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1066,13 +1071,13 @@ function StepOne({ data, updateData, onNext }) {
                                                     children: "*"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 157,
+                                                    lineNumber: 163,
                                                     columnNumber: 25
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 156,
+                                            lineNumber: 162,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -1092,12 +1097,12 @@ function StepOne({ data, updateData, onNext }) {
                                                         placeholder: "Select"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/step-one.tsx",
-                                                        lineNumber: 167,
+                                                        lineNumber: 173,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 166,
+                                                    lineNumber: 172,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -1107,7 +1112,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "United States"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 170,
+                                                            lineNumber: 176,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1115,7 +1120,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "United Kingdom"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 171,
+                                                            lineNumber: 177,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1123,19 +1128,19 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "Canada"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 172,
+                                                            lineNumber: 178,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 169,
+                                                    lineNumber: 175,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 159,
+                                            lineNumber: 165,
                                             columnNumber: 15
                                         }, this),
                                         errors.country && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1143,13 +1148,13 @@ function StepOne({ data, updateData, onNext }) {
                                             children: "Required"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 175,
+                                            lineNumber: 181,
                                             columnNumber: 34
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-one.tsx",
-                                    lineNumber: 155,
+                                    lineNumber: 161,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1164,13 +1169,13 @@ function StepOne({ data, updateData, onNext }) {
                                                     children: "*"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 180,
+                                                    lineNumber: 186,
                                                     columnNumber: 26
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 179,
+                                            lineNumber: 185,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -1190,12 +1195,12 @@ function StepOne({ data, updateData, onNext }) {
                                                         placeholder: "Select"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/step-one.tsx",
-                                                        lineNumber: 190,
+                                                        lineNumber: 196,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 189,
+                                                    lineNumber: 195,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -1204,18 +1209,18 @@ function StepOne({ data, updateData, onNext }) {
                                                         children: "English"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/step-one.tsx",
-                                                        lineNumber: 193,
+                                                        lineNumber: 199,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 192,
+                                                    lineNumber: 198,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 182,
+                                            lineNumber: 188,
                                             columnNumber: 15
                                         }, this),
                                         errors.language && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1223,30 +1228,30 @@ function StepOne({ data, updateData, onNext }) {
                                             children: "Required"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 196,
+                                            lineNumber: 202,
                                             columnNumber: 35
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-one.tsx",
-                                    lineNumber: 178,
+                                    lineNumber: 184,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/step-one.tsx",
-                            lineNumber: 102,
+                            lineNumber: 108,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/step-one.tsx",
-                        lineNumber: 101,
+                        lineNumber: 107,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/step-one.tsx",
-                lineNumber: 93,
+                lineNumber: 99,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1264,7 +1269,7 @@ function StepOne({ data, updateData, onNext }) {
                                                 className: "h-5 w-5 text-[#0dadb7]"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/step-one.tsx",
-                                                lineNumber: 207,
+                                                lineNumber: 213,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardTitle"], {
@@ -1272,26 +1277,26 @@ function StepOne({ data, updateData, onNext }) {
                                                 children: "Content & Style"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/step-one.tsx",
-                                                lineNumber: 208,
+                                                lineNumber: 214,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/step-one.tsx",
-                                        lineNumber: 206,
+                                        lineNumber: 212,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
                                         children: "Configure content length and formatting"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-one.tsx",
-                                        lineNumber: 210,
+                                        lineNumber: 216,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/step-one.tsx",
-                                lineNumber: 205,
+                                lineNumber: 211,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1310,13 +1315,13 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "*"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 216,
+                                                            lineNumber: 222,
                                                             columnNumber: 34
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 215,
+                                                    lineNumber: 221,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1334,7 +1339,7 @@ function StepOne({ data, updateData, onNext }) {
                                                     }
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 218,
+                                                    lineNumber: 224,
                                                     columnNumber: 17
                                                 }, this),
                                                 errors.length && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1342,13 +1347,13 @@ function StepOne({ data, updateData, onNext }) {
                                                     children: "Required"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 229,
+                                                    lineNumber: 235,
                                                     columnNumber: 35
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 214,
+                                            lineNumber: 220,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1363,13 +1368,13 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "*"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 234,
+                                                            lineNumber: 240,
                                                             columnNumber: 36
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 233,
+                                                    lineNumber: 239,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -1389,12 +1394,12 @@ function StepOne({ data, updateData, onNext }) {
                                                                 placeholder: "Select"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/step-one.tsx",
-                                                                lineNumber: 244,
+                                                                lineNumber: 250,
                                                                 columnNumber: 21
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 243,
+                                                            lineNumber: 249,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -1404,7 +1409,7 @@ function StepOne({ data, updateData, onNext }) {
                                                                     children: "Very Short (1 sentence)"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-one.tsx",
-                                                                    lineNumber: 247,
+                                                                    lineNumber: 253,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1412,7 +1417,7 @@ function StepOne({ data, updateData, onNext }) {
                                                                     children: "Short (1-3 lines)"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-one.tsx",
-                                                                    lineNumber: 248,
+                                                                    lineNumber: 254,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1420,7 +1425,7 @@ function StepOne({ data, updateData, onNext }) {
                                                                     children: "Normal (3-4 lines)"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-one.tsx",
-                                                                    lineNumber: 249,
+                                                                    lineNumber: 255,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1428,19 +1433,19 @@ function StepOne({ data, updateData, onNext }) {
                                                                     children: "Long (4-6 lines)"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-one.tsx",
-                                                                    lineNumber: 250,
+                                                                    lineNumber: 256,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 246,
+                                                            lineNumber: 252,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 236,
+                                                    lineNumber: 242,
                                                     columnNumber: 17
                                                 }, this),
                                                 errors.paragraphLength && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1448,30 +1453,30 @@ function StepOne({ data, updateData, onNext }) {
                                                     children: "Required"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 253,
+                                                    lineNumber: 259,
                                                     columnNumber: 44
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 232,
+                                            lineNumber: 238,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-one.tsx",
-                                    lineNumber: 213,
+                                    lineNumber: 219,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-one.tsx",
-                                lineNumber: 212,
+                                lineNumber: 218,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-one.tsx",
-                        lineNumber: 204,
+                        lineNumber: 210,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -1486,7 +1491,7 @@ function StepOne({ data, updateData, onNext }) {
                                                 className: "h-5 w-5 text-[#0dadb7]"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/step-one.tsx",
-                                                lineNumber: 263,
+                                                lineNumber: 269,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardTitle"], {
@@ -1494,26 +1499,26 @@ function StepOne({ data, updateData, onNext }) {
                                                 children: "Compliance"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/step-one.tsx",
-                                                lineNumber: 264,
+                                                lineNumber: 270,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/step-one.tsx",
-                                        lineNumber: 262,
+                                        lineNumber: 268,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
                                         children: "Indicate specific guidelines to follow"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-one.tsx",
-                                        lineNumber: 266,
+                                        lineNumber: 272,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/step-one.tsx",
-                                lineNumber: 261,
+                                lineNumber: 267,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1529,13 +1534,13 @@ function StepOne({ data, updateData, onNext }) {
                                                     children: "*"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 271,
+                                                    lineNumber: 277,
                                                     columnNumber: 35
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 270,
+                                            lineNumber: 276,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -1543,9 +1548,12 @@ function StepOne({ data, updateData, onNext }) {
                                             onValueChange: (v)=>{
                                                 updateData({
                                                     ...data,
-                                                    guidelines: v
+                                                    guidelines: v,
+                                                    // Clear custom guidelines if switching away from Custom
+                                                    customGuidelines: v === "Custom" ? data.customGuidelines : undefined
                                                 });
                                                 clearError("guidelines");
+                                                clearError("customGuidelines");
                                             },
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectTrigger"], {
@@ -1555,12 +1563,12 @@ function StepOne({ data, updateData, onNext }) {
                                                         placeholder: "Select"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/step-one.tsx",
-                                                        lineNumber: 281,
+                                                        lineNumber: 293,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 280,
+                                                    lineNumber: 292,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -1570,7 +1578,7 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "None"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 284,
+                                                            lineNumber: 296,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -1578,19 +1586,27 @@ function StepOne({ data, updateData, onNext }) {
                                                             children: "ERGO"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-one.tsx",
-                                                            lineNumber: 285,
+                                                            lineNumber: 297,
+                                                            columnNumber: 19
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
+                                                            value: "Custom",
+                                                            children: "Custom"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/step-one.tsx",
+                                                            lineNumber: 298,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-one.tsx",
-                                                    lineNumber: 283,
+                                                    lineNumber: 295,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 273,
+                                            lineNumber: 279,
                                             columnNumber: 15
                                         }, this),
                                         errors.guidelines && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1598,30 +1614,82 @@ function StepOne({ data, updateData, onNext }) {
                                             children: "Required"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-one.tsx",
-                                            lineNumber: 288,
+                                            lineNumber: 301,
                                             columnNumber: 37
+                                        }, this),
+                                        data.guidelines === "Custom" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "mt-3 space-y-2",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Label"], {
+                                                    htmlFor: "custom-guidelines",
+                                                    children: [
+                                                        "Custom Guidelines ",
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            className: "text-destructive",
+                                                            children: "*"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/step-one.tsx",
+                                                            lineNumber: 306,
+                                                            columnNumber: 39
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/components/step-one.tsx",
+                                                    lineNumber: 305,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
+                                                    id: "custom-guidelines",
+                                                    placeholder: "e.g., 'Don't use word X' or 'Only communicate Bundle A'...",
+                                                    className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["cn"])("min-h-[100px] resize-y", errors.customGuidelines && "border-destructive"),
+                                                    value: data.customGuidelines || "",
+                                                    onChange: (e)=>{
+                                                        updateData({
+                                                            ...data,
+                                                            customGuidelines: e.target.value
+                                                        });
+                                                        clearError("customGuidelines");
+                                                    }
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/step-one.tsx",
+                                                    lineNumber: 308,
+                                                    columnNumber: 19
+                                                }, this),
+                                                errors.customGuidelines && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    className: "text-sm text-destructive",
+                                                    children: "Required"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/step-one.tsx",
+                                                    lineNumber: 318,
+                                                    columnNumber: 47
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/components/step-one.tsx",
+                                            lineNumber: 304,
+                                            columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-one.tsx",
-                                    lineNumber: 269,
+                                    lineNumber: 275,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-one.tsx",
-                                lineNumber: 268,
+                                lineNumber: 274,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-one.tsx",
-                        lineNumber: 260,
+                        lineNumber: 266,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/step-one.tsx",
-                lineNumber: 202,
+                lineNumber: 208,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1633,18 +1701,18 @@ function StepOne({ data, updateData, onNext }) {
                     children: "Continue to Product Info"
                 }, void 0, false, {
                     fileName: "[project]/components/step-one.tsx",
-                    lineNumber: 296,
+                    lineNumber: 328,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/step-one.tsx",
-                lineNumber: 295,
+                lineNumber: 327,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/step-one.tsx",
-        lineNumber: 62,
+        lineNumber: 68,
         columnNumber: 5
     }, this);
 }
@@ -1837,18 +1905,36 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 ;
 ;
 ;
-// Customize these messages to change the "story" told during loading
-const loadingMessages = [
-    "Initializing smart scraper...",
-    "Reading your reference pages...",
-    "Analyzing tone of voice and style...",
-    "Extracting key benefits and USPs...",
-    "Identifying pain points and solutions...",
-    "Structuring insights for your brief...",
-    "Finalizing analysis..."
-];
-function ScrapingDialog({ open, onOpenChange, onCancel }) {
+// Default messages for initial scraping (Step 2)
+const defaultMessages = {
+    title: "Analyzing Content",
+    description: "Your reference pages are being scraped and analyzed. This can take a couple of minutes.",
+    messages: [
+        "Initializing smart scraper...",
+        "Reading your reference pages...",
+        "Analyzing tone of voice and style...",
+        "Extracting key benefits and USPs...",
+        "Identifying pain points and solutions...",
+        "Structuring insights for your brief...",
+        "Finalizing analysis..."
+    ]
+};
+// Messages for when user reaches Insights before scraping is done
+const finalizingMessages = {
+    title: "Finalizing Analysis",
+    description: "We're wrapping up the analysis of your reference pages. This should only take a moment.",
+    messages: [
+        "Almost there...",
+        "Processing final details...",
+        "Organizing your insights...",
+        "Just a few more seconds...",
+        "Preparing your data...",
+        "Nearly ready..."
+    ]
+};
+function ScrapingDialog({ open, onOpenChange, onCancel, variant = "scraping" }) {
     const [messageIndex, setMessageIndex] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
+    const content = variant === "finalizing" ? finalizingMessages : defaultMessages;
     // Cycle through messages to keep the user engaged
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (!open) {
@@ -1858,14 +1944,16 @@ function ScrapingDialog({ open, onOpenChange, onCancel }) {
         const interval = setInterval(()=>{
             setMessageIndex((prev)=>{
                 // If we reach the last message, stay there
-                if (prev >= loadingMessages.length - 1) return prev;
+                if (prev >= content.messages.length - 1) return prev;
                 return prev + 1;
             });
-        }, 4500) // Change message every 4.5 seconds
+        }, variant === "finalizing" ? 3000 : 4500) // Faster cycling for finalizing variant
         ;
         return ()=>clearInterval(interval);
     }, [
-        open
+        open,
+        content.messages.length,
+        variant
     ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialog"], {
         open: open,
@@ -1881,7 +1969,7 @@ function ScrapingDialog({ open, onOpenChange, onCancel }) {
                                 className: "h-12 w-12 text-[#0dadb7]"
                             }, void 0, false, {
                                 fileName: "[project]/components/scraping-dialog.tsx",
-                                lineNumber: 59,
+                                lineNumber: 86,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1889,53 +1977,53 @@ function ScrapingDialog({ open, onOpenChange, onCancel }) {
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialogTitle"], {
                                         className: "text-xl",
-                                        children: "Analyzing Content"
+                                        children: content.title
                                     }, void 0, false, {
                                         fileName: "[project]/components/scraping-dialog.tsx",
-                                        lineNumber: 62,
+                                        lineNumber: 89,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialogDescription"], {
                                         className: "mx-auto max-w-[280px]",
-                                        children: "Your reference pages are being scraped and analyzed. This can take a couple of minutes."
+                                        children: content.description
                                     }, void 0, false, {
                                         fileName: "[project]/components/scraping-dialog.tsx",
-                                        lineNumber: 63,
+                                        lineNumber: 90,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/scraping-dialog.tsx",
-                                lineNumber: 61,
+                                lineNumber: 88,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "min-h-[24px] flex items-center justify-center",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-sm font-medium text-[#0dadb7] animate-pulse text-center transition-all duration-500",
-                                    children: loadingMessages[messageIndex]
+                                    children: content.messages[messageIndex]
                                 }, void 0, false, {
                                     fileName: "[project]/components/scraping-dialog.tsx",
-                                    lineNumber: 70,
+                                    lineNumber: 97,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/scraping-dialog.tsx",
-                                lineNumber: 69,
+                                lineNumber: 96,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/scraping-dialog.tsx",
-                        lineNumber: 57,
+                        lineNumber: 84,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/scraping-dialog.tsx",
-                    lineNumber: 56,
+                    lineNumber: 83,
                     columnNumber: 9
                 }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialogFooter"], {
+                onCancel && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialogFooter"], {
                     className: "sm:justify-center",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDialogCancel"], {
                         onClick: onCancel,
@@ -1943,23 +2031,23 @@ function ScrapingDialog({ open, onOpenChange, onCancel }) {
                         children: "Cancel"
                     }, void 0, false, {
                         fileName: "[project]/components/scraping-dialog.tsx",
-                        lineNumber: 78,
-                        columnNumber: 11
+                        lineNumber: 106,
+                        columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/scraping-dialog.tsx",
-                    lineNumber: 77,
-                    columnNumber: 9
+                    lineNumber: 105,
+                    columnNumber: 11
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/scraping-dialog.tsx",
-            lineNumber: 55,
+            lineNumber: 82,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/scraping-dialog.tsx",
-        lineNumber: 54,
+        lineNumber: 81,
         columnNumber: 5
     }, this);
 }
@@ -3211,6 +3299,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$layers$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Layers$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/layers.js [app-ssr] (ecmascript) <export default as Layers>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$globe$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Globe$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/globe.js [app-ssr] (ecmascript) <export default as Globe>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/loader-circle.js [app-ssr] (ecmascript) <export default as Loader2>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$book$2d$open$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__BookOpen$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/book-open.js [app-ssr] (ecmascript) <export default as BookOpen>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$dnd$2d$kit$2f$core$2f$dist$2f$core$2e$esm$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@dnd-kit/core/dist/core.esm.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$dnd$2d$kit$2f$sortable$2f$dist$2f$sortable$2e$esm$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@dnd-kit/sortable/dist/sortable.esm.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$dnd$2d$kit$2f$utilities$2f$dist$2f$utilities$2e$esm$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@dnd-kit/utilities/dist/utilities.esm.js [app-ssr] (ecmascript)");
@@ -3235,7 +3324,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 66,
+            lineNumber: 67,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Opening",
@@ -3248,7 +3337,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 73,
+            lineNumber: 74,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Opening",
@@ -3261,7 +3350,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 80,
+            lineNumber: 81,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Opening",
@@ -3274,7 +3363,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 84,
+            lineNumber: 85,
             columnNumber: 41
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Opening"
@@ -3286,12 +3375,11 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 85,
+            lineNumber: 86,
             columnNumber: 51
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Opening"
     },
-    // Authority & Credibility
     {
         id: "authority",
         name: "Authority",
@@ -3302,10 +3390,11 @@ const buildingBlocks = [
             lineNumber: 90,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
-        category: "Authority & Credibility",
+        category: "Opening",
         hasInput: true,
         inputLabel: "Authority Name / Role"
     },
+    // Authority & Credibility
     {
         id: "expert-testimonial",
         name: "Expert Testimonial (Quote)",
@@ -3313,7 +3402,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 98,
+            lineNumber: 99,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Authority & Credibility",
@@ -3332,7 +3421,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 107,
+            lineNumber: 108,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Authority & Credibility"
@@ -3344,10 +3433,24 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 113,
+            lineNumber: 114,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Authority & Credibility"
+    },
+    {
+        id: "studies-research",
+        name: "Studies/Research",
+        icon: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$book$2d$open$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__BookOpen$3e$__["BookOpen"], {
+            className: "h-4 w-4"
+        }, void 0, false, {
+            fileName: "[project]/components/step-four.tsx",
+            lineNumber: 120,
+            columnNumber: 11
+        }, ("TURBOPACK compile-time value", void 0)),
+        category: "Authority & Credibility",
+        hasInput: true,
+        inputLabel: "Study URL / Description / Topic"
     },
     // Problem & Solution
     {
@@ -3357,7 +3460,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 120,
+            lineNumber: 129,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Problem & Solution",
@@ -3372,7 +3475,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 129,
+            lineNumber: 138,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Problem & Solution"
@@ -3384,7 +3487,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 135,
+            lineNumber: 144,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Problem & Solution"
@@ -3396,7 +3499,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 141,
+            lineNumber: 150,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Problem & Solution",
@@ -3411,7 +3514,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 150,
+            lineNumber: 159,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Problem & Solution"
@@ -3423,7 +3526,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 156,
+            lineNumber: 165,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Problem & Solution"
@@ -3435,7 +3538,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 159,
+            lineNumber: 168,
             columnNumber: 61
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Problem & Solution"
@@ -3448,7 +3551,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 164,
+            lineNumber: 173,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Benefits & Features"
@@ -3460,7 +3563,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 170,
+            lineNumber: 179,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Benefits & Features"
@@ -3472,7 +3575,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 176,
+            lineNumber: 185,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Benefits & Features"
@@ -3485,7 +3588,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 180,
+            lineNumber: 189,
             columnNumber: 59
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Urgency & CTA"
@@ -3497,7 +3600,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 181,
+            lineNumber: 190,
             columnNumber: 45
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Urgency & CTA"
@@ -3509,7 +3612,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 185,
+            lineNumber: 194,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Urgency & CTA",
@@ -3523,7 +3626,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 193,
+            lineNumber: 202,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Urgency & CTA"
@@ -3535,7 +3638,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 196,
+            lineNumber: 205,
             columnNumber: 59
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Urgency & CTA"
@@ -3547,7 +3650,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 197,
+            lineNumber: 206,
             columnNumber: 35
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Urgency & CTA"
@@ -3560,7 +3663,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 199,
+            lineNumber: 208,
             columnNumber: 35
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Other"
@@ -3572,7 +3675,7 @@ const buildingBlocks = [
             className: "h-4 w-4"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 203,
+            lineNumber: 212,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         category: "Other",
@@ -3582,9 +3685,9 @@ const buildingBlocks = [
 ];
 const categories = [
     "Opening",
-    "Authority & Credibility",
     "Problem & Solution",
     "Benefits & Features",
+    "Authority & Credibility",
     "Urgency & CTA",
     "Other"
 ];
@@ -3609,7 +3712,7 @@ function DraggablePaletteBlock({ block, onAdd }) {
                 className: "mr-1 h-3 w-3 text-[#0dadb7]"
             }, void 0, false, {
                 fileName: "[project]/components/step-four.tsx",
-                lineNumber: 244,
+                lineNumber: 253,
                 columnNumber: 7
             }, this),
             block.name,
@@ -3618,13 +3721,13 @@ function DraggablePaletteBlock({ block, onAdd }) {
                 children: "*"
             }, void 0, false, {
                 fileName: "[project]/components/step-four.tsx",
-                lineNumber: 246,
+                lineNumber: 255,
                 columnNumber: 26
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/step-four.tsx",
-        lineNumber: 233,
+        lineNumber: 242,
         columnNumber: 5
     }, this);
 }
@@ -3657,12 +3760,12 @@ function SortableStructureBlock({ item, index, onRemove, onUpdateInput, onUpdate
                                     className: "h-4 w-4 text-muted-foreground"
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-four.tsx",
-                                    lineNumber: 289,
+                                    lineNumber: 298,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-four.tsx",
-                                lineNumber: 284,
+                                lineNumber: 293,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3670,13 +3773,13 @@ function SortableStructureBlock({ item, index, onRemove, onUpdateInput, onUpdate
                                 children: index + 1
                             }, void 0, false, {
                                 fileName: "[project]/components/step-four.tsx",
-                                lineNumber: 291,
+                                lineNumber: 300,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-four.tsx",
-                        lineNumber: 283,
+                        lineNumber: 292,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3691,13 +3794,13 @@ function SortableStructureBlock({ item, index, onRemove, onUpdateInput, onUpdate
                                         children: item.block.name
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-four.tsx",
-                                        lineNumber: 299,
+                                        lineNumber: 308,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/step-four.tsx",
-                                lineNumber: 297,
+                                lineNumber: 306,
                                 columnNumber: 13
                             }, this),
                             item.block.hasInput && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3710,12 +3813,12 @@ function SortableStructureBlock({ item, index, onRemove, onUpdateInput, onUpdate
                                     className: "h-8 text-xs"
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-four.tsx",
-                                    lineNumber: 304,
+                                    lineNumber: 313,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-four.tsx",
-                                lineNumber: 303,
+                                lineNumber: 312,
                                 columnNumber: 15
                             }, this),
                             item.block.hasSelect && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3730,12 +3833,12 @@ function SortableStructureBlock({ item, index, onRemove, onUpdateInput, onUpdate
                                                 placeholder: item.block.selectLabel
                                             }, void 0, false, {
                                                 fileName: "[project]/components/step-four.tsx",
-                                                lineNumber: 318,
+                                                lineNumber: 327,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-four.tsx",
-                                            lineNumber: 317,
+                                            lineNumber: 326,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -3745,29 +3848,29 @@ function SortableStructureBlock({ item, index, onRemove, onUpdateInput, onUpdate
                                                     children: option
                                                 }, option, false, {
                                                     fileName: "[project]/components/step-four.tsx",
-                                                    lineNumber: 322,
+                                                    lineNumber: 331,
                                                     columnNumber: 23
                                                 }, this))
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-four.tsx",
-                                            lineNumber: 320,
+                                            lineNumber: 329,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-four.tsx",
-                                    lineNumber: 316,
+                                    lineNumber: 325,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-four.tsx",
-                                lineNumber: 315,
+                                lineNumber: 324,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-four.tsx",
-                        lineNumber: 296,
+                        lineNumber: 305,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -3779,28 +3882,28 @@ function SortableStructureBlock({ item, index, onRemove, onUpdateInput, onUpdate
                             className: "h-4 w-4"
                         }, void 0, false, {
                             fileName: "[project]/components/step-four.tsx",
-                            lineNumber: 338,
+                            lineNumber: 347,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/step-four.tsx",
-                        lineNumber: 332,
+                        lineNumber: 341,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/step-four.tsx",
-                lineNumber: 282,
+                lineNumber: 291,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 281,
+            lineNumber: 290,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/step-four.tsx",
-        lineNumber: 276,
+        lineNumber: 285,
         columnNumber: 5
     }, this);
 }
@@ -3816,12 +3919,12 @@ function DropZone({ id, isOver }) {
             children: "Drop here"
         }, void 0, false, {
             fileName: "[project]/components/step-four.tsx",
-            lineNumber: 356,
+            lineNumber: 365,
             columnNumber: 18
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/step-four.tsx",
-        lineNumber: 350,
+        lineNumber: 359,
         columnNumber: 5
     }, this);
 }
@@ -3835,7 +3938,7 @@ function DroppableStructureArea({ children, isEmpty, isOver }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/components/step-four.tsx",
-        lineNumber: 375,
+        lineNumber: 384,
         columnNumber: 5
     }, this);
 }
@@ -3854,7 +3957,7 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                             className: "h-4 w-4"
                         }, void 0, false, {
                             fileName: "[project]/components/step-four.tsx",
-                            lineNumber: 405,
+                            lineNumber: 414,
                             columnNumber: 19
                         }, this),
                         category: b.category,
@@ -4040,7 +4143,7 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                         className: "h-4 w-4 text-muted-foreground"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-four.tsx",
-                                        lineNumber: 580,
+                                        lineNumber: 589,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4048,13 +4151,13 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                         children: "Campaign Summary"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-four.tsx",
-                                        lineNumber: 581,
+                                        lineNumber: 590,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/step-four.tsx",
-                                lineNumber: 579,
+                                lineNumber: 588,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4068,14 +4171,14 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                 children: "Topic:"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/step-four.tsx",
-                                                lineNumber: 585,
+                                                lineNumber: 594,
                                                 columnNumber: 15
                                             }, this),
                                             " Why UK residents are switching to private dental insurance plans amid rising NHS waiting times and limited coverage options"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/step-four.tsx",
-                                        lineNumber: 584,
+                                        lineNumber: 593,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4088,14 +4191,14 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                         children: "Niche:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/step-four.tsx",
-                                                        lineNumber: 590,
+                                                        lineNumber: 599,
                                                         columnNumber: 17
                                                     }, this),
                                                     " Finance/Insurance"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/step-four.tsx",
-                                                lineNumber: 589,
+                                                lineNumber: 598,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4105,14 +4208,14 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                         children: "Market:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/step-four.tsx",
-                                                        lineNumber: 593,
+                                                        lineNumber: 602,
                                                         columnNumber: 17
                                                     }, this),
                                                     " United Kingdom"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/step-four.tsx",
-                                                lineNumber: 592,
+                                                lineNumber: 601,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -4122,32 +4225,32 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                         children: "Length:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/step-four.tsx",
-                                                        lineNumber: 596,
+                                                        lineNumber: 605,
                                                         columnNumber: 17
                                                     }, this),
                                                     " 1500 words"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/step-four.tsx",
-                                                lineNumber: 595,
+                                                lineNumber: 604,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/step-four.tsx",
-                                        lineNumber: 588,
+                                        lineNumber: 597,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/step-four.tsx",
-                                lineNumber: 583,
+                                lineNumber: 592,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-four.tsx",
-                        lineNumber: 578,
+                        lineNumber: 587,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4161,7 +4264,7 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                         children: "Available Blocks"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-four.tsx",
-                                        lineNumber: 605,
+                                        lineNumber: 614,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4169,7 +4272,7 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                         children: "Drag blocks to the structure or click + to add"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-four.tsx",
-                                        lineNumber: 606,
+                                        lineNumber: 615,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4182,7 +4285,7 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                         children: category
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/step-four.tsx",
-                                                        lineNumber: 610,
+                                                        lineNumber: 619,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4192,29 +4295,29 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                                 onAdd: ()=>addBlock(block)
                                                             }, block.id, false, {
                                                                 fileName: "[project]/components/step-four.tsx",
-                                                                lineNumber: 615,
+                                                                lineNumber: 624,
                                                                 columnNumber: 25
                                                             }, this))
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/step-four.tsx",
-                                                        lineNumber: 611,
+                                                        lineNumber: 620,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, category, true, {
                                                 fileName: "[project]/components/step-four.tsx",
-                                                lineNumber: 609,
+                                                lineNumber: 618,
                                                 columnNumber: 17
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-four.tsx",
-                                        lineNumber: 607,
+                                        lineNumber: 616,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/step-four.tsx",
-                                lineNumber: 604,
+                                lineNumber: 613,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4228,7 +4331,7 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                 children: "Advertorial Structure"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/step-four.tsx",
-                                                lineNumber: 626,
+                                                lineNumber: 635,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -4239,13 +4342,13 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/step-four.tsx",
-                                                lineNumber: 627,
+                                                lineNumber: 636,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/step-four.tsx",
-                                        lineNumber: 625,
+                                        lineNumber: 634,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4262,7 +4365,7 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                             className: "h-12 w-12 text-muted-foreground/40 mb-4"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-four.tsx",
-                                                            lineNumber: 637,
+                                                            lineNumber: 646,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4270,7 +4373,7 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                             children: isOverMainArea ? "Drop here to add" : "No blocks added yet"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-four.tsx",
-                                                            lineNumber: 638,
+                                                            lineNumber: 647,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4278,18 +4381,18 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                             children: isOverMainArea ? "" : "Drag blocks from the left panel or click + to start building your advertorial structure"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-four.tsx",
-                                                            lineNumber: 641,
+                                                            lineNumber: 650,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-four.tsx",
-                                                    lineNumber: 636,
+                                                    lineNumber: 645,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/step-four.tsx",
-                                                lineNumber: 633,
+                                                lineNumber: 642,
                                                 columnNumber: 19
                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$dnd$2d$kit$2f$sortable$2f$dist$2f$sortable$2e$esm$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SortableContext"], {
                                                 items: addedBlocks.map((b)=>b.uid),
@@ -4302,7 +4405,7 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                             isOver: overDropZone === "drop-zone-0"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-four.tsx",
-                                                            lineNumber: 651,
+                                                            lineNumber: 660,
                                                             columnNumber: 46
                                                         }, this),
                                                         addedBlocks.map((item, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4315,7 +4418,7 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                                         onUpdateSelect: (value)=>updateBlockSelect(item.uid, value)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/components/step-four.tsx",
-                                                                        lineNumber: 655,
+                                                                        lineNumber: 664,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     activePaletteBlock && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DropZone, {
@@ -4323,13 +4426,13 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                                         isOver: overDropZone === `drop-zone-${index + 1}`
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/components/step-four.tsx",
-                                                                        lineNumber: 663,
+                                                                        lineNumber: 672,
                                                                         columnNumber: 29
                                                                     }, this)
                                                                 ]
                                                             }, item.uid, true, {
                                                                 fileName: "[project]/components/step-four.tsx",
-                                                                lineNumber: 654,
+                                                                lineNumber: 663,
                                                                 columnNumber: 25
                                                             }, this)),
                                                         activePaletteBlock && !overDropZone && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4339,45 +4442,45 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                                                 children: "Drop here"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/step-four.tsx",
-                                                                lineNumber: 673,
+                                                                lineNumber: 682,
                                                                 columnNumber: 27
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-four.tsx",
-                                                            lineNumber: 672,
+                                                            lineNumber: 681,
                                                             columnNumber: 25
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-four.tsx",
-                                                    lineNumber: 650,
+                                                    lineNumber: 659,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/step-four.tsx",
-                                                lineNumber: 649,
+                                                lineNumber: 658,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-four.tsx",
-                                            lineNumber: 631,
+                                            lineNumber: 640,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-four.tsx",
-                                        lineNumber: 630,
+                                        lineNumber: 639,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/step-four.tsx",
-                                lineNumber: 624,
+                                lineNumber: 633,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-four.tsx",
-                        lineNumber: 602,
+                        lineNumber: 611,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4389,7 +4492,7 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                 children: "Back"
                             }, void 0, false, {
                                 fileName: "[project]/components/step-four.tsx",
-                                lineNumber: 686,
+                                lineNumber: 695,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -4402,7 +4505,7 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                             className: "mr-2 h-4 w-4 animate-spin"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-four.tsx",
-                                            lineNumber: 692,
+                                            lineNumber: 701,
                                             columnNumber: 17
                                         }, this),
                                         "Saving..."
@@ -4410,19 +4513,19 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                                 }, void 0, true) : "Review & Generate"
                             }, void 0, false, {
                                 fileName: "[project]/components/step-four.tsx",
-                                lineNumber: 689,
+                                lineNumber: 698,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-four.tsx",
-                        lineNumber: 685,
+                        lineNumber: 694,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/step-four.tsx",
-                lineNumber: 576,
+                lineNumber: 585,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$dnd$2d$kit$2f$core$2f$dist$2f$core$2e$esm$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DragOverlay"], {
@@ -4435,25 +4538,25 @@ function StepFour({ onBack, onNext, campaignData, data: stepData, updateData }) 
                             className: "mr-1 h-3 w-3 text-[#0dadb7]"
                         }, void 0, false, {
                             fileName: "[project]/components/step-four.tsx",
-                            lineNumber: 709,
+                            lineNumber: 718,
                             columnNumber: 13
                         }, this),
                         activePaletteBlock.name
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/step-four.tsx",
-                    lineNumber: 704,
+                    lineNumber: 713,
                     columnNumber: 11
                 }, this) : null
             }, void 0, false, {
                 fileName: "[project]/components/step-four.tsx",
-                lineNumber: 702,
+                lineNumber: 711,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/step-four.tsx",
-        lineNumber: 575,
+        lineNumber: 584,
         columnNumber: 5
     }, this);
 }
@@ -4664,7 +4767,8 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
         language: stepOneData.language || "English",
         length: stepOneData.length || "1500",
         paragraphLength: stepOneData.paragraphLength || "Normal (3-4 lines)",
-        guidelines: stepOneData.guidelines || "None"
+        guidelines: stepOneData.guidelines || "None",
+        customGuidelines: stepOneData.customGuidelines || ""
     });
     const [tempCampaignData, setTempCampaignData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(campaignData);
     const [topic, setTopic] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(stepOneData.topic || "");
@@ -4742,7 +4846,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                 }
             }, void 0, false, {
                 fileName: "[project]/components/step-five.tsx",
-                lineNumber: 201,
+                lineNumber: 202,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4755,7 +4859,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                 children: "Review your request"
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 212,
+                                lineNumber: 213,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -4763,13 +4867,13 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                 children: "Confirm the details below before generating"
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 213,
+                                lineNumber: 214,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-five.tsx",
-                        lineNumber: 211,
+                        lineNumber: 212,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4779,26 +4883,26 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                 className: "h-5 w-5"
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 216,
+                                lineNumber: 217,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: "Almost there"
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 217,
+                                lineNumber: 218,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-five.tsx",
-                        lineNumber: 215,
+                        lineNumber: 216,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/step-five.tsx",
-                lineNumber: 210,
+                lineNumber: 211,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4815,7 +4919,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                             className: "h-4 w-4 text-[#0dadb7]"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 225,
+                                            lineNumber: 226,
                                             columnNumber: 15
                                         }, this),
                                         "Advertorial Topic",
@@ -4824,24 +4928,24 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                             onCancel: handleTopicCancel
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 228,
+                                            lineNumber: 229,
                                             columnNumber: 17
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(EditButton, {
                                             onClick: handleTopicEdit
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 230,
+                                            lineNumber: 231,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 224,
+                                    lineNumber: 225,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 223,
+                                lineNumber: 224,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4852,25 +4956,25 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                     onChange: (e)=>setTempTopic(e.target.value)
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 236,
+                                    lineNumber: 237,
                                     columnNumber: 15
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-sm text-muted-foreground leading-relaxed",
                                     children: topic
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 242,
+                                    lineNumber: 243,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 234,
+                                lineNumber: 235,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-five.tsx",
-                        lineNumber: 222,
+                        lineNumber: 223,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -4884,7 +4988,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                             className: "h-4 w-4 text-[#0dadb7]"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 250,
+                                            lineNumber: 251,
                                             columnNumber: 15
                                         }, this),
                                         "Campaign Setup",
@@ -4893,24 +4997,24 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                             onCancel: handleCampaignCancel
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 253,
+                                            lineNumber: 254,
                                             columnNumber: 17
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(EditButton, {
                                             onClick: handleCampaignEdit
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 255,
+                                            lineNumber: 256,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 249,
+                                    lineNumber: 250,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 248,
+                                lineNumber: 249,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -4925,7 +5029,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: "Campaign Type"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 263,
+                                                    lineNumber: 264,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -4939,12 +5043,12 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                             className: "h-8 text-xs",
                                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectValue"], {}, void 0, false, {
                                                                 fileName: "[project]/components/step-five.tsx",
-                                                                lineNumber: 269,
+                                                                lineNumber: 270,
                                                                 columnNumber: 23
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-five.tsx",
-                                                            lineNumber: 268,
+                                                            lineNumber: 269,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -4956,7 +5060,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Lead Generation"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 272,
+                                                                    lineNumber: 273,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -4965,25 +5069,25 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "E-commerce"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 275,
+                                                                    lineNumber: 276,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/step-five.tsx",
-                                                            lineNumber: 271,
+                                                            lineNumber: 272,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 264,
+                                                    lineNumber: 265,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 262,
+                                            lineNumber: 263,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4994,7 +5098,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: "Niche"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 282,
+                                                    lineNumber: 283,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -5008,12 +5112,12 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                             className: "h-8 text-xs",
                                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectValue"], {}, void 0, false, {
                                                                 fileName: "[project]/components/step-five.tsx",
-                                                                lineNumber: 288,
+                                                                lineNumber: 289,
                                                                 columnNumber: 23
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-five.tsx",
-                                                            lineNumber: 287,
+                                                            lineNumber: 288,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -5025,7 +5129,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Beauty"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 291,
+                                                                    lineNumber: 292,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5034,7 +5138,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Education"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 294,
+                                                                    lineNumber: 295,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5043,7 +5147,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Fashion/Clothing"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 297,
+                                                                    lineNumber: 298,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5052,7 +5156,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Finance/Insurance"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 300,
+                                                                    lineNumber: 301,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5061,7 +5165,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Gaming"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 303,
+                                                                    lineNumber: 304,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5070,7 +5174,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Health Supplements"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 306,
+                                                                    lineNumber: 307,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5079,7 +5183,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Home Improvement"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 309,
+                                                                    lineNumber: 310,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5088,7 +5192,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Medical"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 312,
+                                                                    lineNumber: 313,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5097,7 +5201,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Tech/Gadgets"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 315,
+                                                                    lineNumber: 316,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5106,25 +5210,25 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Weight Loss"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 318,
+                                                                    lineNumber: 319,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/step-five.tsx",
-                                                            lineNumber: 290,
+                                                            lineNumber: 291,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 283,
+                                                    lineNumber: 284,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 281,
+                                            lineNumber: 282,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5135,7 +5239,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: "Country"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 325,
+                                                    lineNumber: 326,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -5149,12 +5253,12 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                             className: "h-8 text-xs",
                                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectValue"], {}, void 0, false, {
                                                                 fileName: "[project]/components/step-five.tsx",
-                                                                lineNumber: 331,
+                                                                lineNumber: 332,
                                                                 columnNumber: 23
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-five.tsx",
-                                                            lineNumber: 330,
+                                                            lineNumber: 331,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -5166,7 +5270,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "United States"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 334,
+                                                                    lineNumber: 335,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5175,7 +5279,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "United Kingdom"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 337,
+                                                                    lineNumber: 338,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5184,25 +5288,25 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Canada"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 340,
+                                                                    lineNumber: 341,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/step-five.tsx",
-                                                            lineNumber: 333,
+                                                            lineNumber: 334,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 326,
+                                                    lineNumber: 327,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 324,
+                                            lineNumber: 325,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5213,7 +5317,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: "Language"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 347,
+                                                    lineNumber: 348,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -5227,12 +5331,12 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                             className: "h-8 text-xs",
                                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectValue"], {}, void 0, false, {
                                                                 fileName: "[project]/components/step-five.tsx",
-                                                                lineNumber: 353,
+                                                                lineNumber: 354,
                                                                 columnNumber: 23
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-five.tsx",
-                                                            lineNumber: 352,
+                                                            lineNumber: 353,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -5243,24 +5347,24 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                 children: "English"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/step-five.tsx",
-                                                                lineNumber: 356,
+                                                                lineNumber: 357,
                                                                 columnNumber: 23
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-five.tsx",
-                                                            lineNumber: 355,
+                                                            lineNumber: 356,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 348,
+                                                    lineNumber: 349,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 346,
+                                            lineNumber: 347,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5271,7 +5375,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: "Length"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 363,
+                                                    lineNumber: 364,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -5284,13 +5388,13 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                         })
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 364,
+                                                    lineNumber: 365,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 362,
+                                            lineNumber: 363,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5301,7 +5405,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: "Paragraphs"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 372,
+                                                    lineNumber: 373,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
@@ -5315,12 +5419,12 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                             className: "h-8 text-xs",
                                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectValue"], {}, void 0, false, {
                                                                 fileName: "[project]/components/step-five.tsx",
-                                                                lineNumber: 378,
+                                                                lineNumber: 379,
                                                                 columnNumber: 23
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-five.tsx",
-                                                            lineNumber: 377,
+                                                            lineNumber: 378,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -5332,7 +5436,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Very Short (1 sentence)"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 381,
+                                                                    lineNumber: 382,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5341,7 +5445,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Short (1-3 lines)"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 384,
+                                                                    lineNumber: 385,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5350,7 +5454,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Normal (3-4 lines)"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 387,
+                                                                    lineNumber: 388,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -5359,82 +5463,101 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                                     children: "Long (4-6 lines)"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 390,
+                                                                    lineNumber: 391,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/step-five.tsx",
-                                                            lineNumber: 380,
+                                                            lineNumber: 381,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 373,
+                                                    lineNumber: 374,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 371,
+                                            lineNumber: 372,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "flex items-center gap-2",
+                                            className: "space-y-2",
                                             children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "text-xs text-muted-foreground w-24 shrink-0",
-                                                    children: "Guidelines"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 397,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
-                                                    value: tempCampaignData.guidelines,
-                                                    onValueChange: (v)=>setTempCampaignData({
-                                                            ...tempCampaignData,
-                                                            guidelines: v
-                                                        }),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex items-center gap-2",
                                                     children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectTrigger"], {
-                                                            className: "h-8 text-xs",
-                                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectValue"], {}, void 0, false, {
-                                                                fileName: "[project]/components/step-five.tsx",
-                                                                lineNumber: 403,
-                                                                columnNumber: 23
-                                                            }, this)
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            className: "text-xs text-muted-foreground w-24 shrink-0",
+                                                            children: "Guidelines"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-five.tsx",
-                                                            lineNumber: 402,
+                                                            lineNumber: 399,
                                                             columnNumber: 21
                                                         }, this),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
-                                                            className: "text-xs",
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
+                                                            value: tempCampaignData.guidelines,
+                                                            onValueChange: (v)=>setTempCampaignData({
+                                                                    ...tempCampaignData,
+                                                                    guidelines: v,
+                                                                    customGuidelines: v === "Custom" ? tempCampaignData.customGuidelines : ""
+                                                                }),
                                                             children: [
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
-                                                                    className: "text-xs",
-                                                                    value: "None",
-                                                                    children: "None"
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectTrigger"], {
+                                                                    className: "h-8 text-xs",
+                                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectValue"], {}, void 0, false, {
+                                                                        fileName: "[project]/components/step-five.tsx",
+                                                                        lineNumber: 409,
+                                                                        columnNumber: 25
+                                                                    }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 406,
+                                                                    lineNumber: 408,
                                                                     columnNumber: 23
                                                                 }, this),
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
                                                                     className: "text-xs",
-                                                                    value: "ERGO",
-                                                                    children: "ERGO"
-                                                                }, void 0, false, {
+                                                                    children: [
+                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
+                                                                            className: "text-xs",
+                                                                            value: "None",
+                                                                            children: "None"
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/components/step-five.tsx",
+                                                                            lineNumber: 412,
+                                                                            columnNumber: 25
+                                                                        }, this),
+                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
+                                                                            className: "text-xs",
+                                                                            value: "ERGO",
+                                                                            children: "ERGO"
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/components/step-five.tsx",
+                                                                            lineNumber: 415,
+                                                                            columnNumber: 25
+                                                                        }, this),
+                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
+                                                                            className: "text-xs",
+                                                                            value: "Custom",
+                                                                            children: "Custom"
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/components/step-five.tsx",
+                                                                            lineNumber: 418,
+                                                                            columnNumber: 25
+                                                                        }, this)
+                                                                    ]
+                                                                }, void 0, true, {
                                                                     fileName: "[project]/components/step-five.tsx",
-                                                                    lineNumber: 409,
+                                                                    lineNumber: 411,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/step-five.tsx",
-                                                            lineNumber: 405,
+                                                            lineNumber: 400,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
@@ -5442,17 +5565,47 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     fileName: "[project]/components/step-five.tsx",
                                                     lineNumber: 398,
                                                     columnNumber: 19
+                                                }, this),
+                                                tempCampaignData.guidelines === "Custom" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex items-start gap-2",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            className: "text-xs text-muted-foreground w-24 shrink-0 pt-2",
+                                                            children: "Custom"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/step-five.tsx",
+                                                            lineNumber: 426,
+                                                            columnNumber: 23
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
+                                                            placeholder: "Enter custom compliance guidelines...",
+                                                            className: "min-h-[80px] resize-y text-xs",
+                                                            value: tempCampaignData.customGuidelines || "",
+                                                            onChange: (e)=>setTempCampaignData({
+                                                                    ...tempCampaignData,
+                                                                    customGuidelines: e.target.value
+                                                                })
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/step-five.tsx",
+                                                            lineNumber: 427,
+                                                            columnNumber: 23
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/components/step-five.tsx",
+                                                    lineNumber: 425,
+                                                    columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 396,
+                                            lineNumber: 397,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 261,
+                                    lineNumber: 262,
                                     columnNumber: 15
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "space-y-2",
@@ -5465,7 +5618,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: "Campaign Type"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 419,
+                                                    lineNumber: 440,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5473,13 +5626,13 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: campaignData.campaignType
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 420,
+                                                    lineNumber: 441,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 418,
+                                            lineNumber: 439,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5490,7 +5643,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: "Niche"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 425,
+                                                    lineNumber: 446,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5498,13 +5651,13 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: campaignData.niche
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 426,
+                                                    lineNumber: 447,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 424,
+                                            lineNumber: 445,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5515,7 +5668,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: "Country"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 431,
+                                                    lineNumber: 452,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5523,13 +5676,13 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: campaignData.country
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 432,
+                                                    lineNumber: 453,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 430,
+                                            lineNumber: 451,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5540,7 +5693,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: "Language"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 437,
+                                                    lineNumber: 458,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5548,13 +5701,13 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: campaignData.language
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 438,
+                                                    lineNumber: 459,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 436,
+                                            lineNumber: 457,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5565,7 +5718,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: "Length"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 443,
+                                                    lineNumber: 464,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5576,13 +5729,13 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 444,
+                                                    lineNumber: 465,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 442,
+                                            lineNumber: 463,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5593,7 +5746,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: "Paragraphs"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 449,
+                                                    lineNumber: 470,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5601,55 +5754,69 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                     children: campaignData.paragraphLength
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 450,
+                                                    lineNumber: 471,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 448,
+                                            lineNumber: 469,
                                             columnNumber: 17
                                         }, this),
                                         campaignData.guidelines !== "None" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "flex items-center gap-2",
+                                            className: "flex items-start gap-2",
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "text-xs text-muted-foreground w-24 shrink-0",
+                                                    className: "text-xs text-muted-foreground w-24 shrink-0 pt-1",
                                                     children: "Guidelines"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 456,
+                                                    lineNumber: 477,
                                                     columnNumber: 21
                                                 }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "inline-flex items-center rounded-md bg-[#F6F6F6] px-2.5 py-1 text-xs font-medium text-muted-foreground",
-                                                    children: campaignData.guidelines
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex-1",
+                                                    children: campaignData.guidelines === "Custom" && campaignData.customGuidelines ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "rounded-md bg-[#F6F6F6] px-2.5 py-1.5 text-xs font-medium text-muted-foreground whitespace-pre-wrap",
+                                                        children: campaignData.customGuidelines
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/components/step-five.tsx",
+                                                        lineNumber: 480,
+                                                        columnNumber: 25
+                                                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "inline-flex items-center rounded-md bg-[#F6F6F6] px-2.5 py-1 text-xs font-medium text-muted-foreground",
+                                                        children: campaignData.guidelines
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/components/step-five.tsx",
+                                                        lineNumber: 484,
+                                                        columnNumber: 25
+                                                    }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/step-five.tsx",
-                                                    lineNumber: 457,
+                                                    lineNumber: 478,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 455,
+                                            lineNumber: 476,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 417,
+                                    lineNumber: 438,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 259,
+                                lineNumber: 260,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-five.tsx",
-                        lineNumber: 247,
+                        lineNumber: 248,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -5663,7 +5830,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                             className: "h-4 w-4 text-[#0dadb7]"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 470,
+                                            lineNumber: 499,
                                             columnNumber: 15
                                         }, this),
                                         "Reference Pages",
@@ -5671,18 +5838,18 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                             onClick: ()=>setShowRefWarning(true)
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 472,
+                                            lineNumber: 501,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 469,
+                                    lineNumber: 498,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 468,
+                                lineNumber: 497,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -5694,7 +5861,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                 className: "h-4 w-4 text-[#0dadb7]"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/step-five.tsx",
-                                                lineNumber: 479,
+                                                lineNumber: 508,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5702,31 +5869,31 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                                 children: url.replace(/^https?:\/\//, '')
                                             }, void 0, false, {
                                                 fileName: "[project]/components/step-five.tsx",
-                                                lineNumber: 480,
+                                                lineNumber: 509,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, index, true, {
                                         fileName: "[project]/components/step-five.tsx",
-                                        lineNumber: 478,
+                                        lineNumber: 507,
                                         columnNumber: 17
                                     }, this)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-sm text-muted-foreground",
                                     children: "No reference pages added"
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 484,
+                                    lineNumber: 513,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 475,
+                                lineNumber: 504,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-five.tsx",
-                        lineNumber: 467,
+                        lineNumber: 496,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -5740,7 +5907,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                             className: "h-4 w-4 text-[#0dadb7]"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 493,
+                                            lineNumber: 522,
                                             columnNumber: 15
                                         }, this),
                                         "Selected Insights",
@@ -5748,18 +5915,18 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                             onClick: ()=>onJumpToStep(3)
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 495,
+                                            lineNumber: 524,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 492,
+                                    lineNumber: 521,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 491,
+                                lineNumber: 520,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -5770,36 +5937,36 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                             children: insight.length > 50 ? `${insight.substring(0, 50)}...` : insight
                                         }, index, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 502,
+                                            lineNumber: 531,
                                             columnNumber: 19
                                         }, this)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                         className: "text-sm text-muted-foreground",
                                         children: "No insights selected"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-five.tsx",
-                                        lineNumber: 510,
+                                        lineNumber: 539,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 499,
+                                    lineNumber: 528,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 498,
+                                lineNumber: 527,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-five.tsx",
-                        lineNumber: 490,
+                        lineNumber: 519,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/step-five.tsx",
-                lineNumber: 221,
+                lineNumber: 222,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -5813,7 +5980,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                     className: "h-4 w-4 text-[#0dadb7]"
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 521,
+                                    lineNumber: 550,
                                     columnNumber: 13
                                 }, this),
                                 "Advertorial Structure",
@@ -5825,25 +5992,25 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 523,
+                                    lineNumber: 552,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(EditButton, {
                                     onClick: ()=>onJumpToStep(4)
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 526,
+                                    lineNumber: 555,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/step-five.tsx",
-                            lineNumber: 520,
+                            lineNumber: 549,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/step-five.tsx",
-                        lineNumber: 519,
+                        lineNumber: 548,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -5857,7 +6024,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                             children: index + 1
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 534,
+                                            lineNumber: 563,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -5865,36 +6032,36 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                             children: block
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-five.tsx",
-                                            lineNumber: 537,
+                                            lineNumber: 566,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, index, true, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 533,
+                                    lineNumber: 562,
                                     columnNumber: 17
                                 }, this)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-sm text-muted-foreground py-4 text-center",
                                 children: "No blocks added to structure"
                             }, void 0, false, {
                                 fileName: "[project]/components/step-five.tsx",
-                                lineNumber: 541,
+                                lineNumber: 570,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/step-five.tsx",
-                            lineNumber: 530,
+                            lineNumber: 559,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/step-five.tsx",
-                        lineNumber: 529,
+                        lineNumber: 558,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/step-five.tsx",
-                lineNumber: 518,
+                lineNumber: 547,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -5906,7 +6073,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                         children: "Back to Edit"
                     }, void 0, false, {
                         fileName: "[project]/components/step-five.tsx",
-                        lineNumber: 549,
+                        lineNumber: 578,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -5920,7 +6087,7 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                                     className: "mr-2 h-4 w-4 animate-spin"
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-five.tsx",
-                                    lineNumber: 560,
+                                    lineNumber: 589,
                                     columnNumber: 15
                                 }, this),
                                 "Starting..."
@@ -5928,19 +6095,19 @@ function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, 
                         }, void 0, true) : "Generate Advertorial"
                     }, void 0, false, {
                         fileName: "[project]/components/step-five.tsx",
-                        lineNumber: 552,
+                        lineNumber: 581,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/step-five.tsx",
-                lineNumber: 548,
+                lineNumber: 577,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/step-five.tsx",
-        lineNumber: 200,
+        lineNumber: 201,
         columnNumber: 5
     }, this);
 }

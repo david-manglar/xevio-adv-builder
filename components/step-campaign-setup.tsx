@@ -7,18 +7,31 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Globe, FileText, Shield, Lightbulb } from "lucide-react"
-import { StepOneState } from "@/lib/types"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog"
+import { Globe, FileText, Shield, Lightbulb, AlertTriangle } from "lucide-react"
+import { StepOneState, CampaignData } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { hasStepOneChanges } from "@/lib/url-utils"
 
 interface StepOneProps {
   data: StepOneState
   updateData: (data: StepOneState) => void
   onNext: () => void
+  campaignData: CampaignData  // NEW: Access existing campaign data
 }
 
-export function StepOne({ data, updateData, onNext }: StepOneProps) {
+export function StepOne({ data, updateData, onNext, campaignData }: StepOneProps) {
   const [errors, setErrors] = useState<Partial<Record<keyof StepOneState, boolean>>>({})
+  const [showRescrapeWarning, setShowRescrapeWarning] = useState(false)
 
   const validate = () => {
     const newErrors: Partial<Record<keyof StepOneState, boolean>> = {}
@@ -42,14 +55,35 @@ export function StepOne({ data, updateData, onNext }: StepOneProps) {
       }
     })
 
+    // If Custom is selected, customGuidelines is required
+    if (data.guidelines === "Custom" && (!data.customGuidelines || data.customGuidelines.trim() === "")) {
+      newErrors.customGuidelines = true
+      isValid = false
+    }
+
     setErrors(newErrors)
     return isValid
   }
 
   const handleNext = () => {
-    if (validate()) {
-      onNext()
+    if (!validate()) return
+    
+    // Check if Step 1 data has changed from the scraped version
+    // Only show warning if we have existing scraped data
+    const hasScrapedData = campaignData.scrapedUrls && campaignData.scrapedUrls.length > 0
+    const step1Changed = hasStepOneChanges(data, campaignData.scrapedStepOneData)
+    
+    if (hasScrapedData && step1Changed) {
+      setShowRescrapeWarning(true)
+      return
     }
+    
+    onNext()
+  }
+  
+  const handleConfirmRescrape = () => {
+    setShowRescrapeWarning(false)
+    onNext()
   }
 
   const clearError = (field: keyof StepOneState) => {
@@ -273,8 +307,14 @@ export function StepOne({ data, updateData, onNext }: StepOneProps) {
               <Select
                 value={data.guidelines}
                 onValueChange={(v) => {
-                  updateData({ ...data, guidelines: v })
+                  updateData({ 
+                    ...data, 
+                    guidelines: v,
+                    // Clear custom guidelines if switching away from Custom
+                    customGuidelines: v === "Custom" ? data.customGuidelines : undefined
+                  })
                   clearError("guidelines")
+                  clearError("customGuidelines")
                 }}
               >
                 <SelectTrigger id="guidelines" className={cn(errors.guidelines && "border-destructive")}>
@@ -283,9 +323,29 @@ export function StepOne({ data, updateData, onNext }: StepOneProps) {
                 <SelectContent>
                   <SelectItem value="None">None</SelectItem>
                   <SelectItem value="ERGO">ERGO</SelectItem>
+                  <SelectItem value="Custom">Custom</SelectItem>
                 </SelectContent>
               </Select>
               {errors.guidelines && <p className="text-sm text-destructive">Required</p>}
+              
+              {data.guidelines === "Custom" && (
+                <div className="mt-3 space-y-2">
+                  <Label htmlFor="custom-guidelines">
+                    Custom Guidelines <span className="text-destructive">*</span>
+                  </Label>
+                  <Textarea
+                    id="custom-guidelines"
+                    placeholder="e.g., 'Don't use word X' or 'Only communicate Bundle A'..."
+                    className={cn("min-h-[100px] resize-y", errors.customGuidelines && "border-destructive")}
+                    value={data.customGuidelines || ""}
+                    onChange={(e) => {
+                      updateData({ ...data, customGuidelines: e.target.value })
+                      clearError("customGuidelines")
+                    }}
+                  />
+                  {errors.customGuidelines && <p className="text-sm text-destructive">Required</p>}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -297,6 +357,37 @@ export function StepOne({ data, updateData, onNext }: StepOneProps) {
           Continue to Product Info
         </Button>
       </div>
+
+      {/* Re-scrape Warning Dialog */}
+      <AlertDialog open={showRescrapeWarning} onOpenChange={(open) => !open && setShowRescrapeWarning(false)}>
+        <AlertDialogContent className="sm:max-w-[425px]">
+          <AlertDialogHeader>
+            <div className="flex items-start gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100 mt-1">
+                <AlertTriangle className="h-5 w-5 text-amber-600" />
+              </div>
+              <div className="flex-1 space-y-2">
+                <AlertDialogTitle>Re-scrape Required</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Changing campaign settings will restart the scraping process since these 
+                  settings affect how pages are analyzed. You may lose insights you've customized.
+                  <br /><br />
+                  Do you want to continue?
+                </AlertDialogDescription>
+              </div>
+            </div>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowRescrapeWarning(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleConfirmRescrape}
+              className="bg-[#4644B6] hover:bg-[#3a38a0]"
+            >
+              Yes, Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
