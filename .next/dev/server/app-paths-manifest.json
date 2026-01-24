@@ -1,5 +1,0 @@
-{
-  "/api/campaign/[id]/route": "app/api/campaign/[id]/route.js",
-  "/api/history/route": "app/api/history/route.js",
-  "/page": "app/page.js"
-}
