@@ -204,6 +204,7 @@ export function StepOne({ data, updateData, onNext, campaignData }: StepOneProps
                   <SelectItem value="United States">United States</SelectItem>
                   <SelectItem value="United Kingdom">United Kingdom</SelectItem>
                   <SelectItem value="Canada">Canada</SelectItem>
+                  <SelectItem value="Germany">Germany</SelectItem>
                 </SelectContent>
               </Select>
               {errors.country && <p className="text-sm text-destructive">Required</p>}
@@ -225,6 +226,7 @@ export function StepOne({ data, updateData, onNext, campaignData }: StepOneProps
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="English">English</SelectItem>
+                  <SelectItem value="German">German</SelectItem>
                 </SelectContent>
               </Select>
               {errors.language && <p className="text-sm text-destructive">Required</p>}

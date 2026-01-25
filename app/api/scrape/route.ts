@@ -193,7 +193,8 @@ export async function POST(request: Request) {
             campaignType: stepOneData.campaignType,
             country: stepOneData.country,
             language: stepOneData.language,
-            guidelines: stepOneData.guidelines
+            guidelines: stepOneData.guidelines,
+            customGuidelines: stepOneData.customGuidelines || null
           }
         })
       }).catch((error) => {

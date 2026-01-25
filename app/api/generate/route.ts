@@ -62,6 +62,7 @@ export async function POST(request: Request) {
       length: finalSettings.length || stepOneData?.length,
       paragraphLength: finalSettings.paragraphLength || stepOneData?.paragraphLength,
       guidelines: finalSettings.guidelines || stepOneData?.guidelines,
+      customGuidelines: finalSettings.customGuidelines || stepOneData?.customGuidelines || null,
 
       // Reference URLs from Step 2 (with descriptions)
       referenceUrls: (stepTwoData?.referenceUrls || [])
