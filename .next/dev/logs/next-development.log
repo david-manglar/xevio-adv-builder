@@ -9,3 +9,34 @@
 [00:03:11.799] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
 [00:03:11.799] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
 [00:03:11.799] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769364888011}
+[34:04:58.668] Server  LOG      ✓ Compiled in 249ms
+[34:17:02.656] Server  LOG      ✓ Compiled in 46ms
+[34:17:06.939] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[34:17:07.412] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[34:17:07.412] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[34:17:07.412] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769488123138}
+[34:17:14.295] Server  LOG      ✓ Compiled in 29ms
+[34:17:19.963] Server  LOG      ✓ Compiled in 33ms
+[34:17:58.349] Server  LOG      ✓ Compiled in 137ms
+[34:18:16.210] Server  LOG      ✓ Compiled in 25ms
+[45:50:19.012] Server  LOG     Calling n8n generate webhook: "https://manglarmedia.app.n8n.cloud/webhook/c66f38a9-243c-41d9-b41f-bead78d16db4"
+[45:50:19.469] Server  LOG     n8n webhook response status: 200
+[46:00:17.124] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[46:00:17.362] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[46:00:17.362] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[46:00:17.363] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769530313256}
+[46:08:58.722] Server  LOG     Calling n8n generate webhook: "https://manglarmedia.app.n8n.cloud/webhook/c66f38a9-243c-41d9-b41f-bead78d16db4"
+[46:08:59.270] Server  LOG     n8n webhook response status: 200
+[46:13:03.035] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[46:13:03.207] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[46:13:03.207] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[46:13:03.207] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769531079098}
+[47:14:35.559] Server  LOG     Calling n8n generate webhook: "https://manglarmedia.app.n8n.cloud/webhook/c66f38a9-243c-41d9-b41f-bead78d16db4"
+[47:14:36.345] Server  LOG     n8n webhook response status: 200
+[47:44:17.414] Browser ERROR   A component is changing an uncontrolled input to be controlled. This is likely caused by the value changing from undefined to a defined value, which should not happen. Decide between using a controlled or uncontrolled input element for the lifetime of the component. More info: https://react.dev/link/controlled-components
+[47:44:48.927] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[47:44:49.712] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[47:44:49.712] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[47:44:49.712] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1769536585580}
+[47:50:43.117] Server  LOG     Calling n8n generate webhook: "https://manglarmedia.app.n8n.cloud/webhook/c66f38a9-243c-41d9-b41f-bead78d16db4"
+[47:50:43.706] Server  LOG     n8n webhook response status: 200

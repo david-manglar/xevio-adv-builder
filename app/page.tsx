@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { StepIndicator } from "@/components/step-indicator"
 import { StepOne } from "@/components/step-campaign-setup"
-import { StepTwo } from "@/components/step-reference-pages"
+import { StepTwo, ScrapeRequest } from "@/components/step-reference-pages"
 import { StepThree } from "@/components/step-building-blocks"
 import { StepFour } from "@/components/step-insights"
 import { StepFive } from "@/components/step-review"
@@ -15,6 +15,7 @@ import { Clock, User, Loader2 } from "lucide-react"
 import { StepOneState, StepTwoState, StepThreeState, StepFourState, CampaignData } from "@/lib/types"
 import { supabase } from "@/lib/supabase"
 import { getSession, signOut, onAuthStateChange } from "@/lib/auth"
+import { extractUrls } from "@/lib/url-utils"
 
 export default function AdvertorialBuilder() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -22,7 +23,6 @@ export default function AdvertorialBuilder() {
   const [userEmail, setUserEmail] = useState<string>("")
   const [userId, setUserId] = useState<string | null>(null)
   const [currentStep, setCurrentStep] = useState(1)
-  const [isLoading, setIsLoading] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [isHistoryMenuOpen, setIsHistoryMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
@@ -185,6 +185,60 @@ export default function AdvertorialBuilder() {
     }))
   }
 
+  // Handle Step 2 completion - scrape logic lives here (parent never unmounts)
+  const handleStep2Complete = async (scrapeRequest: ScrapeRequest | null) => {
+    // No scraping needed - just navigate
+    if (!scrapeRequest) {
+      setCurrentStep(3)
+      return
+    }
+
+    const { newUrlsOnly, isFullRescrape } = scrapeRequest
+
+    // Reset insights if doing full re-scrape
+    if (isFullRescrape) {
+      handleResetInsights()
+    }
+
+    // Navigate immediately so user can work on Building Blocks
+    setCurrentStep(3)
+
+    // Call scrape API (parent stays mounted, so this always completes)
+    try {
+      const response = await fetch("/api/scrape", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          stepOneData,
+          stepTwoData,
+          userId,
+          campaignId: campaignData.id || undefined,
+          newUrlsOnly: newUrlsOnly || undefined,
+          isFullRescrape: isFullRescrape || undefined,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to start scraping")
+      }
+
+      const currentUrls = extractUrls(stepTwoData.referenceUrls)
+
+      setCampaignData(prev => ({
+        ...prev,
+        id: result.campaignId,
+        status: "scraping",
+        scrapedUrls: currentUrls,
+        scrapedStepOneData: { ...stepOneData },
+        scrapingResult: (newUrlsOnly && !isFullRescrape) ? prev.scrapingResult : undefined,
+      }))
+    } catch (error) {
+      console.error("Error starting scrape:", error)
+    }
+  }
+
   // Listen for campaign updates when generating
   useEffect(() => {
     if (isGenerating && campaignData.id) {
@@ -327,12 +381,8 @@ export default function AdvertorialBuilder() {
             stepOneData={stepOneData}
             data={stepTwoData}
             updateData={setStepTwoData}
-            onNext={handleNextStep}
+            onComplete={handleStep2Complete}
             onBack={handlePrevStep}
-            isLoading={isLoading}
-            onCampaignCreated={(data) => setCampaignData(prev => ({ ...prev, ...data }))}
-            onResetInsights={handleResetInsights}
-            userId={userId}
             campaignData={campaignData}
           />
         )}

@@ -1,3 +1,8 @@
 {
+  "/api/campaign/[id]/route": "app/api/campaign/[id]/route.js",
+  "/api/generate/route": "app/api/generate/route.js",
+  "/api/history/route": "app/api/history/route.js",
+  "/api/save-progress/route": "app/api/save-progress/route.js",
+  "/api/scrape/route": "app/api/scrape/route.js",
   "/page": "app/page.js"
 }

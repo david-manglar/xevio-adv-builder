@@ -109,8 +109,23 @@ async function POST(request) {
             length: finalSettings.length || stepOneData?.length,
             paragraphLength: finalSettings.paragraphLength || stepOneData?.paragraphLength,
             guidelines: finalSettings.guidelines || stepOneData?.guidelines,
-            // Reference URLs from Step 2
-            referenceUrls: (stepTwoData?.referenceUrls || []).filter((url)=>url.trim() !== ''),
+            customGuidelines: finalSettings.customGuidelines || stepOneData?.customGuidelines || null,
+            // Reference URLs from Step 2 (with descriptions)
+            referenceUrls: (stepTwoData?.referenceUrls || []).filter((ref)=>{
+                const url = typeof ref === 'string' ? ref : ref?.url;
+                return url && url.trim() !== '';
+            }).map((ref)=>{
+                if (typeof ref === 'string') {
+                    return {
+                        url: ref.trim(),
+                        description: null
+                    };
+                }
+                return {
+                    url: ref.url.trim(),
+                    description: ref.description?.trim() || null
+                };
+            }),
             // Only selected insights from Step 3
             selectedInsights,
             // Ordered structure blocks from Step 4

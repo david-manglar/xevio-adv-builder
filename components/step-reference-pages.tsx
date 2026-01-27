@@ -14,39 +14,36 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog"
-import { Link, Loader2, Plus, X, AlertTriangle } from "lucide-react"
+import { Link, Plus, X, AlertTriangle } from "lucide-react"
 import { StepOneState, StepTwoState, CampaignData } from "@/lib/types"
 import { useState } from "react"
 import { detectUrlChanges, extractUrls, hasStepOneChanges } from "@/lib/url-utils"
+
+// Scrape request passed to parent - null means skip (no scrape needed)
+export interface ScrapeRequest {
+  newUrlsOnly: string[] | null
+  isFullRescrape: boolean
+}
 
 interface StepTwoProps {
   stepOneData: StepOneState
   data: StepTwoState
   updateData: (data: StepTwoState) => void
-  onNext: () => void
+  onComplete: (scrapeRequest: ScrapeRequest | null) => void
   onBack: () => void
-  isLoading: boolean
-  onCampaignCreated: (data: CampaignData) => void
-  onResetInsights: () => void  // NEW: Reset Step 4 insights on full re-scrape
-  userId: string | null
-  campaignData: CampaignData  // NEW: Access existing campaign data
+  campaignData: CampaignData
 }
 
 export function StepTwo({
   stepOneData,
   data,
   updateData,
-  onNext,
+  onComplete,
   onBack,
-  isLoading,
-  onCampaignCreated,
-  onResetInsights,
-  userId,
   campaignData,
 }: StepTwoProps) {
   const [showRescrapeWarning, setShowRescrapeWarning] = useState(false)
   const [pendingAction, setPendingAction] = useState<'structural' | 'step1_change' | null>(null)
-  const [isNavigating, setIsNavigating] = useState(false)
 
   // Determine if we need to re-scrape based on URL or Step 1 changes
   const determineAction = () => {
@@ -80,12 +77,12 @@ export function StepTwo({
     }
   }
 
-  const handleNext = async () => {
+  const handleNext = () => {
     const decision = determineAction()
     
     // No scraping needed - just proceed
     if (decision.action === 'skip') {
-      onNext()
+      onComplete(null)
       return
     }
     
@@ -102,72 +99,22 @@ export function StepTwo({
       return
     }
     
-    // Full scrape (new campaign) or incremental - proceed with API call
-    await performScrape(decision.action === 'incremental' ? decision.newUrls : null)
+    // Full scrape (new campaign) or incremental - pass to parent
+    onComplete({
+      newUrlsOnly: decision.action === 'incremental' ? decision.newUrls : null,
+      isFullRescrape: false,
+    })
   }
 
-  const handleConfirmRescrape = async () => {
+  const handleConfirmRescrape = () => {
     setShowRescrapeWarning(false)
     setPendingAction(null)
     
-    // Reset insights since we're doing full re-scrape
-    onResetInsights()
-    
-    // Perform full re-scrape
-    await performScrape(null, true)
-  }
-
-  const performScrape = async (newUrlsOnly: string[] | null, isFullRescrape: boolean = false) => {
-    setIsNavigating(true)
-    
-    // Proceed optimistically to Step 3 immediately - we don't need to wait for the API
-    // Step 3 (Building Blocks) doesn't require the campaign ID
-    // The API call will complete in the background and update campaign data when ready
-    onNext()
-    
-    try {
-      const response = await fetch("/api/scrape", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          stepOneData,
-          stepTwoData: data,
-          userId,
-          // Include campaign ID if updating existing campaign
-          campaignId: campaignData.id || undefined,
-          // Include only new URLs for incremental scrape
-          newUrlsOnly: newUrlsOnly || undefined,
-          // Flag for full re-scrape (clears existing results)
-          isFullRescrape: isFullRescrape || undefined,
-        }),
-      })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to start scraping")
-      }
-
-      const campaignId = result.campaignId
-      const currentUrls = extractUrls(data.referenceUrls)
-      
-      // Update campaign data with the new/updated campaign ID and scraping status
-      // This happens after navigation, but Step 4 (Insights) will wait for scraping results anyway
-      onCampaignCreated({ 
-        id: campaignId, 
-        status: "scraping",
-        scrapedUrls: currentUrls,
-        scrapedStepOneData: { ...stepOneData },
-        // Keep existing results if incremental, clear if full re-scrape
-        scrapingResult: (newUrlsOnly && !isFullRescrape) ? campaignData.scrapingResult : undefined,
-      })
-
-    } catch (error) {
-      console.error("Error starting scrape:", error)
-      // Note: User is already on Step 3, so we can't show an alert easily
-      // The scraping will fail and Step 4 will show the error state
-      // Alternatively, we could use a toast notification here
-    }
+    // Tell parent to do full re-scrape
+    onComplete({
+      newUrlsOnly: null,
+      isFullRescrape: true,
+    })
   }
 
   // Check if a string is a valid URL
@@ -206,6 +153,9 @@ export function StepTwo({
     updated[index] = { ...updated[index], description: value }
     updateData({ ...data, referenceUrls: updated })
   }
+
+  // Button text based on whether this is a new scrape or just continuing
+  const buttonText = campaignData.scrapedUrls?.length ? "Continue" : "Scrape & Continue"
 
   return (
     <div className="space-y-6">
@@ -282,20 +232,8 @@ export function StepTwo({
         <Button variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button 
-          onClick={handleNext} 
-          disabled={isLoading || isNavigating || !hasValidUrl} 
-          size="lg"
-        >
-          {isLoading || isNavigating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {campaignData.scrapedUrls?.length ? "Continue" : "Scrape & Continue"}
-            </>
-          ) : (
-            // Show different button text based on whether this is a new scrape or just continuing
-            campaignData.scrapedUrls?.length ? "Continue" : "Scrape & Continue"
-          )}
+        <Button onClick={handleNext} disabled={!hasValidUrl} size="lg">
+          {buttonText}
         </Button>
       </div>
 
