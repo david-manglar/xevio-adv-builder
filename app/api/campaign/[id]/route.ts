@@ -35,7 +35,8 @@ export async function GET(
         generated_content,
         doc_name,
         status,
-        created_at
+        created_at,
+        mode
       `)
       .eq('id', id)
       .single()
@@ -67,6 +68,7 @@ export async function GET(
       docName: campaign.doc_name || '',
       status: campaign.status || '',
       createdAt: campaign.created_at || '',
+      mode: campaign.mode ?? null,
     }
 
     return NextResponse.json({ campaign: formattedCampaign })

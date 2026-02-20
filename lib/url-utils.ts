@@ -15,6 +15,14 @@ function normalizeUrl(url: string): string {
 }
 
 /**
+ * Clean a URL for storage and sending: trim whitespace and strip trailing slashes.
+ * Unlike normalizeUrl, this preserves the original casing (paths can be case-sensitive).
+ */
+export function cleanUrl(url: string): string {
+  return url.trim().replace(/\/+$/, '')
+}
+
+/**
  * Extract URL strings from ReferenceUrl array
  */
 export function extractUrls(referenceUrls: ReferenceUrl[]): string[] {

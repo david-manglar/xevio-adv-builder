@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { cleanUrl } from '@/lib/url-utils'
 
 interface ScrapeRequestBody {
   stepOneData: {
@@ -42,13 +43,13 @@ export async function POST(request: Request) {
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Prepare URLs with descriptions
+    // Prepare URLs with descriptions (clean trailing slashes to avoid 404s)
     const urlsWithContext = validUrls.map((ref: any) => {
       if (typeof ref === 'string') {
-        return { url: ref.trim(), description: null }
+        return { url: cleanUrl(ref), description: null }
       }
       return { 
-        url: ref.url.trim(), 
+        url: cleanUrl(ref.url), 
         description: ref.description?.trim() || null 
       }
     })
@@ -134,6 +135,7 @@ export async function POST(request: Request) {
         .from('campaigns')
         .insert({
           user_id: userId,
+          mode: 'full',
           topic: stepOneData.topic,
           campaign_type: stepOneData.campaignType,
           niche: stepOneData.niche,

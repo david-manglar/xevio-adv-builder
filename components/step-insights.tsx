@@ -30,6 +30,8 @@ import {
   BookOpen,
   Info,
   AlertCircle,
+  PenLine,
+  CheckCircle,
 } from "lucide-react"
 import {
   DndContext,
@@ -124,6 +126,12 @@ const buildingBlocks: BlockType[] = [
     hasInput: true,
     inputLabel: "Study URL / Description / Topic",
   },
+  {
+    id: "diary",
+    name: "Diary (1st Person)",
+    icon: <PenLine className="h-4 w-4" />,
+    category: "Authority & Credibility",
+  },
   // Problem & Solution
   {
     id: "x-reasons",
@@ -205,6 +213,7 @@ const buildingBlocks: BlockType[] = [
     category: "Urgency & CTA",
   },
   { id: "next-steps", name: "Next Steps Explainer", icon: <FileText className="h-4 w-4" />, category: "Urgency & CTA" },
+  { id: "conclusion", name: "Conclusion", icon: <CheckCircle className="h-4 w-4" />, category: "Urgency & CTA" },
   { id: "cta", name: "CTA", icon: <MessageSquare className="h-4 w-4" />, category: "Urgency & CTA" },
   // Other
   { id: "faq", name: "FAQ", icon: <HelpCircle className="h-4 w-4" />, category: "Other" },

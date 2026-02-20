@@ -82,7 +82,8 @@ async function GET(request, { params }) {
         generated_content,
         doc_name,
         status,
-        created_at
+        created_at,
+        mode
       `).eq('id', id).single();
         if (error) {
             console.error('Supabase Error:', error);
@@ -116,7 +117,8 @@ async function GET(request, { params }) {
             generatedContent: campaign.generated_content || '',
             docName: campaign.doc_name || '',
             status: campaign.status || '',
-            createdAt: campaign.created_at || ''
+            createdAt: campaign.created_at || '',
+            mode: campaign.mode ?? null
         };
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             campaign: formattedCampaign

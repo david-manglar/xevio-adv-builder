@@ -69,7 +69,7 @@ async function GET(request) {
         const supabaseKey = ("TURBOPACK compile-time value", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3cmJvY3ZtdHhrb3p3cmFkbWtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA1MTE5NDksImV4cCI6MjA3NjA4Nzk0OX0.ClZYBde_Os4nM4PttgRdfmG2Yl4357GnieAoApxcoqg");
         const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$supabase$2d$js$2f$dist$2f$index$2e$mjs__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["createClient"])(supabaseUrl, supabaseKey);
         // Fetch completed campaigns for this user
-        const { data: campaigns, error, count } = await supabase.from('campaigns').select('id, doc_name, niche, country, campaign_type, created_at, generated_content', {
+        const { data: campaigns, error, count } = await supabase.from('campaigns').select('id, doc_name, niche, country, campaign_type, created_at, generated_content, mode', {
             count: 'exact'
         }).eq('user_id', userId).eq('status', 'completed').order('created_at', {
             ascending: false
@@ -90,7 +90,8 @@ async function GET(request) {
                 niche: campaign.niche,
                 country: campaign.country,
                 createdAt: formatDate(campaign.created_at),
-                docUrl: campaign.generated_content
+                docUrl: campaign.generated_content,
+                mode: campaign.mode ?? null
             }));
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             campaigns: formattedCampaigns,

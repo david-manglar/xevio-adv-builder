@@ -29,6 +29,7 @@ interface CampaignDetails {
   structureBlocks: StructureBlock[]
   generatedContent: string
   docName: string
+  mode?: 'full' | 'lazy' | null
 }
 
 interface BuilderSettingsDetailsProps {
@@ -119,7 +120,7 @@ export function BuilderSettingsDetails({ campaign }: BuilderSettingsDetailsProps
       <div className="space-y-2">
         <div className="flex items-center gap-2 text-xs font-medium text-foreground">
           <FileText className="h-3.5 w-3.5 text-[#0dadb7]" />
-          Advertorial Topic
+          Topic / Instructions
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed bg-white rounded-md p-3 border border-border/50">
           {campaign.topic || "No topic specified"}
@@ -137,6 +138,12 @@ export function BuilderSettingsDetails({ campaign }: BuilderSettingsDetailsProps
             <span className="text-muted-foreground w-20 shrink-0">Type</span>
             <span className="inline-flex items-center rounded bg-[#F6F6F6] px-2 py-0.5 text-xs text-muted-foreground">
               {campaign.campaignType || "—"}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-muted-foreground w-20 shrink-0">Mode</span>
+            <span className="inline-flex items-center rounded bg-[#F6F6F6] px-2 py-0.5 text-xs text-muted-foreground">
+              {campaign.mode === 'lazy' ? 'Lazy mode' : campaign.mode === 'full' ? 'Standard mode' : '—'}
             </span>
           </div>
           <div className="flex items-center gap-2 text-xs">

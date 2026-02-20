@@ -57,10 +57,26 @@ export interface StepFourState {
 
 export interface CampaignData {
   id?: string
+  mode?: 'full' | 'lazy'
   status?: 'draft' | 'scraping' | 'urls_processed' | 'analyzing' | 'generating' | 'completed' | 'failed'
   scrapingResult?: any
-  scrapedUrls?: string[]  // Track which URLs have been scraped
-  scrapedStepOneData?: StepOneState  // Track Step 1 data used during scraping
+  scrapedUrls?: string[]
+  scrapedStepOneData?: StepOneState
   generated_content?: string
   doc_name?: string
+}
+
+export interface LazyModeState {
+  instructions: string
+  advertorialUrl: string
+  referenceUrls: ReferenceUrl[]
+  campaignType: string
+  niche: string
+  country: string
+  language: string
+  length: string
+  keepOriginalLength: boolean
+  paragraphLength: string
+  guidelines: string
+  customGuidelines?: string
 }

@@ -19,6 +19,7 @@ interface CampaignHistory {
   country: string
   createdAt: string
   docUrl: string
+  mode?: 'full' | 'lazy' | null
 }
 
 interface CampaignDetails {
@@ -36,6 +37,7 @@ interface CampaignDetails {
   structureBlocks: Array<{ position: number; name: string; inputValue?: string | null; selectValue?: string | null }>
   generatedContent: string
   docName: string
+  mode?: 'full' | 'lazy' | null
 }
 
 export function HistoryMenu({ isOpen, onClose, userId }: HistoryMenuProps) {
@@ -211,6 +213,9 @@ export function HistoryMenu({ isOpen, onClose, userId }: HistoryMenuProps) {
                       </div>
                       <div>
                         Country: <span className="text-foreground">{campaign.country}</span>
+                      </div>
+                      <div>
+                        Mode: <span className="text-foreground">{campaign.mode === 'lazy' ? 'Lazy' : campaign.mode === 'full' ? 'Standard' : '—'}</span>
                       </div>
                       <div>
                         Created: <span className="text-foreground">{campaign.createdAt}</span>

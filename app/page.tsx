@@ -8,11 +8,14 @@ import { StepThree } from "@/components/step-building-blocks"
 import { StepFour } from "@/components/step-insights"
 import { StepFive } from "@/components/step-review"
 import { StepGenerating } from "@/components/step-generating"
+import { ModeSelection } from "@/components/mode-selection"
+import { LazyModeSetup } from "@/components/lazy-mode-setup"
+import { LazyModeReview } from "@/components/lazy-mode-review"
 import { HistoryMenu } from "@/components/history-menu"
 import { UserMenu } from "@/components/user-menu"
 import { LoginScreen } from "@/components/login-screen"
 import { Clock, User, Loader2 } from "lucide-react"
-import { StepOneState, StepTwoState, StepThreeState, StepFourState, CampaignData } from "@/lib/types"
+import { StepOneState, StepTwoState, StepThreeState, StepFourState, LazyModeState, CampaignData } from "@/lib/types"
 import { supabase } from "@/lib/supabase"
 import { getSession, signOut, onAuthStateChange } from "@/lib/auth"
 import { extractUrls } from "@/lib/url-utils"
@@ -22,6 +25,7 @@ export default function AdvertorialBuilder() {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   const [userEmail, setUserEmail] = useState<string>("")
   const [userId, setUserId] = useState<string | null>(null)
+  const [appMode, setAppMode] = useState<"selecting" | "full" | "lazy">("selecting")
   const [currentStep, setCurrentStep] = useState(1)
   const [isGenerating, setIsGenerating] = useState(false)
   const [isHistoryMenuOpen, setIsHistoryMenuOpen] = useState(false)
@@ -52,6 +56,22 @@ export default function AdvertorialBuilder() {
   const [stepFourData, setStepFourData] = useState<StepFourState>({
     blocks: [],
     initialized: false,
+  })
+
+  // Lazy Mode state
+  const [lazyModeStep, setLazyModeStep] = useState(1)
+  const [lazyModeData, setLazyModeData] = useState<LazyModeState>({
+    instructions: "",
+    advertorialUrl: "",
+    referenceUrls: [],
+    campaignType: "",
+    niche: "",
+    country: "",
+    language: "",
+    length: "",
+    keepOriginalLength: false,
+    paragraphLength: "",
+    guidelines: "",
   })
 
   // Check for existing session on mount
@@ -102,6 +122,7 @@ export default function AdvertorialBuilder() {
       setIsLoggedIn(false)
       setUserEmail("")
       setUserId(null)
+      setAppMode("selecting")
       setCurrentStep(1)
       setIsUserMenuOpen(false)
       // Reset all form data
@@ -146,7 +167,9 @@ export default function AdvertorialBuilder() {
 
   const handleStartOver = () => {
     setIsGenerating(false)
+    setAppMode("selecting")
     setCurrentStep(1)
+    setLazyModeStep(1)
     setCampaignData({})
     // Reset form data for new campaign
     setStepOneData({
@@ -165,6 +188,19 @@ export default function AdvertorialBuilder() {
       initialized: false,
     })
     setStepFourData({ blocks: [], initialized: false })
+    setLazyModeData({
+      instructions: "",
+      advertorialUrl: "",
+      referenceUrls: [],
+      campaignType: "",
+      niche: "",
+      country: "",
+      language: "",
+      length: "",
+      keepOriginalLength: false,
+      paragraphLength: "",
+      guidelines: "",
+    })
   }
 
   const handleJumpToStep = (step: number) => {
@@ -328,6 +364,25 @@ export default function AdvertorialBuilder() {
     </header>
   )
 
+  // Mode selection screen
+  if (appMode === "selecting") {
+    return (
+      <div className="min-h-screen bg-background">
+        {header}
+        <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} />
+        <UserMenu
+          isOpen={isUserMenuOpen}
+          onClose={() => setIsUserMenuOpen(false)}
+          onLogout={handleLogout}
+          userEmail={userEmail}
+        />
+        <main className="mx-auto max-w-7xl px-6">
+          <ModeSelection userEmail={userEmail} onSelectMode={setAppMode} />
+        </main>
+      </div>
+    )
+  }
+
   if (isGenerating) {
     return (
       <div className="min-h-screen bg-background">
@@ -345,13 +400,60 @@ export default function AdvertorialBuilder() {
             status={campaignData.generated_content ? 'completed' : 'generating'}
             documentUrl={campaignData.generated_content}
             documentName={campaignData.doc_name}
-            topic={stepOneData.topic}
+            topic={appMode === "lazy" ? lazyModeData.instructions : stepOneData.topic}
           />
         </main>
       </div>
     )
   }
 
+  // Lazy Mode flow
+  if (appMode === "lazy") {
+    const lazySteps = [
+      { number: 1, title: "Setup", description: "Instructions & reference pages" },
+      { number: 2, title: "Review", description: "Confirm and generate" },
+    ]
+
+    return (
+      <div className="min-h-screen bg-background">
+        {header}
+        <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} />
+        <UserMenu
+          isOpen={isUserMenuOpen}
+          onClose={() => setIsUserMenuOpen(false)}
+          onLogout={handleLogout}
+          userEmail={userEmail}
+        />
+        <div className="border-b border-border bg-card/50 py-6">
+          <div className="mx-auto max-w-6xl px-6">
+            <StepIndicator currentStep={lazyModeStep} steps={lazySteps} />
+          </div>
+        </div>
+        <main className="mx-auto max-w-5xl px-6 py-8">
+          {lazyModeStep === 1 && (
+            <LazyModeSetup
+              data={lazyModeData}
+              updateData={setLazyModeData}
+              onNext={() => setLazyModeStep(2)}
+              onBack={() => setAppMode("selecting")}
+            />
+          )}
+          {lazyModeStep === 2 && (
+            <LazyModeReview
+              data={lazyModeData}
+              campaignData={campaignData}
+              userId={userId}
+              onBack={() => setLazyModeStep(1)}
+              onGenerate={handleGenerate}
+              setCampaignData={setCampaignData}
+            />
+          )}
+        </main>
+      </div>
+    )
+  }
+
+  // Full Builder flow
   return (
     <div className="min-h-screen bg-background">
       {header}
@@ -373,6 +475,7 @@ export default function AdvertorialBuilder() {
             data={stepOneData} 
             updateData={setStepOneData} 
             onNext={handleNextStep}
+            onBack={() => setAppMode("selecting")}
             campaignData={campaignData}
           />
         )}

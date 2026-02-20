@@ -26,10 +26,11 @@ interface StepOneProps {
   data: StepOneState
   updateData: (data: StepOneState) => void
   onNext: () => void
-  campaignData: CampaignData  // NEW: Access existing campaign data
+  onBack?: () => void
+  campaignData: CampaignData
 }
 
-export function StepOne({ data, updateData, onNext, campaignData }: StepOneProps) {
+export function StepOne({ data, updateData, onNext, onBack, campaignData }: StepOneProps) {
   const [errors, setErrors] = useState<Partial<Record<keyof StepOneState, boolean>>>({})
   const [showRescrapeWarning, setShowRescrapeWarning] = useState(false)
 
@@ -354,7 +355,14 @@ export function StepOne({ data, updateData, onNext, campaignData }: StepOneProps
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-end pt-4">
+      <div className="flex justify-between pt-4">
+        {onBack ? (
+          <Button variant="outline" onClick={onBack}>
+            Back
+          </Button>
+        ) : (
+          <div />
+        )}
         <Button onClick={handleNext} size="lg" className="bg-[#4644B6] hover:bg-[#3a38a0]">
           Continue to Product Info
         </Button>

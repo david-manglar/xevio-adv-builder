@@ -825,6 +825,8 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 "use strict";
 
 __turbopack_context__.s([
+    "cleanUrl",
+    ()=>cleanUrl,
     "detectUrlChanges",
     ()=>detectUrlChanges,
     "extractUrls",
@@ -836,6 +838,9 @@ __turbopack_context__.s([
  * Normalize a URL for comparison by trimming whitespace and removing trailing slashes
  */ function normalizeUrl(url) {
     return url.trim().replace(/\/+$/, '').toLowerCase();
+}
+function cleanUrl(url) {
+    return url.trim().replace(/\/+$/, '');
 }
 function extractUrls(referenceUrls) {
     return referenceUrls.map((ref)=>typeof ref === 'string' ? ref : ref?.url).filter((url)=>!!url && url.trim() !== '').map(normalizeUrl);
@@ -2197,6 +2202,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$plus$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Plus$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/plus.js [app-client] (ecmascript) <export default as Plus>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$x$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__X$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/x.js [app-client] (ecmascript) <export default as X>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$triangle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertTriangle$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/triangle-alert.js [app-client] (ecmascript) <export default as AlertTriangle>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/loader-circle.js [app-client] (ecmascript) <export default as Loader2>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$check$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__CheckCircle2$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/circle-check.js [app-client] (ecmascript) <export default as CheckCircle2>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertCircle$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/circle-alert.js [app-client] (ecmascript) <export default as AlertCircle>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$url$2d$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/url-utils.ts [app-client] (ecmascript)");
 ;
@@ -2214,6 +2222,7 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
     _s();
     const [showRescrapeWarning, setShowRescrapeWarning] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [pendingAction, setPendingAction] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [urlValidations, setUrlValidations] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({});
     // Determine if we need to re-scrape based on URL or Step 1 changes
     const determineAction = ()=>{
         const currentUrls = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$url$2d$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["extractUrls"])(data.referenceUrls);
@@ -2331,6 +2340,55 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
             referenceUrls: updated
         });
     };
+    const handleUrlBlur = async (index)=>{
+        const raw = data.referenceUrls[index]?.url;
+        if (!raw) return;
+        const cleaned = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$url$2d$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cleanUrl"])(raw);
+        if (cleaned !== raw) {
+            updateUrl(index, cleaned);
+        }
+        if (!isValidUrl(cleaned)) return;
+        // Skip if already validated as reachable or currently in-flight
+        const existing = urlValidations[cleaned];
+        if (existing?.status === 'valid' || existing?.status === 'validating') return;
+        setUrlValidations((prev)=>({
+                ...prev,
+                [cleaned]: {
+                    status: 'validating'
+                }
+            }));
+        try {
+            const res = await fetch('/api/validate-url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: cleaned
+                })
+            });
+            const result = await res.json();
+            setUrlValidations((prev)=>({
+                    ...prev,
+                    [cleaned]: {
+                        status: result.reachable ? 'valid' : 'invalid',
+                        message: result.error || undefined
+                    }
+                }));
+        } catch  {
+            setUrlValidations((prev)=>({
+                    ...prev,
+                    [cleaned]: {
+                        status: 'invalid',
+                        message: 'Failed to validate URL'
+                    }
+                }));
+        }
+    };
+    const getUrlValidation = (url)=>{
+        if (!url || !isValidUrl(url)) return null;
+        return urlValidations[(0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$url$2d$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cleanUrl"])(url)] || null;
+    };
     const updateDescription = (index, value)=>{
         const updated = [
             ...data.referenceUrls
@@ -2346,6 +2404,14 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
     };
     // Button text based on whether this is a new scrape or just continuing
     const buttonText = campaignData.scrapedUrls?.length ? "Continue" : "Scrape & Continue";
+    const hasValidationError = data.referenceUrls.some((ref)=>{
+        const v = getUrlValidation(ref.url);
+        return v?.status === 'invalid';
+    });
+    const isValidatingUrls = data.referenceUrls.some((ref)=>{
+        const v = getUrlValidation(ref.url);
+        return v?.status === 'validating';
+    });
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "space-y-6",
         children: [
@@ -2361,7 +2427,7 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                         className: "h-5 w-5 text-muted-foreground"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-reference-pages.tsx",
-                                        lineNumber: 166,
+                                        lineNumber: 229,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardTitle"], {
@@ -2369,33 +2435,35 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                         children: "Reference Pages"
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-reference-pages.tsx",
-                                        lineNumber: 167,
+                                        lineNumber: 230,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/step-reference-pages.tsx",
-                                lineNumber: 165,
+                                lineNumber: 228,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                 children: "Add URLs from existing pages (product pages, competitor pages) and optionally describe what each page is or what the scraper should focus on. It will extract key information like USPs, pricing, tone of voice, and more from these references."
                             }, void 0, false, {
                                 fileName: "[project]/components/step-reference-pages.tsx",
-                                lineNumber: 169,
+                                lineNumber: 232,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/step-reference-pages.tsx",
-                        lineNumber: 164,
+                        lineNumber: 227,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "space-y-4",
                             children: [
-                                data.referenceUrls.map((ref, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                data.referenceUrls.map((ref, index)=>{
+                                    const validation = getUrlValidation(ref.url);
+                                    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "space-y-2",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "flex items-start gap-2",
@@ -2418,13 +2486,13 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                                                             children: "*"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/components/step-reference-pages.tsx",
-                                                                            lineNumber: 181,
+                                                                            lineNumber: 246,
                                                                             columnNumber: 51
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/components/step-reference-pages.tsx",
-                                                                    lineNumber: 180,
+                                                                    lineNumber: 245,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -2432,16 +2500,69 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                                                     type: "url",
                                                                     placeholder: "https://example.com/product-page",
                                                                     value: ref.url,
-                                                                    onChange: (e)=>updateUrl(index, e.target.value)
+                                                                    onChange: (e)=>updateUrl(index, e.target.value),
+                                                                    onBlur: ()=>handleUrlBlur(index),
+                                                                    "aria-invalid": validation?.status === 'invalid'
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-reference-pages.tsx",
-                                                                    lineNumber: 183,
+                                                                    lineNumber: 248,
                                                                     columnNumber: 23
+                                                                }, this),
+                                                                validation?.status === 'validating' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                    className: "flex items-center gap-1.5 text-xs text-muted-foreground",
+                                                                    children: [
+                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__["Loader2"], {
+                                                                            className: "h-3 w-3 animate-spin"
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/components/step-reference-pages.tsx",
+                                                                            lineNumber: 259,
+                                                                            columnNumber: 27
+                                                                        }, this),
+                                                                        "Checking URL..."
+                                                                    ]
+                                                                }, void 0, true, {
+                                                                    fileName: "[project]/components/step-reference-pages.tsx",
+                                                                    lineNumber: 258,
+                                                                    columnNumber: 25
+                                                                }, this),
+                                                                validation?.status === 'valid' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                    className: "flex items-center gap-1.5 text-xs text-green-600",
+                                                                    children: [
+                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$check$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__CheckCircle2$3e$__["CheckCircle2"], {
+                                                                            className: "h-3 w-3"
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/components/step-reference-pages.tsx",
+                                                                            lineNumber: 265,
+                                                                            columnNumber: 27
+                                                                        }, this),
+                                                                        "URL is reachable"
+                                                                    ]
+                                                                }, void 0, true, {
+                                                                    fileName: "[project]/components/step-reference-pages.tsx",
+                                                                    lineNumber: 264,
+                                                                    columnNumber: 25
+                                                                }, this),
+                                                                validation?.status === 'invalid' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                    className: "flex items-center gap-1.5 text-xs text-destructive",
+                                                                    children: [
+                                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertCircle$3e$__["AlertCircle"], {
+                                                                            className: "h-3 w-3"
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/components/step-reference-pages.tsx",
+                                                                            lineNumber: 271,
+                                                                            columnNumber: 27
+                                                                        }, this),
+                                                                        validation.message || 'URL is not reachable'
+                                                                    ]
+                                                                }, void 0, true, {
+                                                                    fileName: "[project]/components/step-reference-pages.tsx",
+                                                                    lineNumber: 270,
+                                                                    columnNumber: 25
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/step-reference-pages.tsx",
-                                                            lineNumber: 179,
+                                                            lineNumber: 244,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2457,13 +2578,13 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                                                             children: "(optional)"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/components/step-reference-pages.tsx",
-                                                                            lineNumber: 193,
+                                                                            lineNumber: 278,
                                                                             columnNumber: 37
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/components/step-reference-pages.tsx",
-                                                                    lineNumber: 192,
+                                                                    lineNumber: 277,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -2475,19 +2596,19 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                                                     className: "text-sm"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/step-reference-pages.tsx",
-                                                                    lineNumber: 195,
+                                                                    lineNumber: 280,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/step-reference-pages.tsx",
-                                                            lineNumber: 191,
+                                                            lineNumber: 276,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-reference-pages.tsx",
-                                                    lineNumber: 178,
+                                                    lineNumber: 243,
                                                     columnNumber: 19
                                                 }, this),
                                                 data.referenceUrls.length > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -2500,7 +2621,7 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                                             className: "h-4 w-4"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-reference-pages.tsx",
-                                                            lineNumber: 212,
+                                                            lineNumber: 297,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2508,26 +2629,27 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                                             children: "Remove URL"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/step-reference-pages.tsx",
-                                                            lineNumber: 213,
+                                                            lineNumber: 298,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/step-reference-pages.tsx",
-                                                    lineNumber: 206,
+                                                    lineNumber: 291,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/step-reference-pages.tsx",
-                                            lineNumber: 177,
+                                            lineNumber: 242,
                                             columnNumber: 17
                                         }, this)
                                     }, index, false, {
                                         fileName: "[project]/components/step-reference-pages.tsx",
-                                        lineNumber: 176,
+                                        lineNumber: 241,
                                         columnNumber: 15
-                                    }, this)),
+                                    }, this);
+                                }),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                                     variant: "outline",
                                     size: "sm",
@@ -2538,14 +2660,14 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                             className: "h-4 w-4"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-reference-pages.tsx",
-                                            lineNumber: 220,
+                                            lineNumber: 306,
                                             columnNumber: 15
                                         }, this),
                                         "Add another URL"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/step-reference-pages.tsx",
-                                    lineNumber: 219,
+                                    lineNumber: 305,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2553,24 +2675,24 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                     children: "Scraping happens in the background while you continue. Results will be ready when you reach Step 4 (Insights)."
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-reference-pages.tsx",
-                                    lineNumber: 223,
+                                    lineNumber: 309,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/step-reference-pages.tsx",
-                            lineNumber: 174,
+                            lineNumber: 237,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/step-reference-pages.tsx",
-                        lineNumber: 173,
+                        lineNumber: 236,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/step-reference-pages.tsx",
-                lineNumber: 163,
+                lineNumber: 226,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2582,23 +2704,23 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                         children: "Back"
                     }, void 0, false, {
                         fileName: "[project]/components/step-reference-pages.tsx",
-                        lineNumber: 232,
+                        lineNumber: 318,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                         onClick: handleNext,
-                        disabled: !hasValidUrl,
+                        disabled: !hasValidUrl || hasValidationError || isValidatingUrls,
                         size: "lg",
                         children: buttonText
                     }, void 0, false, {
                         fileName: "[project]/components/step-reference-pages.tsx",
-                        lineNumber: 235,
+                        lineNumber: 321,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/step-reference-pages.tsx",
-                lineNumber: 231,
+                lineNumber: 317,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AlertDialog"], {
@@ -2617,12 +2739,12 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                             className: "h-5 w-5 text-amber-600"
                                         }, void 0, false, {
                                             fileName: "[project]/components/step-reference-pages.tsx",
-                                            lineNumber: 246,
+                                            lineNumber: 332,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/step-reference-pages.tsx",
-                                        lineNumber: 245,
+                                        lineNumber: 331,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2632,7 +2754,7 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                                 children: "Re-scrape Required"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/step-reference-pages.tsx",
-                                                lineNumber: 249,
+                                                lineNumber: 335,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AlertDialogDescription"], {
@@ -2644,36 +2766,36 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                                     }, void 0, false),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                         fileName: "[project]/components/step-reference-pages.tsx",
-                                                        lineNumber: 262,
+                                                        lineNumber: 348,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                         fileName: "[project]/components/step-reference-pages.tsx",
-                                                        lineNumber: 262,
+                                                        lineNumber: 348,
                                                         columnNumber: 25
                                                     }, this),
                                                     "Do you want to continue?"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/step-reference-pages.tsx",
-                                                lineNumber: 250,
+                                                lineNumber: 336,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/step-reference-pages.tsx",
-                                        lineNumber: 248,
+                                        lineNumber: 334,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/step-reference-pages.tsx",
-                                lineNumber: 244,
+                                lineNumber: 330,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/step-reference-pages.tsx",
-                            lineNumber: 243,
+                            lineNumber: 329,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AlertDialogFooter"], {
@@ -2683,7 +2805,7 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                     children: "Cancel"
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-reference-pages.tsx",
-                                    lineNumber: 269,
+                                    lineNumber: 355,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2d$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AlertDialogAction"], {
@@ -2692,34 +2814,34 @@ function StepTwo({ stepOneData, data, updateData, onComplete, onBack, campaignDa
                                     children: "Yes, Re-scrape"
                                 }, void 0, false, {
                                     fileName: "[project]/components/step-reference-pages.tsx",
-                                    lineNumber: 270,
+                                    lineNumber: 356,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/step-reference-pages.tsx",
-                            lineNumber: 268,
+                            lineNumber: 354,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/step-reference-pages.tsx",
-                    lineNumber: 242,
+                    lineNumber: 328,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/step-reference-pages.tsx",
-                lineNumber: 241,
+                lineNumber: 327,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/step-reference-pages.tsx",
-        lineNumber: 161,
+        lineNumber: 224,
         columnNumber: 5
     }, this);
 }
-_s(StepTwo, "nmuErsCtwsbZOTD4/fyMVFFu9VI=");
+_s(StepTwo, "QD/lXMxmEpNjKhe+Kac8YQfO5Dc=");
 _c = StepTwo;
 var _c;
 __turbopack_context__.k.register(_c, "StepTwo");
@@ -9028,6 +9150,7 @@ function AdvertorialBuilder() {
     const [isCheckingAuth, setIsCheckingAuth] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     const [userEmail, setUserEmail] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     const [userId, setUserId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [appMode, setAppMode] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("selecting");
     const [currentStep, setCurrentStep] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(1);
     const [isGenerating, setIsGenerating] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [isHistoryMenuOpen, setIsHistoryMenuOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
@@ -9116,6 +9239,7 @@ function AdvertorialBuilder() {
             setIsLoggedIn(false);
             setUserEmail("");
             setUserId(null);
+            setAppMode("selecting");
             setCurrentStep(1);
             setIsUserMenuOpen(false);
             // Reset all form data
@@ -9172,6 +9296,7 @@ function AdvertorialBuilder() {
     };
     const handleStartOver = ()=>{
         setIsGenerating(false);
+        setAppMode("selecting");
         setCurrentStep(1);
         setCampaignData({});
         // Reset form data for new campaign
@@ -9335,7 +9460,7 @@ function AdvertorialBuilder() {
                         className: "h-8 w-8 animate-spin text-[#4644B6]"
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 290,
+                        lineNumber: 294,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -9343,18 +9468,18 @@ function AdvertorialBuilder() {
                         children: "Loading..."
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 291,
+                        lineNumber: 295,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 289,
+                lineNumber: 293,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/page.tsx",
-            lineNumber: 288,
+            lineNumber: 292,
             columnNumber: 7
         }, this);
     }
@@ -9364,7 +9489,7 @@ function AdvertorialBuilder() {
             onLogin: handleLogin
         }, void 0, false, {
             fileName: "[project]/app/page.tsx",
-            lineNumber: 299,
+            lineNumber: 303,
             columnNumber: 12
         }, this);
     }
@@ -9384,7 +9509,7 @@ function AdvertorialBuilder() {
                                 className: "h-8 w-8"
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 307,
+                                lineNumber: 311,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -9392,13 +9517,13 @@ function AdvertorialBuilder() {
                                 children: "Advertorial Builder"
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 308,
+                                lineNumber: 312,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 306,
+                        lineNumber: 310,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -9412,12 +9537,12 @@ function AdvertorialBuilder() {
                                     className: "h-5 w-5"
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 316,
+                                    lineNumber: 320,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 311,
+                                lineNumber: 315,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -9428,34 +9553,34 @@ function AdvertorialBuilder() {
                                     className: "h-5 w-5"
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 323,
+                                    lineNumber: 327,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/page.tsx",
-                                lineNumber: 318,
+                                lineNumber: 322,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 310,
+                        lineNumber: 314,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 305,
+                lineNumber: 309,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/page.tsx",
-            lineNumber: 304,
+            lineNumber: 308,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 303,
+        lineNumber: 307,
         columnNumber: 5
     }, this);
     if (isGenerating) {
@@ -9469,7 +9594,7 @@ function AdvertorialBuilder() {
                     userId: userId
                 }, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 335,
+                    lineNumber: 339,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$user$2d$menu$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["UserMenu"], {
@@ -9479,7 +9604,7 @@ function AdvertorialBuilder() {
                     userEmail: userEmail
                 }, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 336,
+                    lineNumber: 340,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -9492,18 +9617,18 @@ function AdvertorialBuilder() {
                         topic: stepOneData.topic
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 343,
+                        lineNumber: 347,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 342,
+                    lineNumber: 346,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/page.tsx",
-            lineNumber: 333,
+            lineNumber: 337,
             columnNumber: 7
         }, this);
     }
@@ -9517,7 +9642,7 @@ function AdvertorialBuilder() {
                 userId: userId
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 358,
+                lineNumber: 362,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$user$2d$menu$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["UserMenu"], {
@@ -9527,7 +9652,7 @@ function AdvertorialBuilder() {
                 userEmail: userEmail
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 359,
+                lineNumber: 363,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -9538,17 +9663,17 @@ function AdvertorialBuilder() {
                         currentStep: currentStep
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 367,
+                        lineNumber: 371,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 366,
+                    lineNumber: 370,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 365,
+                lineNumber: 369,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -9561,7 +9686,7 @@ function AdvertorialBuilder() {
                         campaignData: campaignData
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 372,
+                        lineNumber: 376,
                         columnNumber: 11
                     }, this),
                     currentStep === 2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$step$2d$reference$2d$pages$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["StepTwo"], {
@@ -9573,7 +9698,7 @@ function AdvertorialBuilder() {
                         campaignData: campaignData
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 380,
+                        lineNumber: 384,
                         columnNumber: 11
                     }, this),
                     currentStep === 3 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$step$2d$insights$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["StepFour"], {
@@ -9585,7 +9710,7 @@ function AdvertorialBuilder() {
                         updateData: setStepFourData
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 390,
+                        lineNumber: 394,
                         columnNumber: 11
                     }, this),
                     currentStep === 4 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$step$2d$building$2d$blocks$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["StepThree"], {
@@ -9597,7 +9722,7 @@ function AdvertorialBuilder() {
                         updateData: setStepThreeData
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 400,
+                        lineNumber: 404,
                         columnNumber: 11
                     }, this),
                     currentStep === 5 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$step$2d$review$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["StepFive"], {
@@ -9611,23 +9736,23 @@ function AdvertorialBuilder() {
                         campaignData: campaignData
                     }, void 0, false, {
                         fileName: "[project]/app/page.tsx",
-                        lineNumber: 410,
+                        lineNumber: 414,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 370,
+                lineNumber: 374,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 356,
+        lineNumber: 360,
         columnNumber: 5
     }, this);
 }
-_s(AdvertorialBuilder, "qio2kNfW3Tzh/KzGKQmCLjNHNV0=");
+_s(AdvertorialBuilder, "JSKkm1wg/cfyocE2baRzXhOeTO4=");
 _c = AdvertorialBuilder;
 var _c;
 __turbopack_context__.k.register(_c, "AdvertorialBuilder");

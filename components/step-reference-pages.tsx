@@ -14,10 +14,17 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog"
-import { Link, Plus, X, AlertTriangle } from "lucide-react"
+import { Link, Plus, X, AlertTriangle, Loader2, CheckCircle2, AlertCircle } from "lucide-react"
 import { StepOneState, StepTwoState, CampaignData } from "@/lib/types"
 import { useState } from "react"
-import { detectUrlChanges, extractUrls, hasStepOneChanges } from "@/lib/url-utils"
+import { cleanUrl, detectUrlChanges, extractUrls, hasStepOneChanges } from "@/lib/url-utils"
+
+type UrlValidationStatus = 'idle' | 'validating' | 'valid' | 'invalid'
+
+interface UrlValidation {
+  status: UrlValidationStatus
+  message?: string
+}
 
 // Scrape request passed to parent - null means skip (no scrape needed)
 export interface ScrapeRequest {
@@ -44,6 +51,7 @@ export function StepTwo({
 }: StepTwoProps) {
   const [showRescrapeWarning, setShowRescrapeWarning] = useState(false)
   const [pendingAction, setPendingAction] = useState<'structural' | 'step1_change' | null>(null)
+  const [urlValidations, setUrlValidations] = useState<Record<string, UrlValidation>>({})
 
   // Determine if we need to re-scrape based on URL or Step 1 changes
   const determineAction = () => {
@@ -148,6 +156,51 @@ export function StepTwo({
     updateData({ ...data, referenceUrls: updated })
   }
 
+  const handleUrlBlur = async (index: number) => {
+    const raw = data.referenceUrls[index]?.url
+    if (!raw) return
+
+    const cleaned = cleanUrl(raw)
+    if (cleaned !== raw) {
+      updateUrl(index, cleaned)
+    }
+
+    if (!isValidUrl(cleaned)) return
+
+    // Skip if already validated as reachable or currently in-flight
+    const existing = urlValidations[cleaned]
+    if (existing?.status === 'valid' || existing?.status === 'validating') return
+
+    setUrlValidations(prev => ({ ...prev, [cleaned]: { status: 'validating' } }))
+
+    try {
+      const res = await fetch('/api/validate-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: cleaned }),
+      })
+      const result = await res.json()
+
+      setUrlValidations(prev => ({
+        ...prev,
+        [cleaned]: {
+          status: result.reachable ? 'valid' : 'invalid',
+          message: result.error || undefined,
+        },
+      }))
+    } catch {
+      setUrlValidations(prev => ({
+        ...prev,
+        [cleaned]: { status: 'invalid', message: 'Failed to validate URL' },
+      }))
+    }
+  }
+
+  const getUrlValidation = (url: string): UrlValidation | null => {
+    if (!url || !isValidUrl(url)) return null
+    return urlValidations[cleanUrl(url)] || null
+  }
+
   const updateDescription = (index: number, value: string) => {
     const updated = [...data.referenceUrls]
     updated[index] = { ...updated[index], description: value }
@@ -156,6 +209,16 @@ export function StepTwo({
 
   // Button text based on whether this is a new scrape or just continuing
   const buttonText = campaignData.scrapedUrls?.length ? "Continue" : "Scrape & Continue"
+
+  const hasValidationError = data.referenceUrls.some((ref) => {
+    const v = getUrlValidation(ref.url)
+    return v?.status === 'invalid'
+  })
+
+  const isValidatingUrls = data.referenceUrls.some((ref) => {
+    const v = getUrlValidation(ref.url)
+    return v?.status === 'validating'
+  })
 
   return (
     <div className="space-y-6">
@@ -172,7 +235,9 @@ export function StepTwo({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {data.referenceUrls.map((ref, index) => (
+            {data.referenceUrls.map((ref, index) => {
+              const validation = getUrlValidation(ref.url)
+              return (
               <div key={index} className="space-y-2">
                 <div className="flex items-start gap-2">
                   <div className="flex-1 space-y-2">
@@ -186,7 +251,27 @@ export function StepTwo({
                         placeholder="https://example.com/product-page"
                         value={ref.url}
                         onChange={(e) => updateUrl(index, e.target.value)}
+                        onBlur={() => handleUrlBlur(index)}
+                        aria-invalid={validation?.status === 'invalid'}
                       />
+                      {validation?.status === 'validating' && (
+                        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          Checking URL...
+                        </p>
+                      )}
+                      {validation?.status === 'valid' && (
+                        <p className="flex items-center gap-1.5 text-xs text-green-600">
+                          <CheckCircle2 className="h-3 w-3" />
+                          URL is reachable
+                        </p>
+                      )}
+                      {validation?.status === 'invalid' && (
+                        <p className="flex items-center gap-1.5 text-xs text-destructive">
+                          <AlertCircle className="h-3 w-3" />
+                          {validation.message || 'URL is not reachable'}
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-1">
                       <Label htmlFor={`description-${index}`} className="text-sm text-muted-foreground">
@@ -215,7 +300,8 @@ export function StepTwo({
                   )}
                 </div>
               </div>
-            ))}
+              )
+            })}
             <Button variant="outline" size="sm" className="gap-2 bg-transparent" onClick={addUrlField}>
               <Plus className="h-4 w-4" />
               Add another URL
@@ -232,7 +318,7 @@ export function StepTwo({
         <Button variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button onClick={handleNext} disabled={!hasValidUrl} size="lg">
+        <Button onClick={handleNext} disabled={!hasValidUrl || hasValidationError || isValidatingUrls} size="lg">
           {buttonText}
         </Button>
       </div>

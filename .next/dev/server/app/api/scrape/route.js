@@ -2,7 +2,7 @@ var R=require("../../../chunks/[turbopack]_runtime.js")("server/app/api/scrape/r
 R.c("server/chunks/node_modules_next_17dd7870._.js")
 R.c("server/chunks/node_modules_@supabase_auth-js_dist_module_02e1b12e._.js")
 R.c("server/chunks/node_modules_62644f13._.js")
-R.c("server/chunks/[root-of-the-server]__45bb0f95._.js")
+R.c("server/chunks/[root-of-the-server]__864eb4e2._.js")
 R.c("server/chunks/_next-internal_server_app_api_scrape_route_actions_2a5fbd00.js")
 R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/app/api/scrape/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)")
 module.exports=R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/app/api/scrape/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports

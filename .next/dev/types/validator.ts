@@ -83,6 +83,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../app/api/lazy-generate/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/lazy-generate">> = Specific
+  const handler = {} as typeof import("../../../app/api/lazy-generate/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/api/save-progress/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/save-progress">> = Specific
@@ -96,6 +105,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/scrape">> = Specific
   const handler = {} as typeof import("../../../app/api/scrape/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/validate-url/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/validate-url">> = Specific
+  const handler = {} as typeof import("../../../app/api/validate-url/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

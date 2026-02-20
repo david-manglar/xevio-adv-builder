@@ -20,7 +20,7 @@ export async function GET(request: Request) {
     // Fetch completed campaigns for this user
     const { data: campaigns, error, count } = await supabase
       .from('campaigns')
-      .select('id, doc_name, niche, country, campaign_type, created_at, generated_content', { count: 'exact' })
+      .select('id, doc_name, niche, country, campaign_type, created_at, generated_content, mode', { count: 'exact' })
       .eq('user_id', userId)
       .eq('status', 'completed')
       .order('created_at', { ascending: false })
@@ -40,6 +40,7 @@ export async function GET(request: Request) {
       country: campaign.country,
       createdAt: formatDate(campaign.created_at),
       docUrl: campaign.generated_content,
+      mode: campaign.mode ?? null,
     }))
 
     return NextResponse.json({

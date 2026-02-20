@@ -1,10 +1,12 @@
 import { Check } from "lucide-react"
 
-interface StepIndicatorProps {
-  currentStep: number
+interface StepConfig {
+  number: number
+  title: string
+  description: string
 }
 
-const steps = [
+const defaultSteps: StepConfig[] = [
   { number: 1, title: "Campaign Setup", description: "Define your campaign parameters" },
   { number: 2, title: "Product Info", description: "Add reference pages" },
   { number: 3, title: "Building Blocks", description: "Structure your advertorial" },
@@ -12,7 +14,12 @@ const steps = [
   { number: 5, title: "Review", description: "Confirm and generate" },
 ]
 
-export function StepIndicator({ currentStep }: StepIndicatorProps) {
+interface StepIndicatorProps {
+  currentStep: number
+  steps?: StepConfig[]
+}
+
+export function StepIndicator({ currentStep, steps = defaultSteps }: StepIndicatorProps) {
   return (
     <div className="flex items-center justify-around gap-2">
       {steps.map((step) => (

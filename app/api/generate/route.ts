@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { cleanUrl } from '@/lib/url-utils'
 
 export async function POST(request: Request) {
   try {
@@ -72,10 +73,10 @@ export async function POST(request: Request) {
         })
         .map((ref: any) => {
           if (typeof ref === 'string') {
-            return { url: ref.trim(), description: null }
+            return { url: cleanUrl(ref), description: null }
           }
           return { 
-            url: ref.url.trim(), 
+            url: cleanUrl(ref.url), 
             description: ref.description?.trim() || null 
           }
         }),
