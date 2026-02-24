@@ -1,8 +1,4 @@
 {
-  "/api/campaign/[id]/route": "app/api/campaign/[id]/route.js",
-  "/api/history/route": "app/api/history/route.js",
-  "/api/lazy-generate/route": "app/api/lazy-generate/route.js",
-  "/api/scrape/route": "app/api/scrape/route.js",
   "/api/validate-url/route": "app/api/validate-url/route.js",
   "/page": "app/page.js"
 }

@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MessageSquareText, Link, Globe, FileText, Shield, Plus, X, Loader2, CheckCircle2, AlertCircle } from "lucide-react"
 import { LazyModeState } from "@/lib/types"
 import { cn } from "@/lib/utils"
-import { cleanUrl } from "@/lib/url-utils"
+import { cleanUrl, ensureProtocol } from "@/lib/url-utils"
 
 type UrlValidationStatus = "idle" | "validating" | "valid" | "invalid"
 
@@ -109,7 +109,7 @@ export function LazyModeSetup({ data, updateData, onNext, onBack }: LazyModeSetu
   }
 
   const validateUrlRemotely = async (rawUrl: string): Promise<void> => {
-    const cleaned = cleanUrl(rawUrl)
+    const cleaned = ensureProtocol(cleanUrl(rawUrl))
     if (!isValidUrl(cleaned)) return
 
     const existing = urlValidations[cleaned]
@@ -138,23 +138,23 @@ export function LazyModeSetup({ data, updateData, onNext, onBack }: LazyModeSetu
 
   const handleAdvertorialUrlBlur = async () => {
     const raw = data.advertorialUrl
-    if (!raw) return
-    const cleaned = cleanUrl(raw)
-    if (cleaned !== raw) updateData({ ...data, advertorialUrl: cleaned })
-    await validateUrlRemotely(cleaned)
+    if (!raw || !raw.trim()) return
+    const normalized = ensureProtocol(cleanUrl(raw))
+    if (normalized !== raw) updateData({ ...data, advertorialUrl: normalized })
+    await validateUrlRemotely(normalized)
   }
 
   const handleUrlBlur = async (index: number) => {
     const raw = data.referenceUrls[index]?.url
-    if (!raw) return
-    const cleaned = cleanUrl(raw)
-    if (cleaned !== raw) updateUrl(index, cleaned)
-    await validateUrlRemotely(cleaned)
+    if (!raw || !raw.trim()) return
+    const normalized = ensureProtocol(cleanUrl(raw))
+    if (normalized !== raw) updateUrl(index, normalized)
+    await validateUrlRemotely(normalized)
   }
 
   const getUrlValidation = (url: string): UrlValidation | null => {
     if (!url || !isValidUrl(url)) return null
-    return urlValidations[cleanUrl(url)] || null
+    return urlValidations[ensureProtocol(cleanUrl(url))] || null
   }
 
   const advertorialValidation = getUrlValidation(data.advertorialUrl)
@@ -227,7 +227,7 @@ export function LazyModeSetup({ data, updateData, onNext, onBack }: LazyModeSetu
               <Input
                 id="lazy-advertorial-url"
                 type="url"
-                placeholder="https://example.com/advertorial"
+                placeholder="example.com/advertorial"
                 className={cn(errors.advertorialUrl && "border-destructive")}
                 value={data.advertorialUrl}
                 onChange={(e) => {
@@ -284,7 +284,7 @@ export function LazyModeSetup({ data, updateData, onNext, onBack }: LazyModeSetu
                           <Input
                             id={`lazy-url-${index}`}
                             type="url"
-                            placeholder="https://example.com/product-page"
+                            placeholder="example.com/product-page"
                             value={ref.url}
                             onChange={(e) => updateUrl(index, e.target.value)}
                             onBlur={() => handleUrlBlur(index)}

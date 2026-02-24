@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { cleanUrl } from '@/lib/url-utils'
+import { cleanUrl, ensureProtocol } from '@/lib/url-utils'
 
 export async function POST(request: Request) {
   try {
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    const advertorialUrl = cleanUrl(lazyModeData.advertorialUrl || '')
+    const advertorialUrl = ensureProtocol(cleanUrl(lazyModeData.advertorialUrl || ''))
     if (!advertorialUrl) {
       return NextResponse.json({ error: 'Advertorial URL is required' }, { status: 400 })
     }
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const additionalLinks = (lazyModeData.referenceUrls || [])
       .filter((ref: any) => ref?.url && ref.url.trim() !== '')
       .map((ref: any) => ({
-        url: cleanUrl(ref.url),
+        url: ensureProtocol(cleanUrl(ref.url)),
         description: ref.description?.trim() || null,
       }))
 

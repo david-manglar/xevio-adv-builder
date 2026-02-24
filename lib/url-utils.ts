@@ -23,6 +23,19 @@ export function cleanUrl(url: string): string {
 }
 
 /**
+ * Ensure URL has a protocol (https:// or http://). If missing, prepend https://.
+ * Use before parsing or sending to APIs so bare domains like "example.com" work.
+ */
+export function ensureProtocol(url: string): string {
+  const trimmed = url.trim()
+  if (!trimmed) return trimmed
+  if (trimmed.toLowerCase().startsWith('http://') || trimmed.toLowerCase().startsWith('https://')) {
+    return trimmed
+  }
+  return `https://${trimmed}`
+}
+
+/**
  * Extract URL strings from ReferenceUrl array
  */
 export function extractUrls(referenceUrls: ReferenceUrl[]): string[] {

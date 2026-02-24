@@ -17,7 +17,7 @@ import {
 import { Link, Plus, X, AlertTriangle, Loader2, CheckCircle2, AlertCircle } from "lucide-react"
 import { StepOneState, StepTwoState, CampaignData } from "@/lib/types"
 import { useState } from "react"
-import { cleanUrl, detectUrlChanges, extractUrls, hasStepOneChanges } from "@/lib/url-utils"
+import { cleanUrl, ensureProtocol, detectUrlChanges, extractUrls, hasStepOneChanges } from "@/lib/url-utils"
 
 type UrlValidationStatus = 'idle' | 'validating' | 'valid' | 'invalid'
 
@@ -158,14 +158,15 @@ export function StepTwo({
 
   const handleUrlBlur = async (index: number) => {
     const raw = data.referenceUrls[index]?.url
-    if (!raw) return
+    if (!raw || !raw.trim()) return
 
-    const cleaned = cleanUrl(raw)
-    if (cleaned !== raw) {
-      updateUrl(index, cleaned)
+    const normalized = ensureProtocol(cleanUrl(raw))
+    if (normalized !== raw) {
+      updateUrl(index, normalized)
     }
 
-    if (!isValidUrl(cleaned)) return
+    if (!isValidUrl(normalized)) return
+    const cleaned = normalized
 
     // Skip if already validated as reachable or currently in-flight
     const existing = urlValidations[cleaned]
@@ -248,7 +249,7 @@ export function StepTwo({
                       <Input
                         id={`url-${index}`}
                         type="url"
-                        placeholder="https://example.com/product-page"
+                        placeholder="example.com/product-page"
                         value={ref.url}
                         onChange={(e) => updateUrl(index, e.target.value)}
                         onBlur={() => handleUrlBlur(index)}

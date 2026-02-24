@@ -49,6 +49,8 @@ __turbopack_context__.s([
     ()=>cleanUrl,
     "detectUrlChanges",
     ()=>detectUrlChanges,
+    "ensureProtocol",
+    ()=>ensureProtocol,
     "extractUrls",
     ()=>extractUrls,
     "hasStepOneChanges",
@@ -61,6 +63,14 @@ __turbopack_context__.s([
 }
 function cleanUrl(url) {
     return url.trim().replace(/\/+$/, '');
+}
+function ensureProtocol(url) {
+    const trimmed = url.trim();
+    if (!trimmed) return trimmed;
+    if (trimmed.toLowerCase().startsWith('http://') || trimmed.toLowerCase().startsWith('https://')) {
+        return trimmed;
+    }
+    return `https://${trimmed}`;
 }
 function extractUrls(referenceUrls) {
     return referenceUrls.map((ref)=>typeof ref === 'string' ? ref : ref?.url).filter((url)=>!!url && url.trim() !== '').map(normalizeUrl);
@@ -144,8 +154,9 @@ async function POST(request) {
             });
         }
         const cleaned = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$url$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["cleanUrl"])(url);
+        const withProtocol = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$url$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["ensureProtocol"])(cleaned);
         try {
-            const parsed = new URL(cleaned);
+            const parsed = new URL(withProtocol);
             if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
                 return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
                     reachable: false,
@@ -161,7 +172,7 @@ async function POST(request) {
         const controller = new AbortController();
         const timeout = setTimeout(()=>controller.abort(), 10_000);
         try {
-            let response = await fetch(cleaned, {
+            let response = await fetch(withProtocol, {
                 method: 'HEAD',
                 signal: controller.signal,
                 redirect: 'follow',
@@ -170,7 +181,7 @@ async function POST(request) {
                 }
             });
             if (response.status === 405 || response.status === 403) {
-                response = await fetch(cleaned, {
+                response = await fetch(withProtocol, {
                     method: 'GET',
                     signal: controller.signal,
                     redirect: 'follow',

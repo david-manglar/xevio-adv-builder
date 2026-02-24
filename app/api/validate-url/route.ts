@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { cleanUrl } from '@/lib/url-utils'
+import { cleanUrl, ensureProtocol } from '@/lib/url-utils'
 
 export async function POST(request: Request) {
   try {
@@ -10,9 +10,10 @@ export async function POST(request: Request) {
     }
 
     const cleaned = cleanUrl(url)
+    const withProtocol = ensureProtocol(cleaned)
 
     try {
-      const parsed = new URL(cleaned)
+      const parsed = new URL(withProtocol)
       if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
         return NextResponse.json({ reachable: false, error: 'URL must use HTTP or HTTPS' })
       }
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
     const timeout = setTimeout(() => controller.abort(), 10_000)
 
     try {
-      let response = await fetch(cleaned, {
+      let response = await fetch(withProtocol, {
         method: 'HEAD',
         signal: controller.signal,
         redirect: 'follow',
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
       })
 
       if (response.status === 405 || response.status === 403) {
-        response = await fetch(cleaned, {
+        response = await fetch(withProtocol, {
           method: 'GET',
           signal: controller.signal,
           redirect: 'follow',

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { cleanUrl } from '@/lib/url-utils'
+import { cleanUrl, ensureProtocol } from '@/lib/url-utils'
 
 interface ScrapeRequestBody {
   stepOneData: {
@@ -43,13 +43,13 @@ export async function POST(request: Request) {
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Prepare URLs with descriptions (clean trailing slashes to avoid 404s)
+    // Prepare URLs with descriptions (clean trailing slashes and ensure protocol)
     const urlsWithContext = validUrls.map((ref: any) => {
       if (typeof ref === 'string') {
-        return { url: cleanUrl(ref), description: null }
+        return { url: ensureProtocol(cleanUrl(ref)), description: null }
       }
       return { 
-        url: cleanUrl(ref.url), 
+        url: ensureProtocol(cleanUrl(ref.url)), 
         description: ref.description?.trim() || null 
       }
     })
@@ -170,7 +170,10 @@ export async function POST(request: Request) {
 
       // Determine which URLs to send to n8n
       const urlsToScrape = newUrlsOnly && newUrlsOnly.length > 0
-        ? urlsWithContext.filter(u => newUrlsOnly.includes(u.url.toLowerCase().replace(/\/+$/, '')))
+        ? urlsWithContext.filter(u => {
+            const normalized = u.url.toLowerCase().replace(/\/+$/, '')
+            return newUrlsOnly.some((n: string) => ensureProtocol(cleanUrl(n)).toLowerCase().replace(/\/+$/, '') === normalized)
+          })
         : urlsWithContext
 
       // Determine scraping mode for n8n
