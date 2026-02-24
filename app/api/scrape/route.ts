@@ -178,31 +178,35 @@ export async function POST(request: Request) {
         ? 'incremental' 
         : 'full'
 
-      // Fire-and-forget: Trigger n8n webhook without blocking the API response
-      // This allows the user to proceed immediately while scraping happens in background
-      fetch(n8nWebhookUrl, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-          campaignId: finalCampaignId,
-          urls: urlsToScrape,
-          mode: mode,
-          // Include existing insights for incremental mode so n8n can merge
-          existingInsights: mode === 'incremental' ? existingInsights : null,
-          context: {
-            topic: stepOneData.topic,
-            niche: stepOneData.niche,
-            campaignType: stepOneData.campaignType,
-            country: stepOneData.country,
-            language: stepOneData.language,
-            guidelines: stepOneData.guidelines,
-            customGuidelines: stepOneData.customGuidelines || null
-          }
+      // Must be awaited — on Vercel the lambda is killed after the response is sent,
+      // so an unawaited fetch would be silently aborted.
+      try {
+        const webhookResponse = await fetch(n8nWebhookUrl, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({
+            campaignId: finalCampaignId,
+            urls: urlsToScrape,
+            mode: mode,
+            existingInsights: mode === 'incremental' ? existingInsights : null,
+            context: {
+              topic: stepOneData.topic,
+              niche: stepOneData.niche,
+              campaignType: stepOneData.campaignType,
+              country: stepOneData.country,
+              language: stepOneData.language,
+              guidelines: stepOneData.guidelines,
+              customGuidelines: stepOneData.customGuidelines || null
+            }
+          })
         })
-      }).catch((error) => {
-        // Log error but don't block - scraping will be retried if needed
-        console.error('Failed to trigger n8n webhook:', error)
-      })
+
+        if (!webhookResponse.ok) {
+          console.error('n8n scrape webhook returned error:', webhookResponse.status, await webhookResponse.text())
+        }
+      } catch (webhookError) {
+        console.error('Failed to trigger n8n webhook:', webhookError)
+      }
     } else {
       console.warn('N8N_SCRAPE_WEBHOOK_URL is not defined')
     }
