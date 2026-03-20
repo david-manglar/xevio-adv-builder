@@ -1,32 +1,66 @@
-# Advertorial Builder - Development Rules
+# Xevio Advertorial Builder - Development Rules
 
 ## Tech Stack
 - Next.js 16 (App Router)
-- React 19 + TypeScript
-- Tailwind CSS v4
-- shadcn/ui components
+- React 19 + TypeScript (strict mode)
+- Tailwind CSS v4 (OKLch colors, CSS custom properties)
+- shadcn/ui components (New York style)
 - @dnd-kit for drag-and-drop
-- Supabase for backend
+- react-hook-form + Zod for form validation
+- Supabase for backend (auth, DB, realtime)
+- n8n for automation workflows (scraping, generation)
+- Vercel for deployment
 
 ## Design Tokens
 - Brand Teal: #0dadb7 (icons, accents)
 - Brand Purple: #4644B6 (CTAs, active states)
 - Brand Gray: #F6F6F6 (backgrounds)
+- Font: Inter
 
 ## Key Principles
 - Keep components simple and maintainable
-- Use shadcn/ui for UI primitives
-- Follow existing design patterns from prototype
-- All state management via React hooks (no Redux/Zustand yet)
+- Use shadcn/ui for ALL UI primitives — never raw HTML inputs/buttons
+- Icons from lucide-react only
+- Use cn() from @/lib/utils for conditional classes
+- All state management via React hooks in app/page.tsx (no Redux/Zustand)
 - Mobile-first responsive design
+- Props down, callbacks up for component communication
+- Supabase Realtime for async updates (scraping status, etc.)
+
+## Code Style
+- Components: "use client", PascalCase names, kebab-case filenames
+- Functions: camelCase
+- Types/Interfaces: PascalCase (in lib/types.ts)
+- Constants: UPPER_SNAKE_CASE
+- Path aliases: @/components, @/lib, @/components/ui
 
 ## File Structure
-- app/ - Next.js pages and layouts
-- components/ - React components (step-campaign-setup.tsx, step-reference-pages.tsx, step-building-blocks.tsx, step-insights.tsx, step-review.tsx)
-- components/ui/ - shadcn/ui primitives
-- lib/ - Utility functions (to be created)
+- app/ — Next.js pages, layouts, and API routes
+- components/ — Feature components (step-*.tsx, mode-*.tsx, etc.)
+- components/ui/ — shadcn/ui primitives (do not edit manually)
+- lib/ — Utilities (types.ts, supabase.ts, auth.ts, utils.ts, url-utils.ts)
+- docs/ — Developer docs, feature reference
+- n8n/ — n8n workflow JSONs and code snippets
+- public/ — Static assets and images
+
+## External Integrations
+- Supabase: auth (email/password), campaigns table, realtime subscriptions
+- n8n: 3 webhooks (scrape, generate, lazy-generate) — server-side only
+- Google Docs: current output destination (v2 will add in-app editor)
+
+## Do / Don't
+- DO read existing component code before modifying — patterns are consistent
+- DO use shadcn/ui for new UI (npx shadcn@latest add <component>)
+- DO reference docs/.features for the full feature spec
+- DO check docs/ for n8n payload structures before modifying API routes
+- DON'T introduce new state management libraries without discussion
+- DON'T modify components/ui/ files directly (shadcn-managed)
+- DON'T expose n8n webhook URLs or secrets to client-side code
+- DON'T break the existing wizard flow — there are live users
 
 ## Current Status
-- Frontend prototype complete (6-step wizard)
-- Backend integration needed (n8n workflows)
-- Authentication planned (Supabase Auth)
+- Full 6-step wizard: complete (Full mode + Lazy mode)
+- Authentication: complete (Supabase Auth, email/password)
+- Backend integration: complete (n8n webhooks for scraping & generation)
+- Supabase Realtime: complete (async scraping status updates)
+- v2 planned: AI editing environment, LLM switching, more building blocks, n8n rework
