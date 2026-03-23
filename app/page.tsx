@@ -341,7 +341,7 @@ export default function AdvertorialBuilder() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src="/images/xevio-color.svg" alt="Xevio" className="h-8 w-8" />
-            <span className="text-lg font-semibold text-foreground">Advertorial Builder</span>
+            <span className="text-lg font-semibold text-foreground">Advertorial Builder v2</span>
           </div>
           <div className="flex items-center gap-2">
             <button
