@@ -48,6 +48,7 @@ import {
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { CampaignData, StepFourState, StepOneState, AddedBlock as AddedBlockType } from "@/lib/types"
+import { blockDescriptions } from "@/lib/block-descriptions"
 
 type BlockType = {
   id: string
@@ -251,7 +252,7 @@ function DraggablePaletteBlock({ block, onAdd }: { block: BlockType; onAdd: () =
   const [showTooltip, setShowTooltip] = useState(false)
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 })
   const iconRef = useRef<HTMLDivElement>(null)
-  const isFirstPersonLede = block.id === "lede-story"
+  const blockDescription = blockDescriptions[block.id]
 
   const updateTooltipPosition = useCallback(() => {
     if (iconRef.current) {
@@ -308,7 +309,7 @@ function DraggablePaletteBlock({ block, onAdd }: { block: BlockType; onAdd: () =
           {block.name}
           {block.required && <span className="ml-1 text-destructive">*</span>}
         </Button>
-        {isFirstPersonLede && (
+        {blockDescription && (
           <div
             ref={iconRef}
             className="relative flex items-center"
@@ -327,7 +328,7 @@ function DraggablePaletteBlock({ block, onAdd }: { block: BlockType; onAdd: () =
         )}
       </div>
       {/* Tooltip rendered outside container using fixed positioning */}
-      {showTooltip && isFirstPersonLede && (
+      {showTooltip && blockDescription && (
         <div
           className="fixed w-64 p-3 bg-foreground text-background text-xs rounded-md shadow-lg z-[9999] pointer-events-none"
           style={{
@@ -337,8 +338,11 @@ function DraggablePaletteBlock({ block, onAdd }: { block: BlockType; onAdd: () =
             marginTop: '-8px',
           }}
         >
-          <p className="font-medium mb-1.5">1st Person Perspective</p>
-          <p className="leading-relaxed">The entire advertorial will be written from a 1st person perspective when this block is selected.</p>
+          <p className="font-medium mb-1.5">{block.name}</p>
+          <p className="leading-relaxed">{blockDescription.description}</p>
+          {blockDescription.promptPreview && (
+            <p className="mt-1.5 leading-relaxed text-background/70 italic">{blockDescription.promptPreview}</p>
+          )}
           <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-foreground"></div>
         </div>
       )}

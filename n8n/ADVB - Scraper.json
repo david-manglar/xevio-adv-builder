@@ -1,0 +1,1353 @@
+{
+  "name": "ADVB - Scraper",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v2/scrape",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{ $json['body.urls'].url }}\",\n  \"onlyMainContent\": false,\n  \"formats\": [\n    \"markdown\",\n    {\n      \"type\": \"screenshot\",\n      \"fullPage\": true\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        576,
+        464
+      ],
+      "id": "bc67ee5f-3670-4b38-8515-4d917cb9a92b",
+      "name": "Scrape",
+      "executeOnce": false,
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "e9Vc48yBqkTjKAiz",
+          "name": "Firecrawl"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        720,
+        656
+      ],
+      "id": "27d5e8c7-0423-4e59-b933-c8a889d8db27",
+      "name": "gemini-2.5-flash",
+      "credentials": {
+        "openRouterApi": {
+          "id": "r433MoZZGOsLjy7p",
+          "name": "OpenRouter Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## More than 1 URL\n",
+        "height": 736,
+        "width": 2240,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        32,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "2ac4aec0-a221-4baf-822e-60af5ed5c0ef",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        -80
+      ],
+      "id": "c830a765-fe15-4a0b-b441-1c5f949d4994",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.urls",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        144,
+        352
+      ],
+      "id": "a9f28627-ae4f-487d-8afd-e1d673c4d7a4",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        352,
+        352
+      ],
+      "id": "3a2c7423-11c5-486c-8a75-b572936dbf2e",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Clean this landing page markdown by following these rules:\n\nREMOVE:\n- Navigation menus, headers, footers\n- Cookie notices, privacy banners, popups\n- Social media links, share buttons\n- Tracking scripts, analytics code\n- Breadcrumbs, pagination\n- \"Skip to content\" links\n- Metadata tags (title, description, og:image, etc.)\n- Generic footer text (copyright, terms, privacy policy links)\n\nKEEP:\n- All headlines and subheadlines\n- Body copy and paragraphs\n- Bullet points and lists\n- CTAs (call-to-action buttons and links)\n- Pricing information, offers, discounts\n- Testimonials, reviews, social proof\n- Product benefits and features\n- Guarantees, trust badges (text only)\n- FAQs\n- Any content a visitor would read while scrolling\n\nPRESERVE:\n- Original markdown formatting (headings, lists, bold, italic)\n- Logical content flow and structure\n\n---\n\n{{ $json.data.markdown }}",
+        "options": {
+          "systemMessage": "=You are a content extraction specialist for landing page analysis. Your job is to clean markdown content by removing navigational elements, tracking code, and boilerplate while preserving all marketing copy that a visitor would actually read.\n\nOutput ONLY the cleaned markdown with no explanations, commentary, or meta-text."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        784,
+        464
+      ],
+      "id": "2f63f907-2b1c-4da0-a80d-8456e05cc434",
+      "name": "Markdown Cleaner"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract reusable marketing elements from this native advertising landing page across 5 standardized categories.\nThese elements will be presented to users as selectable options when building new advertorials. Write each item as a direct statement or claim that can be reused, not as an analytical observation.\n\nINPUT SOURCES:\n- MARKDOWN (cleaned text content below)\n- SCREENSHOT (provided as image)\n\n---\n\nUSER CONTEXT (if provided):\n{{ $('Loop Over Items').item.json['body.urls'].description }}\n\nIf the user has provided context above, use it to:\n- Understand what type of page this is (product page, competitor advertorial, landing page, etc.)\n- Focus extraction on the areas they've highlighted as important\n- Prioritize elements relevant to their stated goals\n- Ignore sections they've indicated are not relevant\n\nIf no context is provided, extract comprehensively across all categories.\n\n---\n\nMARKDOWN CONTENT:\n{{ $json.output }}\n\n---\n\nSCREENSHOT URL:\n{{ $('Scrape').item.json.data.screenshot }}\n\n---\n\nEXTRACTION REQUIREMENTS:\n\nExtract elements for these 5 categories:\n\n**1. USPs (Unique Selling Propositions)**\nExtract 4-6 benefit statements, value propositions, or selling points exactly as they appear. These should be:\n- Direct benefit claims (e.g., \"Plans from just £7.50 per month\")\n- Specific guarantees or promises\n- Social proof statements (e.g., \"Trusted by 500,000+ families\")\n- Trust indicators (e.g., \"No health questionnaires required\")\n- Risk reversals (e.g., \"Money-back guarantee within 30 days\")\n\nWrite each as a standalone claim that could be used in any advertorial.\n\n**2. PRICING**\nExtract pricing statements exactly as presented. Include:\n- Price points with full context (e.g., \"Standard Plan £12.99/month (was £19.99)\")\n- Payment options or tiers\n- Discount offers\n- Pricing qualifiers (e.g., \"introductory rate\", \"covers up to £500/year\")\n\nIf no pricing found, write: \"No pricing information found\"\n\n**3. MAIN ANGLE (Messaging/Positioning)**\nExtract 2-4 messaging approaches as directive statements:\n- Target audience positioning (e.g., \"Appeals to UK adults 30-60 worried about dental costs\")\n- Problem-solution framing (e.g., \"Addresses NHS dentist shortage by offering immediate private coverage\")\n- Emotional triggers (e.g., \"Creates urgency around avoiding unexpected emergency bills\")\n- Unique positioning (e.g., \"Positions as affordable alternative to expensive private dentistry\")\n\nWrite each as a messaging directive, not an observation.\n\n**4. TONE OF VOICE**\nExtract 2-3 tone characteristics as style directives with examples:\n- Writing style to emulate\n- Emotional approach\n- Language patterns to use\n\nFormat: \"[Tone directive] - Example: '[exact quote showing this tone]'\"\n\n**5. KEY HOOKS (Headlines & CTAs to Adapt)**\nExtract 3-5 hooks as templates or examples:\n- Headlines that work\n- Subheadlines\n- Opening teasers\n- CTA phrasing\n- Curiosity drivers\n\nFormat: \"[Hook type]: '[exact text]'\"\n\n---\n\nINSTRUCTIONS:\n- Write as if suggesting \"Include this\" or \"Use this approach\" - NOT \"This page does X\"\n- Extract exact text for USPs, pricing, and hooks\n- Make tone and angle items actionable directives\n- Each item should stand alone - no analytical framing\n- Prioritize SCREENSHOT for headlines, prices, visual CTAs\n- Prioritize MARKDOWN for body copy, benefits, details\n- If user context emphasizes specific areas, weight extraction toward those areas\n\n---\n\nOUTPUT FORMAT:\n\n=== USPs ===\n- [Direct benefit claim or selling point]\n- [Another benefit claim]\n- [Continue for all USPs]\n\n=== PRICING ===\n- [Pricing statement with full context]\n- [Another pricing statement]\n- [Continue for all pricing found]\n\n=== MAIN ANGLE ===\n- [Messaging approach directive]\n- [Another angle directive]\n- [Continue for all angles]\n\n=== TONE OF VOICE ===\n- [Tone to emulate] - Example: \"[exact quote demonstrating this]\"\n- [Another tone directive] - Example: \"[exact quote]\"\n- [Continue for all tone characteristics]\n\n=== KEY HOOKS ===\n- [Hook type]: \"[exact text to adapt or emulate]\"\n- [Hook type]: \"[exact text]\"\n- [Continue for all hooks]\n\nDo not add any preamble, commentary, or closing remarks. Start directly with \"=== USPs ===\" and end after the last hook.",
+        "options": {
+          "systemMessage": "=You are a native advertising copywriting analyst extracting reusable marketing elements from high-performing landing pages.\n\nYou will receive:\n1. Cleaned markdown content (text-based)\n2. Screenshot of the page (visual-based)\n\nYour task is to extract marketing elements as direct, reusable statements that can be selected and applied to new advertorials. These are NOT analytical observations - they are building blocks.\n\nExtract what's working on this page in a format that can be directly reused. Write statements as if they are suggestions for what to include in a new campaign.\n\nCross-reference both sources. Visual elements take priority for headlines and CTAs.\n\nOutput your extraction in a clean, structured format with clear section headers."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1104,
+        464
+      ],
+      "id": "901a13c3-c00c-4a34-b2ed-96ae0a4872cd",
+      "name": "Page Analyzer"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        672
+      ],
+      "id": "775fc682-bc59-4841-89ff-7a354119063f",
+      "name": "gemini-3-flash",
+      "credentials": {
+        "openRouterApi": {
+          "id": "r433MoZZGOsLjy7p",
+          "name": "OpenRouter Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bd3fbab3-52f0-4510-add0-3f1645bf01fb",
+              "name": "url",
+              "value": "={{ $('Loop Over Items').item.json[\"body.urls\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "09e12ddb-2e92-4d51-917f-3d768cc61747",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1424,
+        464
+      ],
+      "id": "1136b540-4538-4beb-aaf1-e23b25c873e5",
+      "name": "Analysis per page"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        576,
+        288
+      ],
+      "id": "c0ac08bc-2797-4fe0-bb91-c44cd69d6aee",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node: Format Aggregated Data for Consolidation Agent\n// Place this BEFORE the Consolidation Agent\n\nconst aggregatedData = $input.item.json.data;\n\n// Extract all outputs and format them clearly\nconst formattedOutputs = aggregatedData.map((item, index) => {\n  return `\nPAGE ${index + 1}: ${item.url}\n${item.output}\n`;\n}).join('\\n\\n---\\n\\n');\n\n// Return formatted data\nreturn {\n  formattedData: formattedOutputs\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        288
+      ],
+      "id": "46914b76-d886-4a8c-8cb4-756c590e1d44",
+      "name": "Format data"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.5",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        912,
+        320
+      ],
+      "id": "978273aa-3f83-4c16-adce-b0c72bbf8719",
+      "name": "sonnet-4.5",
+      "credentials": {
+        "openRouterApi": {
+          "id": "r433MoZZGOsLjy7p",
+          "name": "OpenRouter Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Consolidate these reference page analyses into a single, curated set of insights.\n\nYou will receive results from multiple scraped pages. Your job is to create one final, high-quality list by:\n- Selecting the best items across all pages\n- Merging similar or duplicate items (keep the best-worded version)\n- Removing redundant or low-quality items\n- Ensuring variety and actionability\n\n---\n\n**INPUT DATA:**\n{{ $json.formattedData }}\n\n---\n\n**CONSOLIDATION TARGETS:**\n\n**1. USPs - Up to 10 items**\n- Prioritize specific, quantified claims (e.g., \"Reduces shedding by 77%\" over \"Reduces shedding\")\n- Include diverse types: pricing benefits, guarantees, social proof, features, specific results\n- Merge duplicates (e.g., if multiple pages mention money-back guarantee, keep one best version)\n- Prefer concrete numbers, timeframes, and specific outcomes\n- Look for: \"X% reduction\", \"in Y weeks\", \"by Z customers\", \"without [negative]\"\n\n**2. PRICING - Up to 5 items**\n- Include diverse pricing options (different tiers, packages, offers)\n- Prioritize complete pricing info (price + context + discount if applicable)\n- If multiple pages show similar pricing, consolidate into clearest version\n- Keep discount percentages and \"was/now\" pricing when available\n- Include payment frequency (per month, one-time, etc.)\n- Return fewer items if not enough unique pricing exists\n\n**3. MAIN ANGLE - Up to 3 items**\n- Choose the most distinct positioning approaches\n- Avoid overlapping angles (e.g., don't pick 2 variations of \"fear of aging\")\n- Each angle should clearly define: target audience + emotional trigger + unique approach\n- Prioritize angles that explain WHY the positioning works\n- Look for: problem-solution framing, urgency tactics, authority positioning, unique mechanisms\n\n**4. TONE OF VOICE - Up to 3 items**\n- Choose distinct tone characteristics with compelling example quotes\n- Ensure variety (e.g., don't pick 3 variations of \"urgent\")\n- Prioritize tones with quotable examples that clearly demonstrate the characteristic\n- Keep the exact example quotes that best show each tone\n- Look for: emotional approach, language patterns, formality level, perspective used\n\n**5. KEY HOOKS - Up to 5 items**\n- Include variety: at least 1 headline, 1 CTA, and mix of others\n- Prioritize hooks with specific numbers, curiosity gaps, or strong emotional triggers\n- Avoid redundant hooks (e.g., multiple CTAs saying same thing)\n- Choose hooks that could work across different products/verticals\n- Keep hook type labels (Headline, CTA, Teaser, etc.) and exact text in quotes\n\n---\n\n**SELECTION CRITERIA:**\n\n**Prefer items with:**\n- Specific data points and numbers\n- Timeframes and quantified results\n- Strong emotional triggers\n- Clear target audience definition\n- Proven social proof (specific user counts)\n- Urgency and scarcity elements\n- Risk reversals and guarantees\n\n**Avoid items with:**\n- Vague or generic statements\n- Overly wordy phrasing\n- Duplicate information across categories\n- Lack of context or specifics\n- Generic \"high quality\" claims without proof\n\n---\n\n**MERGING GUIDELINES:**\n\nWhen you find similar items across multiple pages:\n\n1. Compare quality and specificity\n2. Choose the version with more concrete details\n3. If both are good but different, combine the best elements into one item\n\n**Example merging:**\n- Page 1: \"90-day money-back guarantee\"\n- Page 2: \"90-day, no-questions-asked guarantee: You only pay if it works\"\n- **MERGED:** \"90-day, no-questions-asked guarantee: You only pay if it works\"\n\n**When to merge:**\n- Same core benefit/claim but different wording\n- Similar pricing tiers (keep most complete version)\n- Overlapping angles (combine into one stronger angle)\n- Redundant hooks (keep the one with strongest emotional trigger)\n\n---\n\n**OUTPUT FORMAT:**\n\n=== USPs ===\n- [Item 1]\n- [Item 2]\n...\n\n=== PRICING ===\n- [Item 1]\n- [Item 2]\n...\n\n=== MAIN ANGLE ===\n- [Item 1]\n- [Item 2]\n...\n\n=== TONE OF VOICE ===\n- [Tone] - Example: \"[quote]\"\n- [Tone] - Example: \"[quote]\"\n...\n\n=== KEY HOOKS ===\n- [Hook 1]\n- [Hook 2]\n...\n\n---\n\nReturn ONLY the consolidated list. No preamble, no commentary.\nStart with \"=== USPs ===\" and end after the last hook.",
+        "options": {
+          "systemMessage": "=You are a native advertising strategist curating the best marketing insights from multiple landing page analyses.\n\nYour task: consolidate insights from multiple reference pages into a single, high-quality set of building blocks.\n\n**Your job:**\n1. Select the most effective items from all pages\n2. Merge duplicate or similar items (keep best-worded version)\n3. Prioritize specific, quantified, actionable items\n4. Output up to the requested maximum per category\n\n**Quality criteria:**\n- Specific and concrete (with numbers/timeframes)\n- Unique and differentiated\n- Clear and direct\n\nOutput a curated, final list ready for user selection."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        944,
+        160
+      ],
+      "id": "d19e9b87-0c13-451a-a3d0-82c5b18f41e3",
+      "name": "Consolidation Agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node: Parse Consolidation Agent Output to JSON\n// Place this AFTER the Consolidation Agent node\n// No cleaning needed - JSON handles quotes correctly!\n\n// Get the output text from the consolidation agent\nconst output = $input.item.json.output;\n\n// Split by section headers\nconst sections = output.split('=== ').filter(s => s.trim());\n\nfunction parseSection(section) {\n  if (!section) return [];\n  \n  // Split by newlines and extract lines starting with '-'\n  const lines = section\n    .split('\\n')\n    .filter(line => line.trim().startsWith('-'))\n    .map(line => line.substring(1).trim()); // Remove the '-' and trim\n  \n  return lines;\n}\n\n// Find and parse each section\nconst uspsSection = sections.find(s => s.startsWith('USPs'));\nconst pricingSection = sections.find(s => s.startsWith('PRICING'));\nconst angleSection = sections.find(s => s.startsWith('MAIN ANGLE'));\nconst toneSection = sections.find(s => s.startsWith('TONE OF VOICE'));\nconst hooksSection = sections.find(s => s.startsWith('KEY HOOKS'));\n\n// Parse all sections\nconst usps = parseSection(uspsSection);\nconst pricing = parseSection(pricingSection);\nconst mainAngle = parseSection(angleSection);\nconst toneOfVoice = parseSection(toneSection);\nconst keyHooks = parseSection(hooksSection);\n\n// Return formatted JSON wrapped under scraping_result\nreturn {\n  scraping_result: {\n    usps: usps,\n    pricing: pricing,\n    mainAngle: mainAngle,\n    toneOfVoice: toneOfVoice,\n    keyHooks: keyHooks\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        160
+      ],
+      "id": "035bcdf8-5aeb-4bbe-b315-0e79eb06e36b",
+      "name": "scraping_result"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "93749d1b-a7c1-4a3d-a8bc-ee3248820cb1",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -544,
+        800
+      ],
+      "id": "699360c3-6246-41e9-9683-fea1d416f67b",
+      "name": "Webhook",
+      "webhookId": "93749d1b-a7c1-4a3d-a8bc-ee3248820cb1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "7xLmlE2dwxz86e3I",
+          "name": "Xevio-Adv-Builder-Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b25fb814-07ce-4995-ba9b-5f5c17d1a83f",
+              "name": "campaignId",
+              "value": "={{ $json.body.campaignId }}",
+              "type": "string"
+            },
+            {
+              "id": "08eac7cd-854c-4e6a-9094-795b5cfcae3d",
+              "name": "body.urls",
+              "value": "={{ $json.body.urls }}",
+              "type": "array"
+            },
+            {
+              "id": "d1df562c-68da-42b8-bc45-6e8797be5fb0",
+              "name": "context",
+              "value": "={{ $json.body.context }}",
+              "type": "object"
+            },
+            {
+              "id": "70824b80-6a0b-406f-a9a9-734f5a9e9b64",
+              "name": "mode",
+              "value": "={{ $json.body.mode }}",
+              "type": "string"
+            },
+            {
+              "id": "a76a34c1-343e-4ecb-b9aa-a598653d0b93",
+              "name": "existingInsights",
+              "value": "={{ $json.body.existingInsights }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -368,
+        800
+      ],
+      "id": "5f8950a1-0438-450e-93f9-58b4ea45a991",
+      "name": "Set data"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Test data for incremental insight extraction (webhook format)\nconst testPayload = {\n  body: {\n    campaignId: \"550e8400-e29b-41d4-a716-446655440000\",\n    mode: \"incremental\",\n    urls: [\n      {\n        url: \"https://acmecorp.com/testimonials\",\n        description: \"Customer testimonials and case studies\"\n      }\n    ],\n    existingInsights: {\n      usps: [\n        \"Enterprise-grade security with end-to-end encryption\",\n        \"99.9% uptime SLA guarantee\",\n        \"Seamless integration with existing tools\",\n        \"Unlimited storage for teams\"\n      ],\n      pricing: [\n        \"$29/month per user\",\n        \"Annual plans save 20%\",\n        \"Free 30-day trial, no credit card required\"\n      ],\n      mainAngle: [\n        \"Transform your business with secure, scalable cloud storage that grows with your team. Built for modern businesses that value security without sacrificing simplicity.\"\n      ],\n      toneOfVoice: [\n        \"Professional yet approachable, confident without being pushy, technical but accessible to non-technical decision makers\"\n      ],\n      keyHooks: [\n        \"Stop losing sleep over data security\",\n        \"The cloud storage solution that actually works for small teams\",\n        \"Why 10,000+ businesses trust AcmeCorp for their data\"\n      ]\n    },\n    context: {\n      topic: \"Cloud storage solutions for small businesses\",\n      niche: \"B2B SaaS\",\n      campaignType: \"advertorial\",\n      country: \"United States\",\n      language: \"English\",\n      guidelines: \"Focus on security and ease of use\",\n      customGuidelines: \"Emphasize 30-day free trial\"\n    }\n  }\n};\n\nreturn testPayload;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        -80
+      ],
+      "id": "78e37a97-8175-4758-8b7c-6f2293132204",
+      "name": "Incremental test"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.mode }}",
+                    "rightValue": "incremental",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    },
+                    "id": "e9a021a3-2f5d-448f-a560-ede91b620d1f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "FULL"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0ec556cb-51d1-4c41-9aff-1c9f06d60ed4",
+                    "leftValue": "={{ $json.mode }}",
+                    "rightValue": "incremental",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "INCREMENTAL"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1616,
+        160
+      ],
+      "id": "ddbef9ed-ecfe-4902-b007-0f3edcae739f",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst existing = item.existingInsights;\nconst newResults = item.scraping_result;\n\n// Merge by concatenating arrays\nconst mergedInsights = {\n  usps: [...(existing.usps || []), ...(newResults.usps || [])],\n  pricing: [...(existing.pricing || []), ...(newResults.pricing || [])],\n  mainAngle: [...(existing.mainAngle || []), ...(newResults.mainAngle || [])],\n  toneOfVoice: [...(existing.toneOfVoice || []), ...(newResults.toneOfVoice || [])],\n  keyHooks: [...(existing.keyHooks || []), ...(newResults.keyHooks || [])]\n};\n\nreturn {\n  campaignId: item.campaignId,\n  mergedInsights,\n  mode: item.mode\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        320
+      ],
+      "id": "542d64c3-f8d4-4868-8260-4da4d206670b",
+      "name": "Merge selected + existing"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "campaigns",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.campaignId }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "scraping_result",
+              "fieldValue": "={{ $json.scraping_result }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "urls_processed"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        144
+      ],
+      "id": "a9ca306e-3378-47c8-a4dd-a9e573454f0e",
+      "name": "New insights",
+      "credentials": {
+        "supabaseApi": {
+          "id": "7KJpcJFu5QuT9L4h",
+          "name": "Supabase (Xevio)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "campaigns",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.campaignId }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "scraping_result",
+              "fieldValue": "={{ $json.mergedInsights }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "urls_processed"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        320
+      ],
+      "id": "ed9a0455-3df5-4989-ba33-9f62ab09c8cd",
+      "name": "Merged insights",
+      "credentials": {
+        "supabaseApi": {
+          "id": "7KJpcJFu5QuT9L4h",
+          "name": "Supabase (Xevio)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "338ad539-54a9-4cb1-88c8-0de1c27c986f",
+              "name": "campaignId",
+              "value": "={{ $('Set data').item.json.campaignId }}",
+              "type": "string"
+            },
+            {
+              "id": "451b4820-bc89-4bab-8922-d8da4d80387a",
+              "name": "scraping_result",
+              "value": "={{ $json.scraping_result }}",
+              "type": "object"
+            },
+            {
+              "id": "2526e0ae-8e79-4b25-8b8e-66dd731729de",
+              "name": "mode",
+              "value": "={{ $('Set data').item.json.mode }}",
+              "type": "string"
+            },
+            {
+              "id": "ede88df8-5e99-4158-ae58-d9ba5ac9c3bf",
+              "name": "existingInsights",
+              "value": "={{ $('Set data').item.json.existingInsights }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1424,
+        160
+      ],
+      "id": "f15420ba-083b-4132-963e-6ca64d48764b",
+      "name": "Mode + Insights"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b3108001-a097-4516-9691-fa732f2ddbea",
+              "leftValue": "={{ $json.body.urls.length }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -208,
+        800
+      ],
+      "id": "b8a99ae7-bae4-4041-aad2-c640a21be728",
+      "name": "> 1 URL?"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        272,
+        1168
+      ],
+      "id": "95c698b7-588f-4a01-a5f4-b3d11a2d1130",
+      "name": "gemini-2.5-flash1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "r433MoZZGOsLjy7p",
+          "name": "OpenRouter Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        576,
+        1200
+      ],
+      "id": "9523fb67-3436-42e3-9951-bea4127ff9e5",
+      "name": "gemini-3-flash1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "r433MoZZGOsLjy7p",
+          "name": "OpenRouter Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Single URL\n",
+        "height": 512,
+        "width": 2240,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        32,
+        864
+      ],
+      "typeVersion": 1,
+      "id": "59cfdb9b-9d29-4711-a979-a307b7565e4a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    \"headers\": {\n      \"host\": \"manglarmedia.app.n8n.cloud\",\n      \"user-agent\": \"node\",\n      \"content-length\": \"837\",\n      \"accept\": \"*/*\",\n      \"accept-encoding\": \"gzip, br\",\n      \"accept-language\": \"*\",\n      \"cdn-loop\": \"cloudflare; loops=1; subreqs=1\",\n      \"cf-connecting-ip\": \"3.209.56.106\",\n      \"cf-ew-via\": \"15\",\n      \"cf-ipcountry\": \"US\",\n      \"cf-ray\": \"9c39cb515664c59a-IAD\",\n      \"cf-visitor\": \"{\\\"scheme\\\":\\\"https\\\"}\",\n      \"cf-worker\": \"n8n.cloud\",\n      \"content-type\": \"application/json\",\n      \"sec-fetch-mode\": \"cors\",\n      \"x-forwarded-for\": \"3.209.56.106, 172.68.244.200\",\n      \"x-forwarded-host\": \"manglarmedia.app.n8n.cloud\",\n      \"x-forwarded-port\": \"443\",\n      \"x-forwarded-proto\": \"https\",\n      \"x-forwarded-server\": \"traefik-prod-users-gwc-50-54974b54fc-qdglt\",\n      \"x-is-trusted\": \"yes\",\n      \"x-real-ip\": \"3.209.56.106\",\n      \"x-vercel-id\": \"iad1::mnqxb-1769365325614-c3fe6089d96c\",\n      \"x-webhook-secret\": \"64Dhj2NMrcq9n9lpP1E0pKCBLUEj5eCN\"\n    },\n    \"params\": {},\n    \"query\": {},\n    \"body\": {\n      \"campaignId\": \"93a63ee6-1310-4b26-bd00-634542b1e98b\",\n      \"urls\": [\n        {\n          \"url\": \"https://shop.try-spartan.com/native-pdp-2\",\n          \"description\": \"product page, pay attention to the descriptions and prices\"\n        }\n      ],\n      \"mode\": \"full\",\n      \"existingInsights\": null,\n      \"context\": {\n        \"topic\": \"Men over 30 are discovering a science-backed hair growth solution that tackles DHT buildup at the root level. Clinical studies show visible results in just 90 days, without expensive prescriptions or painful procedures.\",\n        \"niche\": \"Beauty\",\n        \"campaignType\": \"Lead Generation\",\n        \"country\": \"United States\",\n        \"language\": \"English\",\n        \"guidelines\": \"Custom\",\n        \"customGuidelines\": \"Don't make claims that would not fit with clinical studies reference\"\n      }\n    },\n    \"webhookUrl\": \"https://manglarmedia.app.n8n.cloud/webhook/93749d1b-a7c1-4a3d-a8bc-ee3248820cb1\",\n    \"executionMode\": \"production\"\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -688,
+        -80
+      ],
+      "id": "d5872344-11d6-4c90-bd4e-4e0f61612885",
+      "name": "US Hair Loss (1 URL)"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    \"headers\": {\n      \"host\": \"manglarmedia.app.n8n.cloud\",\n      \"user-agent\": \"node\",\n      \"content-length\": \"837\",\n      \"accept\": \"*/*\",\n      \"accept-encoding\": \"gzip, br\",\n      \"accept-language\": \"*\",\n      \"cdn-loop\": \"cloudflare; loops=1; subreqs=1\",\n      \"cf-connecting-ip\": \"3.209.56.106\",\n      \"cf-ew-via\": \"15\",\n      \"cf-ipcountry\": \"US\",\n      \"cf-ray\": \"9c39cb515664c59a-IAD\",\n      \"cf-visitor\": \"{\\\"scheme\\\":\\\"https\\\"}\",\n      \"cf-worker\": \"n8n.cloud\",\n      \"content-type\": \"application/json\",\n      \"sec-fetch-mode\": \"cors\",\n      \"x-forwarded-for\": \"3.209.56.106, 172.68.244.200\",\n      \"x-forwarded-host\": \"manglarmedia.app.n8n.cloud\",\n      \"x-forwarded-port\": \"443\",\n      \"x-forwarded-proto\": \"https\",\n      \"x-forwarded-server\": \"traefik-prod-users-gwc-50-54974b54fc-qdglt\",\n      \"x-is-trusted\": \"yes\",\n      \"x-real-ip\": \"3.209.56.106\",\n      \"x-vercel-id\": \"iad1::mnqxb-1769365325614-c3fe6089d96c\",\n      \"x-webhook-secret\": \"64Dhj2NMrcq9n9lpP1E0pKCBLUEj5eCN\"\n    },\n    \"params\": {},\n    \"query\": {},\n    \"body\": {\n      \"campaignId\": \"93a63ee6-1310-4b26-bd00-634542b1e98b\",\n      \"urls\": [\n        {\n          \"url\": \"https://shop.try-spartan.com/native-pdp-2\",\n          \"description\": \"product page, pay attention to the descriptions and prices\"\n        },\n        {\n          \"url\": \"https://blog.wellnesspluslab.com/this-hair-loss-shampoo-is-changing-lives-quick-fix--og\",\n          \"description\": \"advertorial, focus on the style and framing\"\n        }\n      ],\n      \"mode\": \"full\",\n      \"existingInsights\": null,\n      \"context\": {\n        \"topic\": \"Men over 30 are discovering a science-backed hair growth solution that tackles DHT buildup at the root level. Clinical studies show visible results in just 90 days, without expensive prescriptions or painful procedures.\",\n        \"niche\": \"Beauty\",\n        \"campaignType\": \"Lead Generation\",\n        \"country\": \"United States\",\n        \"language\": \"English\",\n        \"guidelines\": \"Custom\",\n        \"customGuidelines\": \"Don't make claims that would not fit with clinical studies reference\"\n      }\n    },\n    \"webhookUrl\": \"https://manglarmedia.app.n8n.cloud/webhook/93749d1b-a7c1-4a3d-a8bc-ee3248820cb1\",\n    \"executionMode\": \"production\"\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -496,
+        -80
+      ],
+      "id": "364f6d51-3b81-428e-a2f0-d89c67987c85",
+      "name": "US Hair Loss (multiple URLs)"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v2/scrape",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{ $json.body.urls[0].url }}\",\n  \"onlyMainContent\": false,\n  \"formats\": [\n    \"markdown\",\n    {\n      \"type\": \"screenshot\",\n      \"fullPage\": true\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        976
+      ],
+      "id": "d6aab46f-902b-4a5e-bae1-0c4860d4a8da",
+      "name": "Scrape (1)",
+      "executeOnce": false,
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "e9Vc48yBqkTjKAiz",
+          "name": "Firecrawl"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Clean this landing page markdown by following these rules:\n\nREMOVE:\n- Navigation menus, headers, footers\n- Cookie notices, privacy banners, popups\n- Social media links, share buttons\n- Tracking scripts, analytics code\n- Breadcrumbs, pagination\n- \"Skip to content\" links\n- Metadata tags (title, description, og:image, etc.)\n- Generic footer text (copyright, terms, privacy policy links)\n\nKEEP:\n- All headlines and subheadlines\n- Body copy and paragraphs\n- Bullet points and lists\n- CTAs (call-to-action buttons and links)\n- Pricing information, offers, discounts\n- Testimonials, reviews, social proof\n- Product benefits and features\n- Guarantees, trust badges (text only)\n- FAQs\n- Any content a visitor would read while scrolling\n\nPRESERVE:\n- Original markdown formatting (headings, lists, bold, italic)\n- Logical content flow and structure\n\n---\n\n{{ $json.data.markdown }}",
+        "options": {
+          "systemMessage": "=You are a content extraction specialist for landing page analysis. Your job is to clean markdown content by removing navigational elements, tracking code, and boilerplate while preserving all marketing copy that a visitor would actually read.\n\nOutput ONLY the cleaned markdown with no explanations, commentary, or meta-text."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        352,
+        976
+      ],
+      "id": "9d1d4ffa-342f-41ec-8e84-114bf91047cc",
+      "name": "Markdown Cleaner (1)"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract reusable marketing elements from this native advertising landing page across 5 standardized categories.\nThese elements will be presented to users as selectable options when building new advertorials. Write each item as a direct statement or claim that can be reused, not as an analytical observation.\n\nINPUT SOURCES:\n- MARKDOWN (cleaned text content below)\n- SCREENSHOT (provided as image)\n\n---\n\nUSER CONTEXT (if provided):\n{{ $('> 1 URL?').item.json.body.urls[0].description }}\n\nIf the user has provided context above, use it to:\n- Understand what type of page this is (product page, competitor advertorial, landing page, etc.)\n- Focus extraction on the areas they've highlighted as important\n- Prioritize elements relevant to their stated goals\n- Ignore sections they've indicated are not relevant\n\nIf no context is provided, extract comprehensively across all categories.\n\n---\n\nMARKDOWN CONTENT:\n{{ $json.output }}\n\n---\n\nSCREENSHOT URL:\n{{ $('Scrape (1)').item.json.data.screenshot }}\n\n---\n\nEXTRACTION REQUIREMENTS:\n\nExtract elements for these 5 categories:\n\n**1. USPs (Unique Selling Propositions)**\nExtract 4-6 benefit statements, value propositions, or selling points exactly as they appear. These should be:\n- Direct benefit claims (e.g., \"Plans from just £7.50 per month\")\n- Specific guarantees or promises\n- Social proof statements (e.g., \"Trusted by 500,000+ families\")\n- Trust indicators (e.g., \"No health questionnaires required\")\n- Risk reversals (e.g., \"Money-back guarantee within 30 days\")\n\nWrite each as a standalone claim that could be used in any advertorial.\n\n**2. PRICING**\nExtract pricing statements exactly as presented. Include:\n- Price points with full context (e.g., \"Standard Plan £12.99/month (was £19.99)\")\n- Payment options or tiers\n- Discount offers\n- Pricing qualifiers (e.g., \"introductory rate\", \"covers up to £500/year\")\n\nIf no pricing found, write: \"No pricing information found\"\n\n**3. MAIN ANGLE (Messaging/Positioning)**\nExtract 2-4 messaging approaches as directive statements:\n- Target audience positioning (e.g., \"Appeals to UK adults 30-60 worried about dental costs\")\n- Problem-solution framing (e.g., \"Addresses NHS dentist shortage by offering immediate private coverage\")\n- Emotional triggers (e.g., \"Creates urgency around avoiding unexpected emergency bills\")\n- Unique positioning (e.g., \"Positions as affordable alternative to expensive private dentistry\")\n\nWrite each as a messaging directive, not an observation.\n\n**4. TONE OF VOICE**\nExtract 2-3 tone characteristics as style directives with examples:\n- Writing style to emulate\n- Emotional approach\n- Language patterns to use\n\nFormat: \"[Tone directive] - Example: '[exact quote showing this tone]'\"\n\n**5. KEY HOOKS (Headlines & CTAs to Adapt)**\nExtract 3-5 hooks as templates or examples:\n- Headlines that work\n- Subheadlines\n- Opening teasers\n- CTA phrasing\n- Curiosity drivers\n\nFormat: \"[Hook type]: '[exact text]'\"\n\n---\n\nINSTRUCTIONS:\n- Write as if suggesting \"Include this\" or \"Use this approach\" - NOT \"This page does X\"\n- Extract exact text for USPs, pricing, and hooks\n- Make tone and angle items actionable directives\n- Each item should stand alone - no analytical framing\n- Prioritize SCREENSHOT for headlines, prices, visual CTAs\n- Prioritize MARKDOWN for body copy, benefits, details\n- If user context emphasizes specific areas, weight extraction toward those areas\n\n---\n\nOUTPUT FORMAT:\n\n=== USPs ===\n- [Direct benefit claim or selling point]\n- [Another benefit claim]\n- [Continue for all USPs]\n\n=== PRICING ===\n- [Pricing statement with full context]\n- [Another pricing statement]\n- [Continue for all pricing found]\n\n=== MAIN ANGLE ===\n- [Messaging approach directive]\n- [Another angle directive]\n- [Continue for all angles]\n\n=== TONE OF VOICE ===\n- [Tone to emulate] - Example: \"[exact quote demonstrating this]\"\n- [Another tone directive] - Example: \"[exact quote]\"\n- [Continue for all tone characteristics]\n\n=== KEY HOOKS ===\n- [Hook type]: \"[exact text to adapt or emulate]\"\n- [Hook type]: \"[exact text]\"\n- [Continue for all hooks]\n\nDo not add any preamble, commentary, or closing remarks. Start directly with \"=== USPs ===\" and end after the last hook.",
+        "options": {
+          "systemMessage": "=You are a native advertising copywriting analyst extracting reusable marketing elements from high-performing landing pages.\n\nYou will receive:\n1. Cleaned markdown content (text-based)\n2. Screenshot of the page (visual-based)\n\nYour task is to extract marketing elements as direct, reusable statements that can be selected and applied to new advertorials. These are NOT analytical observations - they are building blocks.\n\nExtract what's working on this page in a format that can be directly reused. Write statements as if they are suggestions for what to include in a new campaign.\n\nCross-reference both sources. Visual elements take priority for headlines and CTAs.\n\nOutput your extraction in a clean, structured format with clear section headers."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        656,
+        976
+      ],
+      "id": "0cc08a34-45d6-4271-9ac8-6ba4dc7e2a31",
+      "name": "Page Analyzer (1)"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node: Parse Consolidation Agent Output to JSON\n// Place this AFTER the Consolidation Agent node\n// No cleaning needed - JSON handles quotes correctly!\n\n// Get the output text from the consolidation agent\nconst output = $input.item.json.output;\n\n// Split by section headers\nconst sections = output.split('=== ').filter(s => s.trim());\n\nfunction parseSection(section) {\n  if (!section) return [];\n  \n  // Split by newlines and extract lines starting with '-'\n  const lines = section\n    .split('\\n')\n    .filter(line => line.trim().startsWith('-'))\n    .map(line => line.substring(1).trim()); // Remove the '-' and trim\n  \n  return lines;\n}\n\n// Find and parse each section\nconst uspsSection = sections.find(s => s.startsWith('USPs'));\nconst pricingSection = sections.find(s => s.startsWith('PRICING'));\nconst angleSection = sections.find(s => s.startsWith('MAIN ANGLE'));\nconst toneSection = sections.find(s => s.startsWith('TONE OF VOICE'));\nconst hooksSection = sections.find(s => s.startsWith('KEY HOOKS'));\n\n// Parse all sections\nconst usps = parseSection(uspsSection);\nconst pricing = parseSection(pricingSection);\nconst mainAngle = parseSection(angleSection);\nconst toneOfVoice = parseSection(toneSection);\nconst keyHooks = parseSection(hooksSection);\n\n// Return formatted JSON wrapped under scraping_result\nreturn {\n  scraping_result: {\n    usps: usps,\n    pricing: pricing,\n    mainAngle: mainAngle,\n    toneOfVoice: toneOfVoice,\n    keyHooks: keyHooks\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        976
+      ],
+      "id": "848c8751-6807-42ff-906c-151e005ae651",
+      "name": "scraping_result (1)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst existing = item.existingInsights;\nconst newResults = item.scraping_result;\n\n// Merge by concatenating arrays\nconst mergedInsights = {\n  usps: [...(existing.usps || []), ...(newResults.usps || [])],\n  pricing: [...(existing.pricing || []), ...(newResults.pricing || [])],\n  mainAngle: [...(existing.mainAngle || []), ...(newResults.mainAngle || [])],\n  toneOfVoice: [...(existing.toneOfVoice || []), ...(newResults.toneOfVoice || [])],\n  keyHooks: [...(existing.keyHooks || []), ...(newResults.keyHooks || [])]\n};\n\nreturn {\n  campaignId: item.campaignId,\n  mergedInsights,\n  mode: item.mode\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        1136
+      ],
+      "id": "3c969a08-8333-4056-9258-d71adfe38f6d",
+      "name": "Merge selected + existing (1)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "338ad539-54a9-4cb1-88c8-0de1c27c986f",
+              "name": "campaignId",
+              "value": "={{ $('Set data').item.json.campaignId }}",
+              "type": "string"
+            },
+            {
+              "id": "451b4820-bc89-4bab-8922-d8da4d80387a",
+              "name": "scraping_result",
+              "value": "={{ $json.scraping_result }}",
+              "type": "object"
+            },
+            {
+              "id": "2526e0ae-8e79-4b25-8b8e-66dd731729de",
+              "name": "mode",
+              "value": "={{ $('Set data').item.json.mode }}",
+              "type": "string"
+            },
+            {
+              "id": "ede88df8-5e99-4158-ae58-d9ba5ac9c3bf",
+              "name": "existingInsights",
+              "value": "={{ $('Set data').item.json.existingInsights }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1136,
+        976
+      ],
+      "id": "c57e1159-f284-4ee0-a556-047f2f99a691",
+      "name": "Mode + Insights (1)"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "campaigns",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.campaignId }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "scraping_result",
+              "fieldValue": "={{ $json.scraping_result }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "urls_processed"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1648,
+        960
+      ],
+      "id": "8efb26fb-6a09-4b28-b5c6-1ea0e0875f80",
+      "name": "New insights (1)",
+      "credentials": {
+        "supabaseApi": {
+          "id": "7KJpcJFu5QuT9L4h",
+          "name": "Supabase (Xevio)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "campaigns",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.campaignId }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "scraping_result",
+              "fieldValue": "={{ $json.mergedInsights }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "urls_processed"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1648,
+        1136
+      ],
+      "id": "34181545-f334-4fff-8fdc-b6a63f1c76eb",
+      "name": "Merged insights (1)",
+      "credentials": {
+        "supabaseApi": {
+          "id": "7KJpcJFu5QuT9L4h",
+          "name": "Supabase (Xevio)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Request from frontend",
+        "height": 320,
+        "width": 592,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -608,
+        704
+      ],
+      "typeVersion": 1,
+      "id": "eee9fbb0-3cf9-474c-825a-4c4b0fddf211",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## TEST DATA",
+        "height": 272,
+        "width": 896
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -976,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "10a05c03-ddc6-4e12-8d8e-c6769a8356f8",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.mode }}",
+                    "rightValue": "incremental",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    },
+                    "id": "e9a021a3-2f5d-448f-a560-ede91b620d1f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "FULL"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0ec556cb-51d1-4c41-9aff-1c9f06d60ed4",
+                    "leftValue": "={{ $json.mode }}",
+                    "rightValue": "incremental",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "INCREMENTAL"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1296,
+        976
+      ],
+      "id": "f3f64739-3de6-4468-b3f4-3289c78a08ea",
+      "name": "Switch (1)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Scrape": {
+      "main": [
+        [
+          {
+            "node": "Markdown Cleaner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gemini-2.5-flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Markdown Cleaner",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Scrape",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown Cleaner": {
+      "main": [
+        [
+          {
+            "node": "Page Analyzer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gemini-3-flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Page Analyzer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page Analyzer": {
+      "main": [
+        [
+          {
+            "node": "Analysis per page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analysis per page": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Format data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format data": {
+      "main": [
+        [
+          {
+            "node": "Consolidation Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sonnet-4.5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Consolidation Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consolidation Agent": {
+      "main": [
+        [
+          {
+            "node": "scraping_result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "scraping_result": {
+      "main": [
+        [
+          {
+            "node": "Mode + Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Set data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set data": {
+      "main": [
+        [
+          {
+            "node": "> 1 URL?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Incremental test": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "New insights",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge selected + existing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge selected + existing": {
+      "main": [
+        [
+          {
+            "node": "Merged insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mode + Insights": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "> 1 URL?": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Scrape (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gemini-2.5-flash1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Markdown Cleaner (1)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gemini-3-flash1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Page Analyzer (1)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "US Hair Loss (multiple URLs)": {
+      "main": [
+        []
+      ]
+    },
+    "US Hair Loss (1 URL)": {
+      "main": [
+        []
+      ]
+    },
+    "Scrape (1)": {
+      "main": [
+        [
+          {
+            "node": "Markdown Cleaner (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown Cleaner (1)": {
+      "main": [
+        [
+          {
+            "node": "Page Analyzer (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Page Analyzer (1)": {
+      "main": [
+        [
+          {
+            "node": "scraping_result (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "scraping_result (1)": {
+      "main": [
+        [
+          {
+            "node": "Mode + Insights (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge selected + existing (1)": {
+      "main": [
+        [
+          {
+            "node": "Merged insights (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mode + Insights (1)": {
+      "main": [
+        [
+          {
+            "node": "Switch (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch (1)": {
+      "main": [
+        [
+          {
+            "node": "New insights (1)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge selected + existing (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "76265436-7087-4e8b-9dd2-e845ee3e270e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "75d13ac94932aa15ce393c2710b6b540a9393b919f6fb77e7fb7f889daafb646"
+  },
+  "id": "kANYm1cXIcEsXnbe",
+  "tags": [
+    {
+      "updatedAt": "2026-02-19T21:16:05.495Z",
+      "createdAt": "2025-10-15T23:14:15.940Z",
+      "id": "2tVWdWLl7flgyRol",
+      "name": "BUILDER"
+    }
+  ]
+}

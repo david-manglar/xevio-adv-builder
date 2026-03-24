@@ -91,15 +91,26 @@ public/                 → Static assets and images
 ## Environment Variables
 
 ```bash
-# Supabase (public)
+# Supabase (public — client-side auth & realtime)
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+
+# Supabase (secret — server-side API routes, bypasses RLS)
+SUPABASE_SECRET_KEY=
 
 # n8n webhooks (server-side only — never expose to client)
 N8N_SCRAPE_WEBHOOK_URL=
 N8N_GENERATE_WEBHOOK_URL=
 N8N_LAZY_MODE_WEBHOOK_URL=
 N8N_WEBHOOK_SECRET=
+
+# DEV n8n webhooks (optional — takes priority over production URLs when set)
+N8N_DEV_SCRAPE_WEBHOOK_URL=
+N8N_DEV_GENERATE_WEBHOOK_URL=
+N8N_DEV_LAZY_MODE_WEBHOOK_URL=
+
+# OpenRouter (for AI rewrite in editor)
+OPENROUTER_API_KEY=
 ```
 
 ## Commands

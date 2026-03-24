@@ -15,6 +15,7 @@ import { HistoryMenu } from "@/components/history-menu"
 import { UserMenu } from "@/components/user-menu"
 import { LoginScreen } from "@/components/login-screen"
 import { Clock, User, Loader2 } from "lucide-react"
+import { EditingEnvironment } from "@/components/editor/editing-environment"
 import { StepOneState, StepTwoState, StepThreeState, StepFourState, LazyModeState, CampaignData } from "@/lib/types"
 import { supabase } from "@/lib/supabase"
 import { getSession, signOut, onAuthStateChange } from "@/lib/auth"
@@ -32,6 +33,7 @@ export default function AdvertorialBuilder() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 
   const [campaignData, setCampaignData] = useState<CampaignData>({})
+  const [selectedModel, setSelectedModel] = useState("anthropic/claude-sonnet-4-6")
 
   const [stepOneData, setStepOneData] = useState<StepOneState>({
     topic: "",
@@ -201,6 +203,7 @@ export default function AdvertorialBuilder() {
       paragraphLength: "",
       guidelines: "",
     })
+    setSelectedModel("anthropic/claude-sonnet-4-6")
   }
 
   const handleJumpToStep = (step: number) => {
@@ -291,20 +294,26 @@ export default function AdvertorialBuilder() {
           (payload) => {
             const newStatus = payload.new.status
             const generatedContent = payload.new.generated_content
+            const generatedHtml = payload.new.generated_html
+            const editorContent = payload.new.editor_content
             const docName = payload.new.doc_name
-            
+
             // Update local state if status changed or content arrived
             if (newStatus && newStatus !== campaignData.status) {
               setCampaignData((prev) => ({
                 ...prev,
                 status: newStatus,
                 generated_content: generatedContent || prev.generated_content,
+                generated_html: generatedHtml || prev.generated_html,
+                editor_content: editorContent || prev.editor_content,
                 doc_name: docName || prev.doc_name,
               }))
             } else if (generatedContent && generatedContent !== campaignData.generated_content) {
                setCampaignData((prev) => ({
                 ...prev,
                 generated_content: generatedContent,
+                generated_html: generatedHtml || prev.generated_html,
+                editor_content: editorContent || prev.editor_content,
                 doc_name: docName || prev.doc_name,
               }))
             }
@@ -384,6 +393,37 @@ export default function AdvertorialBuilder() {
   }
 
   if (isGenerating) {
+    const isCompleted = !!(campaignData.generated_content || campaignData.generated_html)
+    const hasEditor = !!campaignData.generated_html
+
+    // Show editor when generated_html is available
+    if (isCompleted && hasEditor) {
+      return (
+        <div className="min-h-screen bg-background flex flex-col">
+          {header}
+          <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} />
+          <UserMenu
+            isOpen={isUserMenuOpen}
+            onClose={() => setIsUserMenuOpen(false)}
+            onLogout={handleLogout}
+            userEmail={userEmail}
+          />
+          <EditingEnvironment
+            generatedHtml={campaignData.editor_content || campaignData.generated_html!}
+            documentUrl={campaignData.generated_content}
+            documentName={campaignData.doc_name}
+            campaignId={campaignData.id}
+            campaignData={campaignData}
+            stepOneData={appMode === "full" ? stepOneData : undefined}
+            stepThreeData={appMode === "full" ? stepThreeData : undefined}
+            lazyModeData={appMode === "lazy" ? lazyModeData : undefined}
+            onStartOver={handleStartOver}
+          />
+        </div>
+      )
+    }
+
+    // Fallback: show generating spinner or Google Docs link (for old campaigns without generated_html)
     return (
       <div className="min-h-screen bg-background">
         {header}
@@ -395,9 +435,9 @@ export default function AdvertorialBuilder() {
           userEmail={userEmail}
         />
         <main className="mx-auto max-w-5xl px-6 py-8">
-          <StepGenerating 
-            onComplete={handleStartOver} 
-            status={campaignData.generated_content ? 'completed' : 'generating'}
+          <StepGenerating
+            onComplete={handleStartOver}
+            status={isCompleted ? 'completed' : 'generating'}
             documentUrl={campaignData.generated_content}
             documentName={campaignData.doc_name}
             topic={appMode === "lazy" ? lazyModeData.instructions : stepOneData.topic}
@@ -446,6 +486,8 @@ export default function AdvertorialBuilder() {
               onBack={() => setLazyModeStep(1)}
               onGenerate={handleGenerate}
               setCampaignData={setCampaignData}
+              selectedModel={selectedModel}
+              onModelChange={setSelectedModel}
             />
           )}
         </main>
@@ -510,15 +552,17 @@ export default function AdvertorialBuilder() {
           />
         )}
         {currentStep === 5 && (
-          <StepFive 
-            onBack={handlePrevStep} 
-            onGenerate={handleGenerate} 
+          <StepFive
+            onBack={handlePrevStep}
+            onGenerate={handleGenerate}
             onJumpToStep={handleJumpToStep}
             stepOneData={stepOneData}
             stepTwoData={stepTwoData}
             stepThreeData={stepThreeData}
             stepFourData={stepFourData}
             campaignData={campaignData}
+            selectedModel={selectedModel}
+            onModelChange={setSelectedModel}
           />
         )}
       </main>

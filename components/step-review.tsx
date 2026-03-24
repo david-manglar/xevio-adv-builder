@@ -16,8 +16,8 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog"
-import { Globe, FileText, Target, Link, CheckCircle2, Layers, Pencil, X, Check, AlertTriangle, Loader2 } from "lucide-react"
-import { StepOneState, StepTwoState, StepThreeState, StepFourState, CampaignData } from "@/lib/types"
+import { Globe, FileText, Target, Link, CheckCircle2, Layers, Pencil, X, Check, AlertTriangle, Loader2, Cpu } from "lucide-react"
+import { StepOneState, StepTwoState, StepThreeState, StepFourState, CampaignData, LLM_MODELS } from "@/lib/types"
 
 interface StepFiveProps {
   onBack: () => void
@@ -28,6 +28,8 @@ interface StepFiveProps {
   stepThreeData: StepThreeState
   stepFourData: StepFourState
   campaignData: CampaignData
+  selectedModel: string
+  onModelChange: (model: string) => void
 }
 
 function ConfirmDialog({
@@ -103,7 +105,7 @@ function EditActions({ onSave, onCancel }: { onSave: () => void; onCancel: () =>
   )
 }
 
-export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, stepThreeData, stepFourData, campaignData: initialCampaignData }: StepFiveProps) {
+export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, stepThreeData, stepFourData, campaignData: initialCampaignData, selectedModel, onModelChange }: StepFiveProps) {
   const [editingCampaign, setEditingCampaign] = useState(false)
   const [editingTopic, setEditingTopic] = useState(false)
   const [showRefWarning, setShowRefWarning] = useState(false)
@@ -193,7 +195,8 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
             stepFiveData: {
               campaignData, // Current edited campaign data
               topic, // Current edited topic
-            }
+            },
+            model: selectedModel,
           }),
         })
       }
@@ -500,6 +503,43 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
                 )}
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Cpu className="h-4 w-4 text-[#0dadb7]" />
+              AI Model
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Select value={selectedModel} onValueChange={onModelChange}>
+              <SelectTrigger className="h-9 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(
+                  LLM_MODELS.reduce((acc, model) => {
+                    if (!acc[model.provider]) acc[model.provider] = []
+                    acc[model.provider].push(model)
+                    return acc
+                  }, {} as Record<string, typeof LLM_MODELS>)
+                ).map(([provider, models]) => (
+                  <div key={provider}>
+                    <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{provider}</div>
+                    {models.map((model) => (
+                      <SelectItem key={model.id} value={model.id} className="text-sm">
+                        {model.name}
+                      </SelectItem>
+                    ))}
+                  </div>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-2">
+              Choose which AI model writes your advertorial
+            </p>
           </CardContent>
         </Card>
 
