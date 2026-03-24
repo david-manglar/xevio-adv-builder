@@ -40,7 +40,7 @@ export async function POST(request: Request) {
 
     // 2. Initialize Supabase client
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    const supabaseKey = process.env.SUPABASE_SECRET_KEY!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     // Prepare URLs with descriptions (clean trailing slashes and ensure protocol)
@@ -159,7 +159,7 @@ export async function POST(request: Request) {
     }
 
     // 4. Trigger n8n Webhook
-    const n8nWebhookUrl = process.env.N8N_SCRAPE_WEBHOOK_URL
+    const n8nWebhookUrl = process.env.N8N_DEV_SCRAPE_WEBHOOK_URL || process.env.N8N_SCRAPE_WEBHOOK_URL
     const n8nWebhookSecret = process.env.N8N_WEBHOOK_SECRET
     
     if (n8nWebhookUrl) {
