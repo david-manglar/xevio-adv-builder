@@ -5,20 +5,23 @@ import { cleanUrl, ensureProtocol } from '@/lib/url-utils'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { campaignId, stepOneData, stepTwoData, stepThreeData, stepFourData, stepFiveData } = body
+    const { campaignId, stepOneData, stepTwoData, stepThreeData, stepFourData, stepFiveData, model } = body
 
     if (!campaignId) {
       return NextResponse.json({ error: 'Campaign ID is required' }, { status: 400 })
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    const supabaseKey = process.env.SUPABASE_SECRET_KEY!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // 1. Update campaign status to 'generating'
+    // 1. Update campaign status to 'generating' and store selected model
+    const updateData: Record<string, any> = { status: 'generating' }
+    if (model) updateData.llm_model = model
+
     const { error: updateError } = await supabase
       .from('campaigns')
-      .update({ status: 'generating' })
+      .update(updateData)
       .eq('id', campaignId)
 
     if (updateError) {
@@ -86,10 +89,13 @@ export async function POST(request: Request) {
 
       // Ordered structure blocks from Step 4
       structureBlocks,
+
+      // Selected LLM model
+      model: model || 'anthropic/claude-sonnet-4-6',
     }
 
     // 3. Trigger n8n webhook
-    const webhookUrl = process.env.N8N_GENERATE_WEBHOOK_URL
+    const webhookUrl = process.env.N8N_DEV_GENERATE_WEBHOOK_URL || process.env.N8N_GENERATE_WEBHOOK_URL
     const webhookSecret = process.env.N8N_WEBHOOK_SECRET
 
     if (!webhookUrl) {

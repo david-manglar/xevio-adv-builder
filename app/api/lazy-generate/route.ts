@@ -5,14 +5,14 @@ import { cleanUrl, ensureProtocol } from '@/lib/url-utils'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { lazyModeData, userId } = body
+    const { lazyModeData, userId, model } = body
 
     if (!lazyModeData || !userId) {
       return NextResponse.json({ error: 'Missing required data' }, { status: 400 })
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    const supabaseKey = process.env.SUPABASE_SECRET_KEY!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     const advertorialUrl = ensureProtocol(cleanUrl(lazyModeData.advertorialUrl || ''))
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     const lengthValue = lazyModeData.keepOriginalLength ? 'keep_original' : lazyModeData.length
 
     // Require n8n webhook URL before creating campaign (avoids orphan campaigns in "generating")
-    const webhookUrl = process.env.N8N_LAZY_MODE_WEBHOOK_URL
+    const webhookUrl = process.env.N8N_DEV_LAZY_MODE_WEBHOOK_URL || process.env.N8N_LAZY_MODE_WEBHOOK_URL
     if (!webhookUrl) {
       console.error(
         '[Lazy Mode] N8N_LAZY_MODE_WEBHOOK_URL is not set. Set this env var in production so the n8n workflow is triggered.'
@@ -64,6 +64,7 @@ export async function POST(request: Request) {
         guidelines: lazyModeData.guidelines,
         reference_urls: referenceUrls,
         status: 'generating',
+        ...(model ? { llm_model: model } : {}),
       })
       .select()
       .single()
@@ -97,6 +98,7 @@ export async function POST(request: Request) {
         paragraphLength: lazyModeData.paragraphLength,
         guidelines: lazyModeData.guidelines,
         customGuidelines: lazyModeData.customGuidelines || null,
+        model: model || 'anthropic/claude-sonnet-4-6',
       }
 
       const webhookResponse = await fetch(webhookUrl, {
