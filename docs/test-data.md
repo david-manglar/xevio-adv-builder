@@ -24,9 +24,9 @@ Use these examples to test the full workflow end-to-end. Each includes data for 
 **Step 2 — Reference URLs**
 | URL | Description |
 |-----|-------------|
-| https://www.denplan.co.uk/patients/plans/denplan-essentials | Main product page — pricing, plan details, benefits |
-| https://www.moneysavingexpert.com/insurance/dental-insurance/ | Competitor comparison and general dental insurance advice |
-| https://www.bbc.co.uk/news/health-67890123 | News context — NHS dentist shortage across UK regions |
+| https://www.simplyhealth.co.uk/denplan | Main product page — pricing, plan details, benefits |
+| https://www.nhs.uk/nhs-services/dentists/how-to-find-an-nhs-dentist/ | NHS context — finding a dentist, waiting lists |
+| https://www.denplan.co.uk/ | Denplan homepage — brand overview, plan types |
 
 **Step 4 — Suggested Structure**
 1. Lede (Journalistic)
@@ -46,7 +46,7 @@ Use these examples to test the full workflow end-to-end. Each includes data for 
 
 | Field | Value |
 |-------|-------|
-| Advertorial URL | https://www.denplan.co.uk/patients/plans/denplan-essentials |
+| Advertorial URL | https://www.simplyhealth.co.uk/denplan |
 | Instructions | Rewrite this into an advertorial targeting UK adults who can't find an NHS dentist. Focus on affordability (plans from £7.50/month), no health questionnaires needed, and the 6,500+ practice network. Use a journalistic angle — lead with the NHS dentist crisis, then position Denplan as the accessible solution. |
 | Campaign Type | Advertorial |
 | Niche | Health & Insurance |
@@ -59,7 +59,7 @@ Use these examples to test the full workflow end-to-end. Each includes data for 
 **Additional Reference URLs**
 | URL | Description |
 |-----|-------------|
-| https://www.moneysavingexpert.com/insurance/dental-insurance/ | Competitor pricing landscape |
+| https://www.nhs.uk/nhs-services/dentists/how-to-find-an-nhs-dentist/ | NHS dentist access context |
 
 ---
 
@@ -83,7 +83,7 @@ Use these examples to test the full workflow end-to-end. Each includes data for 
 | URL | Description |
 |-----|-------------|
 | https://laduti.de/ | Offizielle Produktseite — Inhaltsstoffe, Vorher/Nachher, Preise |
-| https://www.elle.de/beauty-pflege/haare/haarausfall | Redaktioneller Kontext — Haarausfall Ursachen und Behandlungen |
+| https://www.apotheken-umschau.de/krankheiten-symptome/symptome/haarausfall | Redaktioneller Kontext — Haarausfall Ursachen und Behandlungen |
 | https://www.trustpilot.com/review/laduti.de | Echte Kundenbewertungen auf Trustpilot |
 
 **Step 4 — Suggested Structure**
@@ -120,21 +120,21 @@ Use these examples to test the full workflow end-to-end. Each includes data for 
 | URL | Description |
 |-----|-------------|
 | https://www.trustpilot.com/review/laduti.de | Echte Kundenstimmen für Social Proof |
-| https://www.elle.de/beauty-pflege/haare/haarausfall | Hintergrund zu Haarausfall-Thematik |
+| https://www.apotheken-umschau.de/krankheiten-symptome/symptome/haarausfall | Hintergrund zu Haarausfall-Thematik |
 
 ---
 
-## Example 3: UK — Smart Home Security (Bonus)
+## Example 3: US — Light Bulb Security Camera
 
 ### Lazy Mode Only
 
 | Field | Value |
 |-------|-------|
-| Advertorial URL | https://www.ring.com/en-gb/doorbell-cameras |
-| Instructions | Write a listicle-style comparison advertorial for the Ring Video Doorbell. Compare it against 3 competitors (Arlo, Google Nest, Eufy). Position Ring as the best value for UK homeowners. Highlight the integration with Alexa, neighbourhood alerts feature, and the affordable Ring Protect plan. Target audience: homeowners 30-50 concerned about parcel theft and break-ins. |
-| Campaign Type | Listicle |
+| Advertorial URL | https://www.lifehackin.com/cameralight-nomad?c=us&lang=en |
+| Instructions | Rewrite this advertorial for a light bulb security camera. Keep the same fear-based angle (burglary stats, package theft) but make it less aggressive and more editorial. Tone down the scarcity tactics, add more product detail about the 360° rotation and night vision. Target audience: US homeowners 35-55 looking for affordable, easy-to-install home security without subscriptions. |
+| Campaign Type | E-commerce |
 | Niche | Technology & Smart Home |
-| Country | United Kingdom |
+| Country | United States |
 | Language | English |
 | Length | 1300 |
 | Paragraph Length | Short (1-2 sentences) |
@@ -143,8 +143,8 @@ Use these examples to test the full workflow end-to-end. Each includes data for 
 **Additional Reference URLs**
 | URL | Description |
 |-----|-------------|
-| https://www.which.co.uk/reviews/smart-doorbells | Independent UK reviews of smart doorbells |
-| https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice | ONS crime statistics for context |
+| https://www.thesmarthomehookup.com/are-lightbulb-security-cameras-still-terrible-in-2025/ | 2025 comparison of 15 light bulb cameras — specs, pricing, rankings |
+| https://www.thesmarthomehookup.com/should-you-buy-a-lightbulb-security-camera-i-tested-10-cameras-from-amazon-from-20-150/ | Earlier roundup of 10 budget models — honest pros/cons, alternatives |
 
 ---
 

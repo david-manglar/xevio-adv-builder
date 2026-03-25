@@ -30,28 +30,50 @@ export function LazyModeReview({ data, campaignData, userId, onBack, onGenerate,
   const handleGenerate = async () => {
     setIsSubmitting(true)
     try {
-      const response = await fetch("/api/lazy-generate", {
+      const response = await fetch("/api/scrape", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lazyModeData: data, userId, model: selectedModel }),
+        body: JSON.stringify({
+          stepOneData: {
+            topic: data.instructions,
+            campaignType: data.campaignType,
+            niche: data.niche,
+            country: data.country,
+            language: data.language,
+            length: data.keepOriginalLength ? "keep_original" : data.length,
+            paragraphLength: data.paragraphLength,
+            guidelines: data.guidelines,
+            customGuidelines: data.customGuidelines,
+          },
+          stepTwoData: {
+            referenceUrls: [
+              { url: data.advertorialUrl, description: "Reference advertorial" },
+              ...data.referenceUrls.filter((r) => r.url.trim()),
+            ],
+          },
+          userId,
+          mode: "lazy",
+          advertorialUrl: data.advertorialUrl,
+          model: selectedModel,
+        }),
       })
 
       const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to start generation")
+        throw new Error(result.error || "Failed to start scraping")
       }
 
       setCampaignData((prev) => ({
         ...prev,
         id: result.campaignId,
         mode: "lazy",
-        status: "generating",
+        status: "scraping",
       }))
 
       onGenerate()
     } catch (error) {
-      console.error("Failed to start lazy generation:", error)
+      console.error("Failed to start lazy scraping:", error)
     } finally {
       setIsSubmitting(false)
     }

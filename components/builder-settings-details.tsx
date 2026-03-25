@@ -30,6 +30,7 @@ interface CampaignDetails {
   generatedContent: string
   docName: string
   mode?: 'full' | 'lazy' | null
+  llmModel?: string | null
 }
 
 interface BuilderSettingsDetailsProps {
@@ -181,6 +182,14 @@ export function BuilderSettingsDetails({ campaign }: BuilderSettingsDetailsProps
               <span className="text-muted-foreground w-20 shrink-0 pt-0.5">Guidelines</span>
               <span className="inline-flex items-center rounded bg-[#F6F6F6] px-2 py-0.5 text-xs text-muted-foreground">
                 {campaign.guidelines}
+              </span>
+            </div>
+          )}
+          {campaign.llmModel && (
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-muted-foreground w-20 shrink-0">Model</span>
+              <span className="inline-flex items-center rounded bg-[#F6F6F6] px-2 py-0.5 text-xs text-muted-foreground">
+                {campaign.llmModel.replace(/^.*\//, '')}
               </span>
             </div>
           )}

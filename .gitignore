@@ -20,6 +20,9 @@ Thumbs.db
 # Claude Code
 .claude/
 
+# n8n workflow files (internal, contain credentials)
+n8n/
+
 # Backup files
 *.backup
 

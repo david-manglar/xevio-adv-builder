@@ -24,6 +24,7 @@ The generation workflow is triggered when a user completes all steps and clicks 
   "paragraphLength": "Normal (3-4 lines)",
   "guidelines": "None" | "ERGO" | "Custom",
   "customGuidelines": null | "User's custom compliance text...",
+  "model": "anthropic/claude-sonnet-4.6",
   "referenceUrls": [
     {
       "url": "https://acmecorp.com/products",
@@ -224,6 +225,7 @@ const fullPrompt = `
 - **`language`**: Target language (e.g., "English", "German")
 - **`length`**: Target word count as string (e.g., "1500")
 - **`paragraphLength`**: Paragraph style preference (e.g., "Normal (3-4 lines)")
+- **`model`**: OpenRouter model ID for generation (e.g., `anthropic/claude-sonnet-4.6`). Falls back to `anthropic/claude-sonnet-4.6` if not provided
 
 ### Compliance
 
@@ -275,11 +277,14 @@ const fullPrompt = `
 6. **Update Supabase**: After generation, update the campaign:
    ```sql
    UPDATE campaigns
-   SET 
-     generated_content = $generatedContent,
-     status = 'completed'
+   SET
+     generated_html = $generatedHtml,
+     status = 'drafted',
+     llm_model = $model,
+     doc_name = $generatedDocName
    WHERE id = $campaignId
    ```
+   Note: `status = 'drafted'` means content is ready in the in-app editor. `status = 'completed'` is set later by the Google Doc Creator workflow when the user exports.
 
 ---
 

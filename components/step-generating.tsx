@@ -1,8 +1,65 @@
 "use client"
 
-import { Loader2, FileText, CheckCircle2, ExternalLink } from "lucide-react"
+import { Loader2, FileText, CheckCircle2, ExternalLink, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+
+// 0 = scraping, 1 = writing, 2 = done
+type StepIndex = 0 | 1 | 2
+
+const steps = [
+  { label: 'Scraping', color: '#0dadb7' },
+  { label: 'Writing', color: '#4644B6' },
+  { label: 'Done', color: '#0dadb7' },
+]
+
+function ProgressStepper({ activeStep }: { activeStep: StepIndex }) {
+  return (
+    <div className="flex items-center w-full max-w-xs mb-10">
+      {steps.map((step, i) => (
+        <div key={step.label} className="flex items-center flex-1 last:flex-none">
+          {/* Dot */}
+          <div className="relative flex flex-col items-center">
+            <div
+              className="flex h-7 w-7 items-center justify-center rounded-full border-2 transition-all duration-500"
+              style={{
+                borderColor: i <= activeStep ? step.color : '#d4d4d8',
+                backgroundColor: i < activeStep ? step.color : i === activeStep ? 'white' : 'white',
+              }}
+            >
+              {i < activeStep ? (
+                <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} />
+              ) : i === activeStep ? (
+                <div
+                  className="h-2.5 w-2.5 rounded-full animate-pulse"
+                  style={{ backgroundColor: step.color }}
+                />
+              ) : null}
+            </div>
+            <span
+              className="absolute top-9 text-xs font-medium whitespace-nowrap transition-colors duration-500"
+              style={{ color: i <= activeStep ? step.color : '#a1a1aa' }}
+            >
+              {step.label}
+            </span>
+          </div>
+          {/* Line (not after last dot) */}
+          {i < steps.length - 1 && (
+            <div className="flex-1 h-0.5 mx-2 rounded-full overflow-hidden bg-[#e4e4e7]">
+              <div
+                className="h-full rounded-full transition-all duration-700 ease-in-out"
+                style={{
+                  width: i < activeStep ? '100%' : '0%',
+                  backgroundColor: steps[i + 1].color,
+                }}
+              />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
 
 interface StepGeneratingProps {
   onComplete: () => void
@@ -10,22 +67,38 @@ interface StepGeneratingProps {
   documentUrl?: string
   documentName?: string
   topic?: string
+  phase?: 'scraping' | 'generating'
 }
 
-export function StepGenerating({ onComplete, status = 'generating', documentUrl, documentName, topic }: StepGeneratingProps) {
-  
+export function StepGenerating({ onComplete, status = 'generating', documentUrl, documentName, topic, phase = 'generating' }: StepGeneratingProps) {
+
   if (status === 'generating') {
+    const isScraping = phase === 'scraping'
+    const activeStep: StepIndex = isScraping ? 0 : 1
+    const color = isScraping ? '#0dadb7' : '#4644B6'
+    const title = isScraping ? 'Analyzing your pages' : 'Generating your advertorial'
+    const subtitle = isScraping
+      ? 'Scraping and analyzing your reference pages...'
+      : 'Your pages have been analyzed. The writer is working on it...'
+
     return (
       <div className="flex flex-col items-center justify-center py-24">
         <div className="relative mb-8">
-          <div className="absolute inset-0 rounded-full bg-[#4644B6]/20 animate-ping" />
-          <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-[#4644B6]">
+          <div
+            className="absolute inset-0 rounded-full animate-ping transition-colors duration-500"
+            style={{ backgroundColor: `${color}33` }}
+          />
+          <div
+            className="relative flex h-20 w-20 items-center justify-center rounded-full transition-colors duration-500"
+            style={{ backgroundColor: color }}
+          >
             <Loader2 className="h-10 w-10 text-white animate-spin" />
           </div>
         </div>
-        <h2 className="text-xl font-semibold text-foreground mb-2">Generating Your Advertorial</h2>
-        <p className="text-muted-foreground text-center max-w-md">Be patient, the writer is working on it...</p>
-        <div className="mt-8 flex items-center gap-2 text-sm text-muted-foreground">
+        <h2 className="text-xl font-semibold text-foreground mb-2">{title}</h2>
+        <p className="text-muted-foreground text-center max-w-md mb-2">{subtitle}</p>
+        <ProgressStepper activeStep={activeStep} />
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <FileText className="h-4 w-4" />
           <span>Creating content for: {topic ? (topic.length > 40 ? topic.substring(0, 40) + '...' : topic) : 'New Campaign'}</span>
         </div>
@@ -40,7 +113,7 @@ export function StepGenerating({ onComplete, status = 'generating', documentUrl,
           <CheckCircle2 className="h-10 w-10 text-white" />
         </div>
       </div>
-      <h2 className="text-2xl font-semibold text-foreground mb-2">Advertorial Ready!</h2>
+      <h2 className="text-2xl font-semibold text-foreground mb-2">Advertorial ready!</h2>
       <p className="text-muted-foreground text-center max-w-md mb-8">
         Your advertorial has been generated and is ready for review in Google Docs.
       </p>

@@ -225,3 +225,17 @@
   height: 0;
   pointer-events: none;
 }
+
+/* Advertorial placeholder chips */
+.tiptap .adv-placeholder {
+  display: inline-block;
+  background-color: #f0f4ff;
+  border: 1px dashed #4644b6;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #4644b6;
+  letter-spacing: 0.01em;
+  margin: 2px 0;
+}

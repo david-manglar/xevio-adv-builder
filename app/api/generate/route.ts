@@ -91,7 +91,7 @@ export async function POST(request: Request) {
       structureBlocks,
 
       // Selected LLM model
-      model: model || 'anthropic/claude-sonnet-4-6',
+      model: model || 'anthropic/claude-sonnet-4.6',
     }
 
     // 3. Trigger n8n webhook

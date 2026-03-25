@@ -80,13 +80,14 @@ public/                 → Static assets and images
 
 ### n8n
 - Instance: `manglarmedia.app.n8n.cloud`
-- 3 webhooks: scrape, generate, lazy-generate
+- v2 architecture: Unified Scraper (full+lazy), Full Writer, Lazy Writer, Google Doc Creator
 - Payload docs: `docs/n8n-generation-workflow.md`, `docs/n8n-incremental-scraping.md`
+- DEV workflow setup: `n8n/DEV-WORKFLOWS.md`
 - Workflow JSONs go in `/n8n` folder (not `/docs`)
 
 ### Output
 - Generated content currently goes to Google Docs
-- v2 will add an in-app editing environment
+- v2 adds an in-app editing environment (in progress)
 
 ## Environment Variables
 
@@ -108,6 +109,7 @@ N8N_WEBHOOK_SECRET=
 N8N_DEV_SCRAPE_WEBHOOK_URL=
 N8N_DEV_GENERATE_WEBHOOK_URL=
 N8N_DEV_LAZY_MODE_WEBHOOK_URL=
+N8N_DEV_CREATE_DOC_WEBHOOK_URL=
 
 # OpenRouter (for AI rewrite in editor)
 OPENROUTER_API_KEY=
@@ -151,10 +153,42 @@ This project needs git initialization and a proper branching workflow:
 
 ## v2 Context
 
-Major improvements planned (work in progress, tackle incrementally):
+Major improvements in progress (tackle incrementally):
 - In-app AI editing environment (replacing Google Docs output)
 - LLM switching for end users (choice of model for generation)
 - New and modified building blocks
 - Prompt refinements
 - n8n workflow restructuring (open to direct LLM API calls where it makes sense)
 - Dev/staging environment setup
+
+### v2 Workflow Restructuring Progress
+
+Plan: `docs/workflow-restructuring-plan.md`
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 1 | Frontend & API changes (scrape route, lazy-generate route, auto-trigger, UI) | Done |
+| 2 | Unified Scraper n8n workflow (`dev-advb-unified-scraper.json`) | Done |
+| 3 | Lazy Writer n8n workflow (`dev-advb-lazy-writer.json`) | Done — tested end-to-end |
+| 4 | Google Doc Creator (`dev-advb-google-doc-creator.json`) | Done — tested end-to-end |
+| 5 | Full Writer n8n workflow | Not started |
+
+### Campaign status flow (v2)
+`scraping` → `urls_processed` → `generating` → `drafted` → `completed`
+- Writer workflows write `status: 'drafted'` (content ready in editor)
+- Google Doc Creator writes `status: 'completed'` (doc exported)
+- History menu: `drafted` = "Open in editor", `completed` = "Open Google Doc"
+
+### Key changes already made
+- `/api/scrape` handles both full and lazy modes via `mode` field; stores `custom_guidelines`
+- `/api/lazy-generate` reads campaign from Supabase + triggers write-only workflow (incl. `custom_guidelines`)
+- `lazy-mode-review.tsx` calls `/api/scrape` (not `/api/lazy-generate` directly)
+- `page.tsx` auto-triggers generation when scraping completes (`urls_processed` status)
+- `page.tsx` Realtime re-fetches full campaign on `drafted` or `completed` status
+- `step-generating.tsx` shows phase-aware progress stepper (scraping → writing → done)
+- In-app editor: A4 container, placeholder styling (`[IMAGE: ...]`, `[CTA BUTTON: ...]`), editable doc name
+- AI rewrite: OpenRouter API with full article context, campaign context, user instruction as primary directive
+- Google Doc export: modal dialog on completion, history menu updates
+- History menu: "Open in editor" for drafts, "Open Google Doc" for exported campaigns
+- OpenRouter model IDs: `anthropic/claude-sonnet-4.6` (dots, not dashes)
+- LLM model shown in history settings panel

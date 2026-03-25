@@ -12,6 +12,8 @@ interface RewriteRequestBody {
     guidelines: string
     customGuidelines: string
     paragraphLength: string
+    campaignType?: string
+    country?: string
   }
 }
 
@@ -64,7 +66,7 @@ Return ONLY the rewritten text. Do not include any explanation, commentary, or m
         'X-Title': 'Xevio Advertorial Builder',
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-sonnet-4-6',
+        model: 'anthropic/claude-sonnet-4.6',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
@@ -104,32 +106,35 @@ Return ONLY the rewritten text. Do not include any explanation, commentary, or m
 function buildSystemPrompt(context: RewriteRequestBody['campaignContext']): string {
   const parts = [
     'You are an expert advertorial copywriter helping to refine a specific section of an advertorial.',
-    'Your rewrite must maintain consistency with the rest of the article in tone, style, and voice.',
+    '',
+    'PRIORITY: The user\'s instruction is your primary directive. Follow it precisely — if they say "expand", write more. If they say "shorten", write less. If they say "rewrite completely", do so. The instruction overrides any other preference.',
+    '',
+    'CONSISTENCY: Your rewrite must match the tone, style, and voice of the surrounding article. Read the full article context carefully before rewriting.',
   ]
 
   if (context.language) {
-    parts.push(`The entire output must be in ${context.language}.`)
+    parts.push(`\nLANGUAGE: Write entirely in ${context.language}.`)
   }
 
-  if (context.niche) {
-    parts.push(`This advertorial is in the ${context.niche} niche.`)
+  // Campaign background — informational, not constraining
+  const background: string[] = []
+  if (context.campaignType) background.push(`Type: ${context.campaignType}`)
+  if (context.niche) background.push(`Niche: ${context.niche}`)
+  if (context.country) background.push(`Target market: ${context.country}`)
+  if (context.topic) background.push(`Brief: ${context.topic}`)
+
+  if (background.length > 0) {
+    parts.push(`\nCAMPAIGN CONTEXT (for background, not as constraints):\n${background.join('\n')}`)
   }
 
-  if (context.topic) {
-    parts.push(`The topic is: ${context.topic}`)
-  }
-
-  if (context.paragraphLength) {
-    parts.push(`Target paragraph length: ${context.paragraphLength}.`)
-  }
-
+  // Compliance guidelines ARE hard constraints
   if (context.guidelines === 'ERGO') {
-    parts.push('Follow ERGO compliance guidelines: no medical claims, no guaranteed results, include disclaimers where needed.')
+    parts.push('\nCOMPLIANCE (hard constraint): Follow ERGO guidelines — no medical claims, no guaranteed results, include disclaimers where needed.')
   } else if (context.guidelines === 'Custom' && context.customGuidelines) {
-    parts.push(`Follow these custom guidelines: ${context.customGuidelines}`)
+    parts.push(`\nCOMPLIANCE (hard constraint): ${context.customGuidelines}`)
   }
 
-  parts.push('Keep formatting minimal. Return plain text only, matching the style of the surrounding content.')
+  parts.push('\nReturn ONLY the rewritten text. No explanation, no commentary, no markdown formatting.')
 
-  return parts.join(' ')
+  return parts.join('\n')
 }

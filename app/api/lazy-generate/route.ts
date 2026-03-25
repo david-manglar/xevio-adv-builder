@@ -1,106 +1,86 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { cleanUrl, ensureProtocol } from '@/lib/url-utils'
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { lazyModeData, userId, model } = body
+    const { campaignId, model } = body
 
-    if (!lazyModeData || !userId) {
-      return NextResponse.json({ error: 'Missing required data' }, { status: 400 })
+    if (!campaignId) {
+      return NextResponse.json({ error: 'Missing campaignId' }, { status: 400 })
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
     const supabaseKey = process.env.SUPABASE_SECRET_KEY!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    const advertorialUrl = ensureProtocol(cleanUrl(lazyModeData.advertorialUrl || ''))
-    if (!advertorialUrl) {
-      return NextResponse.json({ error: 'Advertorial URL is required' }, { status: 400 })
+    // 1. Read campaign from Supabase
+    const { data: campaign, error: fetchError } = await supabase
+      .from('campaigns')
+      .select('scraping_result, topic, campaign_type, niche, country, language, length, paragraph_length, guidelines, custom_guidelines, llm_model')
+      .eq('id', campaignId)
+      .single()
+
+    if (fetchError || !campaign) {
+      console.error('Error fetching campaign:', fetchError)
+      return NextResponse.json({ error: 'Campaign not found' }, { status: 404 })
     }
 
-    const additionalLinks = (lazyModeData.referenceUrls || [])
-      .filter((ref: any) => ref?.url && ref.url.trim() !== '')
-      .map((ref: any) => ({
-        url: ensureProtocol(cleanUrl(ref.url)),
-        description: ref.description?.trim() || null,
-      }))
+    // 2. Validate scraping_result exists
+    if (!campaign.scraping_result) {
+      return NextResponse.json(
+        { error: 'Scraping results not available yet. Wait for scraping to complete.' },
+        { status: 409 }
+      )
+    }
 
-    const referenceUrls = [
-      { url: advertorialUrl, description: 'Reference advertorial' },
-      ...additionalLinks,
-    ]
+    // 3. Update campaign status and model
+    const { error: updateError } = await supabase
+      .from('campaigns')
+      .update({
+        status: 'generating',
+        ...(model ? { llm_model: model } : {}),
+      })
+      .eq('id', campaignId)
 
-    const lengthValue = lazyModeData.keepOriginalLength ? 'keep_original' : lazyModeData.length
+    if (updateError) {
+      console.error('Error updating campaign:', updateError)
+      return NextResponse.json({ error: 'Failed to update campaign' }, { status: 500 })
+    }
 
-    // Require n8n webhook URL before creating campaign (avoids orphan campaigns in "generating")
+    // 4. Trigger lazy writer webhook
     const webhookUrl = process.env.N8N_DEV_LAZY_MODE_WEBHOOK_URL || process.env.N8N_LAZY_MODE_WEBHOOK_URL
     if (!webhookUrl) {
-      console.error(
-        '[Lazy Mode] N8N_LAZY_MODE_WEBHOOK_URL is not set. Set this env var in production so the n8n workflow is triggered.'
-      )
+      console.error('[Lazy Generate] N8N_LAZY_MODE_WEBHOOK_URL is not set.')
       return NextResponse.json(
-        {
-          error: 'Lazy generation is not configured. Please set N8N_LAZY_MODE_WEBHOOK_URL on the server.',
-        },
+        { error: 'Lazy generation is not configured. Please set N8N_LAZY_MODE_WEBHOOK_URL on the server.' },
         { status: 503 }
       )
     }
 
-    // Create campaign record
-    const { data: campaign, error: dbError } = await supabase
-      .from('campaigns')
-      .insert({
-        user_id: userId,
-        mode: 'lazy',
-        topic: lazyModeData.instructions,
-        campaign_type: lazyModeData.campaignType,
-        niche: lazyModeData.niche,
-        country: lazyModeData.country,
-        language: lazyModeData.language,
-        length: lengthValue,
-        paragraph_length: lazyModeData.paragraphLength,
-        guidelines: lazyModeData.guidelines,
-        reference_urls: referenceUrls,
-        status: 'generating',
-        ...(model ? { llm_model: model } : {}),
-      })
-      .select()
-      .single()
-
-    if (dbError) {
-      console.error('Supabase Error:', dbError)
-      return NextResponse.json({ error: 'Failed to create campaign' }, { status: 500 })
+    const webhookSecret = process.env.N8N_WEBHOOK_SECRET
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+    if (webhookSecret) {
+      headers['X-Webhook-Secret'] = webhookSecret
     }
 
-    // Trigger n8n webhook (webhookUrl already checked above)
-    // MUST be awaited — on Vercel the lambda is killed after the response is sent,
-    // so a fire-and-forget fetch would be silently aborted.
-    const webhookSecret = process.env.N8N_WEBHOOK_SECRET
+    const webhookPayload = {
+      campaignId,
+      instructions: campaign.topic,
+      campaignType: campaign.campaign_type,
+      niche: campaign.niche,
+      country: campaign.country,
+      language: campaign.language,
+      length: campaign.length,
+      paragraphLength: campaign.paragraph_length,
+      guidelines: campaign.guidelines,
+      customGuidelines: campaign.custom_guidelines || null,
+      model: model || campaign.llm_model || 'anthropic/claude-sonnet-4.6',
+      advertorial: campaign.scraping_result.advertorial,
+      references: campaign.scraping_result.references,
+    }
+
     try {
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-      if (webhookSecret) {
-        headers['X-Webhook-Secret'] = webhookSecret
-      }
-
-      const webhookPayload = {
-        campaignId: campaign.id,
-        instructions: lazyModeData.instructions,
-        advertorialUrl,
-        additionalLinks,
-        referenceUrls,
-        campaignType: lazyModeData.campaignType,
-        niche: lazyModeData.niche,
-        country: lazyModeData.country,
-        language: lazyModeData.language,
-        length: lengthValue,
-        paragraphLength: lazyModeData.paragraphLength,
-        guidelines: lazyModeData.guidelines,
-        customGuidelines: lazyModeData.customGuidelines || null,
-        model: model || 'anthropic/claude-sonnet-4-6',
-      }
-
       const webhookResponse = await fetch(webhookUrl, {
         method: 'POST',
         headers,
@@ -108,13 +88,13 @@ export async function POST(request: Request) {
       })
 
       if (!webhookResponse.ok) {
-        console.error('n8n lazy mode webhook returned error:', webhookResponse.status, await webhookResponse.text())
+        console.error('n8n lazy writer webhook returned error:', webhookResponse.status, await webhookResponse.text())
       }
     } catch (webhookError) {
-      console.error('Failed to trigger n8n lazy mode webhook:', webhookError)
+      console.error('Failed to trigger n8n lazy writer webhook:', webhookError)
     }
 
-    return NextResponse.json({ success: true, campaignId: campaign.id })
+    return NextResponse.json({ success: true, campaignId })
   } catch (error) {
     console.error('API Error:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

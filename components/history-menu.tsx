@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X, FileText, ExternalLink, Clock, Loader2, ChevronDown, ChevronUp, Settings2 } from "lucide-react"
+import { X, FileText, ExternalLink, Clock, Loader2, ChevronDown, ChevronUp, Settings2, PenLine } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { BuilderSettingsDetails } from "@/components/builder-settings-details"
 
@@ -9,6 +9,7 @@ interface HistoryMenuProps {
   isOpen: boolean
   onClose: () => void
   userId: string | null
+  onOpenCampaign?: (campaignId: string) => void
 }
 
 interface CampaignHistory {
@@ -20,6 +21,8 @@ interface CampaignHistory {
   createdAt: string
   docUrl: string
   mode?: 'full' | 'lazy' | null
+  status?: string
+  hasEditor?: boolean
 }
 
 interface CampaignDetails {
@@ -40,7 +43,7 @@ interface CampaignDetails {
   mode?: 'full' | 'lazy' | null
 }
 
-export function HistoryMenu({ isOpen, onClose, userId }: HistoryMenuProps) {
+export function HistoryMenu({ isOpen, onClose, userId, onOpenCampaign }: HistoryMenuProps) {
   const [campaigns, setCampaigns] = useState<CampaignHistory[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
@@ -183,7 +186,7 @@ export function HistoryMenu({ isOpen, onClose, userId }: HistoryMenuProps) {
           ) : campaigns.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <FileText className="h-10 w-10 text-muted-foreground/40 mb-3" />
-              <p className="text-sm font-medium text-muted-foreground">No completed campaigns yet</p>
+              <p className="text-sm font-medium text-muted-foreground">No campaigns yet</p>
               <p className="text-xs text-muted-foreground mt-1">
                 Your generated advertorials will appear here
               </p>
@@ -223,15 +226,28 @@ export function HistoryMenu({ isOpen, onClose, userId }: HistoryMenuProps) {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <a
-                        href={campaign.docUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-sm text-[#4644B6] hover:underline font-medium"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        Open Google Doc
-                      </a>
+                      {campaign.status === 'completed' && campaign.docUrl ? (
+                        <a
+                          href={campaign.docUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-sm text-[#4644B6] hover:underline font-medium"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          Open Google Doc
+                        </a>
+                      ) : campaign.hasEditor && onOpenCampaign ? (
+                        <button
+                          onClick={() => {
+                            onOpenCampaign(campaign.id)
+                            onClose()
+                          }}
+                          className="flex items-center gap-2 text-sm text-[#4644B6] hover:underline font-medium"
+                        >
+                          <PenLine className="h-4 w-4" />
+                          Open in editor
+                        </button>
+                      ) : null}
                       <span className="text-border">|</span>
                       <button
                         onClick={() => handleToggleExpand(campaign.id)}
