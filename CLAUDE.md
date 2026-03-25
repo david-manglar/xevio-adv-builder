@@ -65,7 +65,7 @@ components/             → Feature components (step-*.tsx, mode-*.tsx, etc.)
 components/ui/          → shadcn/ui primitives (do not edit manually)
 lib/                    → Utilities (types.ts, supabase.ts, auth.ts, utils.ts)
 docs/                   → Developer docs, .cursorrules, feature reference
-n8n/                    → n8n workflow JSONs and code snippets
+n8n/                    → n8n workflow JSONs (gitignored — local only)
 public/                 → Static assets and images
 ```
 
@@ -82,12 +82,12 @@ public/                 → Static assets and images
 - Instance: `manglarmedia.app.n8n.cloud`
 - v2 architecture: Unified Scraper (full+lazy), Full Writer, Lazy Writer, Google Doc Creator
 - Payload docs: `docs/n8n-generation-workflow.md`, `docs/n8n-incremental-scraping.md`
-- DEV workflow setup: `n8n/DEV-WORKFLOWS.md`
-- Workflow JSONs go in `/n8n` folder (not `/docs`)
+- DEV workflow setup: `n8n/DEV-WORKFLOWS.md` (local only, gitignored)
+- Workflow JSONs live in `/n8n` folder (gitignored — contain credentials)
 
 ### Output
-- Generated content currently goes to Google Docs
-- v2 adds an in-app editing environment (in progress)
+- v2: in-app TipTap editor with AI rewrite, then optional export to Google Docs
+- Editor uses A4-style container, placeholder styling for `[IMAGE: ...]` / `[CTA BUTTON: ...]` tokens
 
 ## Environment Variables
 
@@ -128,9 +128,8 @@ Note: `next.config.mjs` has `typescript.ignoreBuildErrors: true` — build won't
 
 ## Git & Branching
 
-This project needs git initialization and a proper branching workflow:
-- `main` branch = production (what's deployed on Vercel)
-- `dev` branch = staging for review with Creative Director
+- `main` branch = production (deployed on Vercel)
+- `dev` branch = staging/preview (Vercel preview environment)
 - Feature branches off `dev` for individual changes
 
 **Important:** Never push directly to `main`. Always work on `dev` or feature branches.
@@ -153,13 +152,14 @@ This project needs git initialization and a proper branching workflow:
 
 ## v2 Context
 
-Major improvements in progress (tackle incrementally):
-- In-app AI editing environment (replacing Google Docs output)
-- LLM switching for end users (choice of model for generation)
-- New and modified building blocks
-- Prompt refinements
-- n8n workflow restructuring (open to direct LLM API calls where it makes sense)
-- Dev/staging environment setup
+Major improvements (v2):
+- [x] In-app AI editing environment (TipTap editor with AI rewrite)
+- [x] LLM switching for end users (OpenRouter, 8 models)
+- [x] n8n workflow restructuring (Unified Scraper, Lazy Writer, Google Doc Creator)
+- [x] Dev/staging environment (Vercel preview on `dev` branch)
+- [ ] Full Writer n8n workflow (Phase 5)
+- [ ] New and modified building blocks
+- [ ] Prompt refinements
 
 ### v2 Workflow Restructuring Progress
 
