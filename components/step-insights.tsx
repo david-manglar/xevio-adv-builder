@@ -338,11 +338,7 @@ function DraggablePaletteBlock({ block, onAdd }: { block: BlockType; onAdd: () =
             marginTop: '-8px',
           }}
         >
-          <p className="font-medium mb-1.5">{block.name}</p>
           <p className="leading-relaxed">{blockDescription.description}</p>
-          {blockDescription.promptPreview && (
-            <p className="mt-1.5 leading-relaxed text-background/70 italic">{blockDescription.promptPreview}</p>
-          )}
           <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-foreground"></div>
         </div>
       )}
