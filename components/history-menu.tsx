@@ -220,7 +220,7 @@ export function HistoryMenu({ isOpen, onClose, userId, onOpenCampaign }: History
                       <div>
                         Mode: <span className="text-foreground">{campaign.mode === 'lazy' ? 'Lazy' : campaign.mode === 'full' ? 'Standard' : '—'}</span>
                       </div>
-                      <div>
+                      <div className="col-span-2">
                         Created: <span className="text-foreground">{campaign.createdAt}</span>
                       </div>
                     </div>
