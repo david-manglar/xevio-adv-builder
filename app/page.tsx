@@ -462,7 +462,7 @@ export default function AdvertorialBuilder() {
     // Show editor when generated_html is available
     if (isCompleted && hasEditor) {
       return (
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="h-screen bg-background flex flex-col">
           {header}
           <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} onOpenCampaign={handleOpenCampaign} />
           <UserMenu

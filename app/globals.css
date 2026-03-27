@@ -226,6 +226,14 @@
   pointer-events: none;
 }
 
+/* AI Rewrite highlight */
+.tiptap .ai-rewrite-highlight {
+  background-color: rgba(13, 173, 183, 0.15);
+  border-radius: 2px;
+  box-decoration-break: clone;
+  transition: background-color 0.2s;
+}
+
 /* Advertorial placeholder chips */
 .tiptap .adv-placeholder {
   display: inline-block;

@@ -7,6 +7,7 @@ import Underline from "@tiptap/extension-underline"
 import Placeholder from "@tiptap/extension-placeholder"
 import { Plugin, PluginKey } from "@tiptap/pm/state"
 import { Decoration, DecorationSet } from "@tiptap/pm/view"
+import { DOMSerializer } from "@tiptap/pm/model"
 import { Extension } from "@tiptap/core"
 import { Button } from "@/components/ui/button"
 import {
@@ -26,11 +27,48 @@ import {
   X,
 } from "lucide-react"
 import { EditorToolbar } from "./editor-toolbar"
-import { AiRewritePopover } from "./ai-rewrite-popover"
+import { AiRewritePopover, AiRewriteActionBar } from "./ai-rewrite-popover"
 import { cn } from "@/lib/utils"
 import type { CampaignData, StepOneState, StepThreeState, LazyModeState } from "@/lib/types"
 
 const placeholderPattern = /\[(IMAGE|CTA BUTTON|PRODUCT WIDGET|VIDEO|DISCLAIMER):\s*[^\]]+\]/gi
+
+// Shared mutable ref that the decoration plugin reads directly
+// This avoids plugin state/meta issues — just set the range and trigger a re-render
+const highlightRange = { from: 0, to: 0 }
+
+function createAiHighlightPlugin() {
+  return new Plugin({
+    key: new PluginKey('aiRewriteHighlight'),
+    props: {
+      decorations(state) {
+        const { from, to } = highlightRange
+        if (from === 0 && to === 0) return DecorationSet.empty
+        if (from >= to || to > state.doc.content.size) return DecorationSet.empty
+        const decorations: Decoration[] = []
+        state.doc.nodesBetween(from, to, (node, pos) => {
+          if (node.isText) {
+            const start = Math.max(from, pos)
+            const end = Math.min(to, pos + node.nodeSize)
+            if (start < end) {
+              decorations.push(
+                Decoration.inline(start, end, { class: 'ai-rewrite-highlight' })
+              )
+            }
+          }
+        })
+        return DecorationSet.create(state.doc, decorations)
+      },
+    },
+  })
+}
+
+const AiRewriteHighlight = Extension.create({
+  name: 'aiRewriteHighlight',
+  addProseMirrorPlugins() {
+    return [createAiHighlightPlugin()]
+  },
+})
 
 const PlaceholderHighlight = Extension.create({
   name: 'placeholderHighlight',
@@ -74,6 +112,9 @@ interface EditingEnvironmentProps {
   onStartOver: () => void
 }
 
+// AI rewrite phase: 'instruction' = popover with input, 'preview' = content inserted with action bar
+type RewritePhase = 'instruction' | 'preview' | null
+
 export function EditingEnvironment({
   generatedHtml,
   documentUrl,
@@ -86,12 +127,15 @@ export function EditingEnvironment({
   onStartOver,
 }: EditingEnvironmentProps) {
   const [isSaving, setIsSaving] = useState(false)
-  const [showAiRewrite, setShowAiRewrite] = useState(false)
+  const [rewritePhase, setRewritePhase] = useState<RewritePhase>(null)
   const [selectedText, setSelectedText] = useState("")
+  const [selectedHtml, setSelectedHtml] = useState("")
   const [aiPopoverPosition, setAiPopoverPosition] = useState({ top: 0, left: 0 })
   const [showDocModal, setShowDocModal] = useState(false)
   const editorContainerRef = useRef<HTMLDivElement>(null)
   const prevDocUrl = useRef(documentUrl)
+  const originalEditorHtml = useRef<string | null>(null)
+  const rewriteSelectionRange = useRef<{ from: number; to: number } | null>(null)
 
   // Show modal when Google Doc URL arrives
   useEffect(() => {
@@ -112,6 +156,7 @@ export function EditingEnvironment({
         placeholder: "Start editing your advertorial...",
       }),
       PlaceholderHighlight,
+      AiRewriteHighlight,
     ],
     content: generatedHtml,
     editorProps: {
@@ -144,6 +189,44 @@ export function EditingEnvironment({
     }
   }, [editor, campaignId])
 
+  // Set or clear the AI rewrite highlight decoration
+  const setHighlightRange = useCallback((from: number, to: number) => {
+    if (!editor) return
+    highlightRange.from = from
+    highlightRange.to = to
+    // Dispatch a no-op transaction to force the decoration plugin to re-evaluate
+    editor.view.dispatch(editor.state.tr)
+  }, [editor])
+
+  const clearHighlight = useCallback(() => {
+    if (!editor) return
+    highlightRange.from = 0
+    highlightRange.to = 0
+    editor.view.dispatch(editor.state.tr)
+  }, [editor])
+
+  const [selectionContext, setSelectionContext] = useState<{
+    nodeType: string
+    headingLevel?: number
+    hasPlaceholders: boolean
+    isPlaceholderOnly: boolean
+    activeMarks: string[]
+    charCount: number
+    sentenceCount: number
+  } | null>(null)
+
+  // Serialize selected ProseMirror content to HTML
+  const getSelectedHtml = useCallback(() => {
+    if (!editor) return ""
+    const { from, to } = editor.state.selection
+    const slice = editor.state.doc.slice(from, to)
+    const serializer = DOMSerializer.fromSchema(editor.schema)
+    const fragment = serializer.serializeFragment(slice.content)
+    const div = document.createElement("div")
+    div.appendChild(fragment)
+    return div.innerHTML
+  }, [editor])
+
   const handleAiRewrite = useCallback(() => {
     if (!editor) return
 
@@ -152,32 +235,148 @@ export function EditingEnvironment({
 
     if (!text.trim()) return
 
-    setSelectedText(text)
+    // Detect node type at selection start
+    const $from = editor.state.doc.resolve(from)
+    const parentNode = $from.parent
+    let nodeType = "paragraph"
+    let headingLevel: number | undefined
 
-    // Get position for the popover
+    if (parentNode.type.name === "heading") {
+      nodeType = "heading"
+      headingLevel = parentNode.attrs.level
+    } else if (parentNode.type.name === "listItem") {
+      const grandparent = $from.node($from.depth - 2)
+      nodeType = grandparent?.type.name === "orderedList" ? "orderedList" : "bulletList"
+    }
+
+    // Detect active inline marks across the selection
+    const activeMarks: string[] = []
+    const markTypes = ["bold", "italic", "underline"]
+    for (const mark of markTypes) {
+      let allMarked = true
+      editor.state.doc.nodesBetween(from, to, (node) => {
+        if (node.isText) {
+          if (!node.marks.some((m) => m.type.name === mark)) {
+            allMarked = false
+          }
+        }
+      })
+      if (allMarked) activeMarks.push(mark)
+    }
+
+    // Detect placeholders in selection
+    const placeholderRegex = /\[(IMAGE|CTA BUTTON|PRODUCT WIDGET|VIDEO|DISCLAIMER):\s*[^\]]+\]/gi
+    const placeholderMatches = text.match(placeholderRegex)
+    const hasPlaceholders = !!placeholderMatches
+    const isPlaceholderOnly = hasPlaceholders && text.trim() === placeholderMatches![0].trim()
+
+    // Count length metrics
+    const charCount = text.trim().length
+    const sentenceCount = (text.match(/[.!?]+/g) || []).length || 1
+
+    // Get HTML of the selection
+    const html = getSelectedHtml()
+
+    setSelectedText(text)
+    setSelectedHtml(html)
+    setSelectionContext({ nodeType, headingLevel, hasPlaceholders, isPlaceholderOnly, activeMarks, charCount, sentenceCount })
+    rewriteSelectionRange.current = { from, to }
+
+    // Highlight the selected range
+    setHighlightRange(from, to)
+
+    // Get position for the popover relative to the scrollable container
     const coords = editor.view.coordsAtPos(from)
-    const containerRect = editorContainerRef.current?.getBoundingClientRect()
-    if (containerRect) {
+    const container = editorContainerRef.current
+    if (container) {
+      const containerRect = container.getBoundingClientRect()
       setAiPopoverPosition({
-        top: coords.top - containerRect.top,
+        top: coords.top - containerRect.top + container.scrollTop,
         left: coords.left - containerRect.left,
       })
     }
 
-    setShowAiRewrite(true)
-  }, [editor])
+    setRewritePhase('instruction')
+  }, [editor, getSelectedHtml])
 
-  const handleAiRewriteAccept = useCallback(
-    (rewrittenText: string) => {
-      if (!editor) return
+  // Called when the AI returns a result — insert preview into editor
+  const handleRewriteResult = useCallback(
+    (rewrittenHtml: string) => {
+      if (!editor || !rewriteSelectionRange.current) return
 
-      const { from, to } = editor.state.selection
-      editor.chain().focus().deleteRange({ from, to }).insertContent(rewrittenText).run()
-      setShowAiRewrite(false)
-      setSelectedText("")
+      // Save original editor state for revert
+      originalEditorHtml.current = editor.getHTML()
+
+      const { from, to } = rewriteSelectionRange.current
+
+      // Clear highlight, then replace selection with rewritten HTML
+      highlightRange.from = 0
+      highlightRange.to = 0
+
+      const docSizeBefore = editor.state.doc.content.size
+      editor.chain().focus().setTextSelection({ from, to }).deleteRange({ from, to }).insertContent(rewrittenHtml).run()
+
+      // Calculate end of inserted content from doc size change
+      const docSizeAfter = editor.state.doc.content.size
+      const insertedLength = docSizeAfter - docSizeBefore + (to - from)
+      const newTo = from + insertedLength
+      setHighlightRange(from, newTo)
+
+      // Position the action bar below the end of inserted content
+      const safeNewTo = Math.min(newTo, editor.state.doc.content.size - 1)
+      const endCoords = editor.view.coordsAtPos(safeNewTo)
+      const container = editorContainerRef.current
+      if (container) {
+        const containerRect = container.getBoundingClientRect()
+        setAiPopoverPosition({
+          top: endCoords.bottom - containerRect.top + container.scrollTop,
+          left: endCoords.left - containerRect.left,
+        })
+      }
+
+      setRewritePhase('preview')
     },
-    [editor]
+    [editor, setHighlightRange]
   )
+
+  // Accept the preview — just dismiss, content is already in the editor
+  const handlePreviewAccept = useCallback(() => {
+    clearHighlight()
+    originalEditorHtml.current = null
+    rewriteSelectionRange.current = null
+    setRewritePhase(null)
+    setSelectedText("")
+    setSelectedHtml("")
+  }, [clearHighlight])
+
+  // Try again — revert to original, go back to instruction phase
+  const handlePreviewTryAgain = useCallback(() => {
+    if (!editor || !originalEditorHtml.current) return
+
+    clearHighlight()
+    editor.commands.setContent(originalEditorHtml.current)
+    originalEditorHtml.current = null
+
+    // Re-highlight the original selection range
+    if (rewriteSelectionRange.current) {
+      setHighlightRange(rewriteSelectionRange.current.from, rewriteSelectionRange.current.to)
+    }
+
+    setRewritePhase('instruction')
+  }, [editor, clearHighlight, setHighlightRange])
+
+  // Cancel — revert to original, dismiss everything
+  const handleRewriteCancel = useCallback(() => {
+    clearHighlight()
+    if (editor && originalEditorHtml.current) {
+      editor.commands.setContent(originalEditorHtml.current)
+    }
+    originalEditorHtml.current = null
+    rewriteSelectionRange.current = null
+    setRewritePhase(null)
+    setSelectedText("")
+    setSelectedHtml("")
+  }, [editor, clearHighlight])
 
   // Build campaign context for AI rewrite
   const campaignContext = {
@@ -290,7 +489,7 @@ export function EditingEnvironment({
         <Button
           variant="outline"
           size="sm"
-          className="bg-transparent text-[#4644B6] border-[#4644B6]/30 hover:bg-[#4644B6]/10"
+          className="bg-[#4644B6] text-white border-[#4644B6] hover:bg-[#3a38a0] hover:text-white"
           onClick={handleAiRewrite}
           title="AI Rewrite — select text first"
         >
@@ -304,18 +503,26 @@ export function EditingEnvironment({
         <div className="relative mx-auto max-w-[816px] my-8 bg-white rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.06)] min-h-[1056px]">
           <EditorContent editor={editor} />
 
-          {showAiRewrite && (
+          {rewritePhase === 'instruction' && (
             <AiRewritePopover
               selectedText={selectedText}
+              selectedHtml={selectedHtml}
               fullArticleHtml={editor?.getHTML() || ""}
               campaignContext={campaignContext}
               campaignId={campaignId}
+              selectionContext={selectionContext}
               position={aiPopoverPosition}
-              onAccept={handleAiRewriteAccept}
-              onCancel={() => {
-                setShowAiRewrite(false)
-                setSelectedText("")
-              }}
+              onRewriteResult={handleRewriteResult}
+              onCancel={handleRewriteCancel}
+            />
+          )}
+
+          {rewritePhase === 'preview' && (
+            <AiRewriteActionBar
+              position={aiPopoverPosition}
+              onAccept={handlePreviewAccept}
+              onTryAgain={handlePreviewTryAgain}
+              onCancel={handleRewriteCancel}
             />
           )}
         </div>
