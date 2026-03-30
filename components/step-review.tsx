@@ -127,11 +127,22 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
   const [topic, setTopic] = useState(stepOneData.topic || "")
   const [tempTopic, setTempTopic] = useState(topic)
 
-  // Get selected insights from Step 3
-  const selectedInsights = Object.values(stepThreeData.data)
-    .flat()
-    .filter(item => item.selected)
-    .map(item => item.text)
+  // Get selected insights from Step 3, grouped by category
+  const categoryLabels: Record<string, string> = {
+    usps: 'USPs',
+    pricing: 'Pricing',
+    mainAngle: 'Main Angle',
+    toneOfVoice: 'Tone of Voice',
+    keyHooks: 'Key Hooks',
+  }
+  const groupedInsights = Object.entries(stepThreeData.data)
+    .map(([key, items]) => ({
+      key,
+      label: categoryLabels[key] || key,
+      insights: items.filter(item => item.selected).map(item => item.text),
+    }))
+    .filter(group => group.insights.length > 0)
+  const totalInsights = groupedInsights.reduce((sum, g) => sum + g.insights.length, 0)
 
   // Get structure blocks from Step 4
   const structureBlocks = stepFourData.blocks.map(b => b.name)
@@ -571,24 +582,31 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
           <CardTitle className="text-base flex items-center gap-2">
             <Target className="h-4 w-4 text-[#0dadb7]" />
             Selected Insights
+            <span className="inline-flex items-center rounded-md bg-[#F6F6F6] px-2.5 py-1 text-xs font-medium text-muted-foreground">
+              {totalInsights} selected
+            </span>
             <EditButton onClick={() => onJumpToStep(4)} />
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {selectedInsights.length > 0 ? (
-              selectedInsights.map((insight, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center rounded-md bg-[#F6F6F6] px-2.5 py-1 text-xs font-medium text-muted-foreground"
-                >
-                  {insight.length > 50 ? `${insight.substring(0, 50)}...` : insight}
-                </span>
-              ))
-            ) : (
-              <p className="text-sm text-muted-foreground">No insights selected</p>
-            )}
-          </div>
+          {groupedInsights.length > 0 ? (
+            <div className="space-y-3">
+              {groupedInsights.map((group) => (
+                <div key={group.key} className="flex gap-3">
+                  <span className="text-xs font-medium text-muted-foreground w-28 shrink-0 pt-1">{group.label}</span>
+                  <div className="flex-1 space-y-1.5">
+                    {group.insights.map((insight, index) => (
+                      <p key={index} className="text-xs text-muted-foreground leading-relaxed rounded-md bg-[#F6F6F6] px-2.5 py-1.5">
+                        {insight}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">No insights selected</p>
+          )}
         </CardContent>
       </Card>
 

@@ -95,8 +95,8 @@ export function StepGenerating({ onComplete, status = 'generating', documentUrl,
             <Loader2 className="h-10 w-10 text-white animate-spin" />
           </div>
         </div>
-        <h2 className="text-xl font-semibold text-foreground mb-2">{title}</h2>
-        <p className="text-muted-foreground text-center max-w-md mb-2">{subtitle}</p>
+        <h2 className="text-xl font-semibold text-foreground mb-3">{title}</h2>
+        <p className="text-muted-foreground text-center max-w-lg mb-6">{subtitle}</p>
         <ProgressStepper activeStep={activeStep} />
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <FileText className="h-4 w-4" />
