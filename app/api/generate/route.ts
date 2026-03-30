@@ -95,7 +95,7 @@ export async function POST(request: Request) {
     }
 
     // 3. Trigger n8n webhook
-    const webhookUrl = process.env.N8N_DEV_GENERATE_WEBHOOK_URL || process.env.N8N_GENERATE_WEBHOOK_URL
+    const webhookUrl = process.env.N8N_DEV_FULL_MODE_WEBHOOK_URL || process.env.N8N_GENERATE_WEBHOOK_URL
     const webhookSecret = process.env.N8N_WEBHOOK_SECRET
 
     if (!webhookUrl) {
