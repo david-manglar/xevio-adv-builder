@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ShieldCheck, User, RefreshCw, ChevronDown, ChevronUp, Trash2, Ban, CheckCircle, Eye, EyeOff, AlertCircle, ArrowLeft } from "lucide-react"
+import { ShieldCheck, User, UserPlus, RefreshCw, ChevronDown, ChevronUp, Trash2, Ban, CheckCircle, Eye, EyeOff, AlertCircle, ArrowLeft, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -32,6 +32,7 @@ export function AdminPanel({ userId, onBack }: AdminPanelProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null)
+  const [showAddUser, setShowAddUser] = useState(false)
 
   const fetchUsers = async () => {
     if (!userId) return
@@ -75,15 +76,25 @@ export function AdminPanel({ userId, onBack }: AdminPanelProps) {
           <ShieldCheck className="h-6 w-6 text-[#0dadb7]" />
           <h1 className="text-2xl font-semibold text-foreground">Admin Panel</h1>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={fetchUsers}
-          disabled={isLoading}
-        >
-          <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
-          Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchUsers}
+            disabled={isLoading}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+          <Button
+            size="sm"
+            className="bg-[#4644B6] hover:bg-[#3532a0] text-white"
+            onClick={() => setShowAddUser(!showAddUser)}
+          >
+            <UserPlus className="h-4 w-4 mr-2" />
+            Add user
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -93,6 +104,15 @@ export function AdminPanel({ userId, onBack }: AdminPanelProps) {
         <StatCard label="Drafted" value={totalDrafted} />
         <StatCard label="Completed" value={totalCompleted} />
       </div>
+
+      {/* Add User Form */}
+      {showAddUser && (
+        <AddUserForm
+          requestingUserId={userId!}
+          onUserCreated={() => { fetchUsers(); setShowAddUser(false) }}
+          onCancel={() => setShowAddUser(false)}
+        />
+      )}
 
       {/* Error */}
       {error && (
@@ -430,6 +450,127 @@ function UserDetails({ user, isSelf, requestingUserId, onUserUpdated }: UserDeta
             </div>
           )}
         </div>
+      </div>
+    </div>
+  )
+}
+
+// --- Helper Components ---
+
+// --- Add User Form ---
+
+function AddUserForm({ requestingUserId, onUserCreated, onCancel }: {
+  requestingUserId: string
+  onUserCreated: () => void
+  onCancel: () => void
+}) {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [displayName, setDisplayName] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
+  const [error, setError] = useState("")
+
+  const handleCreate = async () => {
+    if (!email || !password) return
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters")
+      return
+    }
+
+    setIsCreating(true)
+    setError("")
+
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          requestingUserId,
+          email: email.trim(),
+          password,
+          displayName: displayName.trim() || undefined,
+        }),
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || 'Failed to create user')
+      onUserCreated()
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to create user')
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
+  return (
+    <div className="bg-[#F6F6F6] rounded-lg p-4 mb-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <UserPlus className="h-4 w-4 text-[#0dadb7]" />
+          <p className="text-sm font-medium text-foreground">Add new user</p>
+        </div>
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onCancel}>
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+
+      {error && (
+        <div className="flex items-center gap-2 p-2 mb-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">
+          <AlertCircle className="h-3 w-3 shrink-0" />
+          {error}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Email *</Label>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="user@example.com"
+            className="h-9 text-sm"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Password *</Label>
+          <div className="relative">
+            <Input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Min. 6 characters"
+              className="h-9 text-sm pr-9"
+            />
+            <button
+              type="button"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+            </button>
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Display name</Label>
+          <Input
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder="Optional"
+            className="h-9 text-sm"
+          />
+        </div>
+      </div>
+
+      <div className="mt-4 flex justify-end">
+        <Button
+          size="sm"
+          className="bg-[#4644B6] hover:bg-[#3532a0] text-white"
+          disabled={!email || !password || isCreating}
+          onClick={handleCreate}
+        >
+          {isCreating ? "Creating..." : "Create user"}
+        </Button>
       </div>
     </div>
   )

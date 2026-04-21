@@ -1,6 +1,65 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
+function createAdminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SECRET_KEY!,
+  )
+}
+
+async function verifyAdmin(supabase: ReturnType<typeof createClient>, userId: string) {
+  const { data } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', userId)
+    .eq('role', 'admin')
+    .maybeSingle()
+  return !!data
+}
+
+// Create a new user
+export async function POST(request: Request) {
+  try {
+    const body = await request.json()
+    const { requestingUserId, email, password, displayName } = body
+
+    if (!requestingUserId || !email || !password) {
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
+    }
+
+    const supabase = createAdminClient()
+
+    if (!(await verifyAdmin(supabase, requestingUserId))) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+    }
+
+    const { data, error } = await supabase.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: displayName ? { display_name: displayName } : undefined,
+    })
+
+    if (error) {
+      console.error('Failed to create user:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json({
+      user: {
+        id: data.user.id,
+        email: data.user.email,
+        displayName: data.user.user_metadata?.display_name || '',
+      }
+    })
+
+  } catch (error) {
+    console.error('Admin API Error:', error)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+  }
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
@@ -10,19 +69,9 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'User ID required' }, { status: 400 })
     }
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseKey = process.env.SUPABASE_SECRET_KEY!
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    const supabase = createAdminClient()
 
-    // Verify the requesting user is an admin
-    const { data: adminRole } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', requestingUserId)
-      .eq('role', 'admin')
-      .maybeSingle()
-
-    if (!adminRole) {
+    if (!(await verifyAdmin(supabase, requestingUserId))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
