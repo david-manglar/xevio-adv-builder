@@ -13,8 +13,9 @@ import { LazyModeSetup } from "@/components/lazy-mode-setup"
 import { LazyModeReview } from "@/components/lazy-mode-review"
 import { HistoryMenu } from "@/components/history-menu"
 import { UserMenu } from "@/components/user-menu"
+import { AdminPanel } from "@/components/admin-panel"
 import { LoginScreen } from "@/components/login-screen"
-import { Clock, User, Loader2, Home } from "lucide-react"
+import { Clock, User, Loader2, Home, ShieldCheck } from "lucide-react"
 import { EditingEnvironment } from "@/components/editor/editing-environment"
 import { StepOneState, StepTwoState, StepThreeState, StepFourState, LazyModeState, CampaignData } from "@/lib/types"
 import { supabase } from "@/lib/supabase"
@@ -31,6 +32,9 @@ export default function AdvertorialBuilder() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [isHistoryMenuOpen, setIsHistoryMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [userName, setUserName] = useState<string>("")
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [showAdminView, setShowAdminView] = useState(false)
 
   const [campaignData, setCampaignData] = useState<CampaignData>({})
   const [selectedModel, setSelectedModel] = useState("anthropic/claude-sonnet-4.6")
@@ -85,6 +89,20 @@ export default function AdvertorialBuilder() {
           setIsLoggedIn(true)
           setUserEmail(session.user.email || "")
           setUserId(session.user.id)
+          setUserName(session.user.user_metadata?.display_name || "")
+
+          // Check admin role (safe — won't break auth if table doesn't exist yet)
+          try {
+            const { data: role } = await supabase
+              .from('user_roles')
+              .select('role')
+              .eq('user_id', session.user.id)
+              .eq('role', 'admin')
+              .maybeSingle()
+            setIsAdmin(!!role)
+          } catch {
+            setIsAdmin(false)
+          }
         }
       } catch (error) {
         console.error("Error checking session:", error)
@@ -96,15 +114,31 @@ export default function AdvertorialBuilder() {
     checkSession()
 
     // Subscribe to auth state changes
-    const subscription = onAuthStateChange((session) => {
+    const subscription = onAuthStateChange(async (session) => {
       if (session?.user) {
         setIsLoggedIn(true)
         setUserEmail(session.user.email || "")
         setUserId(session.user.id)
+        setUserName(session.user.user_metadata?.display_name || "")
+
+        // Check admin role on sign-in
+        try {
+          const { data: role } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', session.user.id)
+            .eq('role', 'admin')
+            .maybeSingle()
+          setIsAdmin(!!role)
+        } catch {
+          setIsAdmin(false)
+        }
       } else {
         setIsLoggedIn(false)
         setUserEmail("")
         setUserId(null)
+        setUserName("")
+        setIsAdmin(false)
       }
     })
 
@@ -124,6 +158,9 @@ export default function AdvertorialBuilder() {
       setIsLoggedIn(false)
       setUserEmail("")
       setUserId(null)
+      setUserName("")
+      setIsAdmin(false)
+      setShowAdminView(false)
       setAppMode("selecting")
       setCurrentStep(1)
       setIsUserMenuOpen(false)
@@ -171,6 +208,7 @@ export default function AdvertorialBuilder() {
     setIsGenerating(false)
     setAppMode("selecting")
     setCurrentStep(1)
+    setShowAdminView(false)
     setLazyModeStep(1)
     setCampaignData({})
     // Reset form data for new campaign
@@ -430,11 +468,30 @@ export default function AdvertorialBuilder() {
             >
               <User className="h-5 w-5" />
             </button>
+            {isAdmin && (
+              <button
+                className="p-2 rounded-md hover:bg-muted text-muted-foreground"
+                onClick={() => setShowAdminView(true)}
+                title="Admin Panel"
+              >
+                <ShieldCheck className="h-5 w-5" />
+              </button>
+            )}
           </div>
         </div>
       </div>
     </header>
   )
+
+  // Admin view (full-page)
+  if (showAdminView && isAdmin) {
+    return (
+      <div className="min-h-screen bg-background">
+        {header}
+        <AdminPanel userId={userId} onBack={() => setShowAdminView(false)} />
+      </div>
+    )
+  }
 
   // Mode selection screen
   if (appMode === "selecting") {
@@ -447,9 +504,11 @@ export default function AdvertorialBuilder() {
           onClose={() => setIsUserMenuOpen(false)}
           onLogout={handleLogout}
           userEmail={userEmail}
+          userName={userName}
+          onUserNameChange={setUserName}
         />
         <main className="mx-auto max-w-7xl px-6">
-          <ModeSelection userEmail={userEmail} onSelectMode={setAppMode} />
+          <ModeSelection userEmail={userEmail} userName={userName} onSelectMode={setAppMode} />
         </main>
       </div>
     )
@@ -465,11 +524,13 @@ export default function AdvertorialBuilder() {
         <div className="h-screen bg-background flex flex-col">
           {header}
           <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} onOpenCampaign={handleOpenCampaign} />
-          <UserMenu
+            <UserMenu
             isOpen={isUserMenuOpen}
             onClose={() => setIsUserMenuOpen(false)}
             onLogout={handleLogout}
             userEmail={userEmail}
+            userName={userName}
+            onUserNameChange={setUserName}
           />
           <EditingEnvironment
             key={campaignData.id}
@@ -497,6 +558,8 @@ export default function AdvertorialBuilder() {
           onClose={() => setIsUserMenuOpen(false)}
           onLogout={handleLogout}
           userEmail={userEmail}
+          userName={userName}
+          onUserNameChange={setUserName}
         />
         <main className="mx-auto max-w-5xl px-6 py-8">
           <StepGenerating
@@ -528,6 +591,8 @@ export default function AdvertorialBuilder() {
           onClose={() => setIsUserMenuOpen(false)}
           onLogout={handleLogout}
           userEmail={userEmail}
+          userName={userName}
+          onUserNameChange={setUserName}
         />
         <div className="border-b border-border bg-card/50 py-6">
           <div className="mx-auto max-w-6xl px-6">
@@ -570,6 +635,8 @@ export default function AdvertorialBuilder() {
         onClose={() => setIsUserMenuOpen(false)}
         onLogout={handleLogout}
         userEmail={userEmail}
+        userName={userName}
+        onUserNameChange={setUserName}
       />
       <div className="border-b border-border bg-card/50 py-6">
         <div className="mx-auto max-w-6xl px-6">

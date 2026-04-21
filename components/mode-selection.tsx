@@ -39,11 +39,12 @@ function DotGrid({ className }: { className?: string }) {
 
 interface ModeSelectionProps {
   userEmail: string
+  userName?: string
   onSelectMode: (mode: "full" | "lazy") => void
 }
 
-export function ModeSelection({ userEmail, onSelectMode }: ModeSelectionProps) {
-  const displayName = userEmail.split("@")[0]
+export function ModeSelection({ userEmail, userName, onSelectMode }: ModeSelectionProps) {
+  const displayName = userName || userEmail.split("@")[0]
   const subtitle = useMemo(
     () => greetingSubtitles[Math.floor(Math.random() * greetingSubtitles.length)],
     []

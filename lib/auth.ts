@@ -27,10 +27,14 @@ export async function signIn(email: string, password: string) {
  * Sign out the current user
  */
 export async function signOut() {
-  const { error } = await supabase.auth.signOut()
-  
+  // Use local scope only — clears localStorage without needing a server call.
+  // This avoids AuthSessionMissingError when the server session is already gone.
+  // The server-side token will expire on its own.
+  const { error } = await supabase.auth.signOut({ scope: 'local' })
   if (error) {
-    throw error
+    // Last resort: manually remove the Supabase auth token from localStorage
+    const key = Object.keys(localStorage).find(k => k.startsWith('sb-') && k.endsWith('-auth-token'))
+    if (key) localStorage.removeItem(key)
   }
 }
 
