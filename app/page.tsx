@@ -13,8 +13,10 @@ import { LazyModeSetup } from "@/components/lazy-mode-setup"
 import { LazyModeReview } from "@/components/lazy-mode-review"
 import { HistoryMenu } from "@/components/history-menu"
 import { UserMenu } from "@/components/user-menu"
+import { AdminPanel } from "@/components/admin-panel"
 import { LoginScreen } from "@/components/login-screen"
-import { Clock, User, Loader2 } from "lucide-react"
+import { Clock, User, Loader2, Home, ShieldCheck } from "lucide-react"
+import { EditingEnvironment } from "@/components/editor/editing-environment"
 import { StepOneState, StepTwoState, StepThreeState, StepFourState, LazyModeState, CampaignData } from "@/lib/types"
 import { supabase } from "@/lib/supabase"
 import { getSession, signOut, onAuthStateChange } from "@/lib/auth"
@@ -30,8 +32,12 @@ export default function AdvertorialBuilder() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [isHistoryMenuOpen, setIsHistoryMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [userName, setUserName] = useState<string>("")
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [showAdminView, setShowAdminView] = useState(false)
 
   const [campaignData, setCampaignData] = useState<CampaignData>({})
+  const [selectedModel, setSelectedModel] = useState("anthropic/claude-sonnet-4.6")
 
   const [stepOneData, setStepOneData] = useState<StepOneState>({
     topic: "",
@@ -83,6 +89,20 @@ export default function AdvertorialBuilder() {
           setIsLoggedIn(true)
           setUserEmail(session.user.email || "")
           setUserId(session.user.id)
+          setUserName(session.user.user_metadata?.display_name || "")
+
+          // Check admin role (safe — won't break auth if table doesn't exist yet)
+          try {
+            const { data: role } = await supabase
+              .from('user_roles')
+              .select('role')
+              .eq('user_id', session.user.id)
+              .eq('role', 'admin')
+              .maybeSingle()
+            setIsAdmin(!!role)
+          } catch {
+            setIsAdmin(false)
+          }
         }
       } catch (error) {
         console.error("Error checking session:", error)
@@ -94,15 +114,31 @@ export default function AdvertorialBuilder() {
     checkSession()
 
     // Subscribe to auth state changes
-    const subscription = onAuthStateChange((session) => {
+    const subscription = onAuthStateChange(async (session) => {
       if (session?.user) {
         setIsLoggedIn(true)
         setUserEmail(session.user.email || "")
         setUserId(session.user.id)
+        setUserName(session.user.user_metadata?.display_name || "")
+
+        // Check admin role on sign-in
+        try {
+          const { data: role } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', session.user.id)
+            .eq('role', 'admin')
+            .maybeSingle()
+          setIsAdmin(!!role)
+        } catch {
+          setIsAdmin(false)
+        }
       } else {
         setIsLoggedIn(false)
         setUserEmail("")
         setUserId(null)
+        setUserName("")
+        setIsAdmin(false)
       }
     })
 
@@ -122,6 +158,9 @@ export default function AdvertorialBuilder() {
       setIsLoggedIn(false)
       setUserEmail("")
       setUserId(null)
+      setUserName("")
+      setIsAdmin(false)
+      setShowAdminView(false)
       setAppMode("selecting")
       setCurrentStep(1)
       setIsUserMenuOpen(false)
@@ -169,6 +208,7 @@ export default function AdvertorialBuilder() {
     setIsGenerating(false)
     setAppMode("selecting")
     setCurrentStep(1)
+    setShowAdminView(false)
     setLazyModeStep(1)
     setCampaignData({})
     // Reset form data for new campaign
@@ -201,6 +241,31 @@ export default function AdvertorialBuilder() {
       paragraphLength: "",
       guidelines: "",
     })
+    setSelectedModel("anthropic/claude-sonnet-4.6")
+  }
+
+  const handleOpenCampaign = async (campaignId: string) => {
+    try {
+      const response = await fetch(`/api/campaign/${campaignId}`)
+      const data = await response.json()
+
+      if (response.ok && data.campaign) {
+        const c = data.campaign
+        setCampaignData({
+          id: c.id,
+          mode: c.mode,
+          status: c.status,
+          generated_content: c.generatedContent,
+          generated_html: c.generatedHtml,
+          editor_content: c.editorContent,
+          doc_name: c.docName,
+        })
+        setAppMode(c.mode === 'lazy' ? 'lazy' : 'full')
+        setIsGenerating(true)
+      }
+    } catch (error) {
+      console.error('Failed to open campaign:', error)
+    }
   }
 
   const handleJumpToStep = (step: number) => {
@@ -288,13 +353,31 @@ export default function AdvertorialBuilder() {
             table: 'campaigns',
             filter: `id=eq.${campaignData.id}`,
           },
-          (payload) => {
+          async (payload) => {
             const newStatus = payload.new.status
             const generatedContent = payload.new.generated_content
             const docName = payload.new.doc_name
-            
-            // Update local state if status changed or content arrived
-            if (newStatus && newStatus !== campaignData.status) {
+
+            // When status changes to drafted or completed, re-fetch full campaign from Supabase
+            // because Realtime may not include large text fields (generated_html)
+            if (newStatus === 'drafted' || newStatus === 'completed') {
+              const { data: freshCampaign } = await supabase
+                .from('campaigns')
+                .select('generated_html, editor_content, generated_content, doc_name, status')
+                .eq('id', campaignData.id)
+                .single()
+
+              if (freshCampaign) {
+                setCampaignData((prev) => ({
+                  ...prev,
+                  status: freshCampaign.status,
+                  generated_html: freshCampaign.generated_html || prev.generated_html,
+                  editor_content: freshCampaign.editor_content || prev.editor_content,
+                  generated_content: freshCampaign.generated_content || prev.generated_content,
+                  doc_name: freshCampaign.doc_name || prev.doc_name,
+                }))
+              }
+            } else if (newStatus && newStatus !== campaignData.status) {
               setCampaignData((prev) => ({
                 ...prev,
                 status: newStatus,
@@ -317,6 +400,26 @@ export default function AdvertorialBuilder() {
       }
     }
   }, [isGenerating, campaignData.id, campaignData.status, campaignData.generated_content])
+
+  // Auto-trigger lazy generation when scraping completes
+  useEffect(() => {
+    if (appMode === 'lazy' && campaignData.status === 'urls_processed' && campaignData.id) {
+      const triggerGeneration = async () => {
+        try {
+          const response = await fetch('/api/lazy-generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ campaignId: campaignData.id, model: selectedModel }),
+          })
+          if (!response.ok) throw new Error('Failed to trigger generation')
+          setCampaignData(prev => ({ ...prev, status: 'generating' }))
+        } catch (error) {
+          console.error('Auto-trigger lazy generation failed:', error)
+        }
+      }
+      triggerGeneration()
+    }
+  }, [appMode, campaignData.status, campaignData.id])
 
   // Show loading spinner while checking auth
   if (isCheckingAuth) {
@@ -341,9 +444,16 @@ export default function AdvertorialBuilder() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src="/images/xevio-color.svg" alt="Xevio" className="h-8 w-8" />
-            <span className="text-lg font-semibold text-foreground">Advertorial Builder</span>
+            <span className="text-lg font-semibold text-foreground">Advertorial Builder v2</span>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              className="p-2 rounded-md hover:bg-muted text-muted-foreground"
+              onClick={handleStartOver}
+              title="Home"
+            >
+              <Home className="h-5 w-5" />
+            </button>
             <button
               className="p-2 rounded-md hover:bg-muted text-muted-foreground"
               onClick={() => setIsHistoryMenuOpen(true)}
@@ -358,49 +468,107 @@ export default function AdvertorialBuilder() {
             >
               <User className="h-5 w-5" />
             </button>
+            {isAdmin && (
+              <button
+                className="p-2 rounded-md hover:bg-muted text-muted-foreground"
+                onClick={() => setShowAdminView(true)}
+                title="Admin Panel"
+              >
+                <ShieldCheck className="h-5 w-5" />
+              </button>
+            )}
           </div>
         </div>
       </div>
     </header>
   )
 
+  // Admin view (full-page)
+  if (showAdminView && isAdmin) {
+    return (
+      <div className="min-h-screen bg-background">
+        {header}
+        <AdminPanel userId={userId} onBack={() => setShowAdminView(false)} />
+      </div>
+    )
+  }
+
   // Mode selection screen
   if (appMode === "selecting") {
     return (
       <div className="min-h-screen bg-background">
         {header}
-        <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} />
+        <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} onOpenCampaign={handleOpenCampaign} />
         <UserMenu
           isOpen={isUserMenuOpen}
           onClose={() => setIsUserMenuOpen(false)}
           onLogout={handleLogout}
           userEmail={userEmail}
+          userName={userName}
+          onUserNameChange={setUserName}
         />
         <main className="mx-auto max-w-7xl px-6">
-          <ModeSelection userEmail={userEmail} onSelectMode={setAppMode} />
+          <ModeSelection userEmail={userEmail} userName={userName} onSelectMode={setAppMode} />
         </main>
       </div>
     )
   }
 
   if (isGenerating) {
+    const isCompleted = !!(campaignData.generated_content || campaignData.generated_html)
+    const hasEditor = !!campaignData.generated_html
+
+    // Show editor when generated_html is available
+    if (isCompleted && hasEditor) {
+      return (
+        <div className="h-screen bg-background flex flex-col">
+          {header}
+          <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} onOpenCampaign={handleOpenCampaign} />
+            <UserMenu
+            isOpen={isUserMenuOpen}
+            onClose={() => setIsUserMenuOpen(false)}
+            onLogout={handleLogout}
+            userEmail={userEmail}
+            userName={userName}
+            onUserNameChange={setUserName}
+          />
+          <EditingEnvironment
+            key={campaignData.id}
+            generatedHtml={campaignData.editor_content || campaignData.generated_html!}
+            documentUrl={campaignData.generated_content}
+            documentName={campaignData.doc_name}
+            campaignId={campaignData.id}
+            campaignData={campaignData}
+            stepOneData={appMode === "full" ? stepOneData : undefined}
+            stepThreeData={appMode === "full" ? stepThreeData : undefined}
+            lazyModeData={appMode === "lazy" ? lazyModeData : undefined}
+            onStartOver={handleStartOver}
+          />
+        </div>
+      )
+    }
+
+    // Fallback: show generating spinner or Google Docs link (for old campaigns without generated_html)
     return (
       <div className="min-h-screen bg-background">
         {header}
-        <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} />
+        <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} onOpenCampaign={handleOpenCampaign} />
         <UserMenu
           isOpen={isUserMenuOpen}
           onClose={() => setIsUserMenuOpen(false)}
           onLogout={handleLogout}
           userEmail={userEmail}
+          userName={userName}
+          onUserNameChange={setUserName}
         />
         <main className="mx-auto max-w-5xl px-6 py-8">
-          <StepGenerating 
-            onComplete={handleStartOver} 
-            status={campaignData.generated_content ? 'completed' : 'generating'}
+          <StepGenerating
+            onComplete={handleStartOver}
+            status={isCompleted ? 'completed' : 'generating'}
             documentUrl={campaignData.generated_content}
             documentName={campaignData.doc_name}
             topic={appMode === "lazy" ? lazyModeData.instructions : stepOneData.topic}
+            phase={campaignData.status === 'scraping' ? 'scraping' : 'generating'}
           />
         </main>
       </div>
@@ -417,12 +585,14 @@ export default function AdvertorialBuilder() {
     return (
       <div className="min-h-screen bg-background">
         {header}
-        <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} />
+        <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} onOpenCampaign={handleOpenCampaign} />
         <UserMenu
           isOpen={isUserMenuOpen}
           onClose={() => setIsUserMenuOpen(false)}
           onLogout={handleLogout}
           userEmail={userEmail}
+          userName={userName}
+          onUserNameChange={setUserName}
         />
         <div className="border-b border-border bg-card/50 py-6">
           <div className="mx-auto max-w-6xl px-6">
@@ -446,6 +616,8 @@ export default function AdvertorialBuilder() {
               onBack={() => setLazyModeStep(1)}
               onGenerate={handleGenerate}
               setCampaignData={setCampaignData}
+              selectedModel={selectedModel}
+              onModelChange={setSelectedModel}
             />
           )}
         </main>
@@ -457,12 +629,14 @@ export default function AdvertorialBuilder() {
   return (
     <div className="min-h-screen bg-background">
       {header}
-      <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} />
+      <HistoryMenu isOpen={isHistoryMenuOpen} onClose={() => setIsHistoryMenuOpen(false)} userId={userId} onOpenCampaign={handleOpenCampaign} />
       <UserMenu
         isOpen={isUserMenuOpen}
         onClose={() => setIsUserMenuOpen(false)}
         onLogout={handleLogout}
         userEmail={userEmail}
+        userName={userName}
+        onUserNameChange={setUserName}
       />
       <div className="border-b border-border bg-card/50 py-6">
         <div className="mx-auto max-w-6xl px-6">
@@ -510,15 +684,17 @@ export default function AdvertorialBuilder() {
           />
         )}
         {currentStep === 5 && (
-          <StepFive 
-            onBack={handlePrevStep} 
-            onGenerate={handleGenerate} 
+          <StepFive
+            onBack={handlePrevStep}
+            onGenerate={handleGenerate}
             onJumpToStep={handleJumpToStep}
             stepOneData={stepOneData}
             stepTwoData={stepTwoData}
             stepThreeData={stepThreeData}
             stepFourData={stepFourData}
             campaignData={campaignData}
+            selectedModel={selectedModel}
+            onModelChange={setSelectedModel}
           />
         )}
       </main>

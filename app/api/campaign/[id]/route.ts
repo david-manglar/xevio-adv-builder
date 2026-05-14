@@ -33,10 +33,13 @@ export async function GET(
         selected_insights,
         structure_blocks,
         generated_content,
+        generated_html,
+        editor_content,
         doc_name,
         status,
         created_at,
-        mode
+        mode,
+        llm_model
       `)
       .eq('id', id)
       .single()
@@ -65,10 +68,13 @@ export async function GET(
       selectedInsights: campaign.selected_insights || {},
       structureBlocks: campaign.structure_blocks || [],
       generatedContent: campaign.generated_content || '',
+      generatedHtml: campaign.generated_html || '',
+      editorContent: campaign.editor_content || '',
       docName: campaign.doc_name || '',
       status: campaign.status || '',
       createdAt: campaign.created_at || '',
       mode: campaign.mode ?? null,
+      llmModel: campaign.llm_model || null,
     }
 
     return NextResponse.json({ campaign: formattedCampaign })

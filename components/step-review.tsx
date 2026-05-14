@@ -16,8 +16,8 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog"
-import { Globe, FileText, Target, Link, CheckCircle2, Layers, Pencil, X, Check, AlertTriangle, Loader2 } from "lucide-react"
-import { StepOneState, StepTwoState, StepThreeState, StepFourState, CampaignData } from "@/lib/types"
+import { Globe, FileText, Target, Link, CheckCircle2, Layers, Pencil, X, Check, AlertTriangle, Loader2, Cpu } from "lucide-react"
+import { StepOneState, StepTwoState, StepThreeState, StepFourState, CampaignData, LLM_MODELS } from "@/lib/types"
 
 interface StepFiveProps {
   onBack: () => void
@@ -28,6 +28,8 @@ interface StepFiveProps {
   stepThreeData: StepThreeState
   stepFourData: StepFourState
   campaignData: CampaignData
+  selectedModel: string
+  onModelChange: (model: string) => void
 }
 
 function ConfirmDialog({
@@ -103,7 +105,7 @@ function EditActions({ onSave, onCancel }: { onSave: () => void; onCancel: () =>
   )
 }
 
-export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, stepThreeData, stepFourData, campaignData: initialCampaignData }: StepFiveProps) {
+export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTwoData, stepThreeData, stepFourData, campaignData: initialCampaignData, selectedModel, onModelChange }: StepFiveProps) {
   const [editingCampaign, setEditingCampaign] = useState(false)
   const [editingTopic, setEditingTopic] = useState(false)
   const [showRefWarning, setShowRefWarning] = useState(false)
@@ -125,11 +127,22 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
   const [topic, setTopic] = useState(stepOneData.topic || "")
   const [tempTopic, setTempTopic] = useState(topic)
 
-  // Get selected insights from Step 3
-  const selectedInsights = Object.values(stepThreeData.data)
-    .flat()
-    .filter(item => item.selected)
-    .map(item => item.text)
+  // Get selected insights from Step 3, grouped by category
+  const categoryLabels: Record<string, string> = {
+    usps: 'USPs',
+    pricing: 'Pricing',
+    mainAngle: 'Main Angle',
+    toneOfVoice: 'Tone of Voice',
+    keyHooks: 'Key Hooks',
+  }
+  const groupedInsights = Object.entries(stepThreeData.data)
+    .map(([key, items]) => ({
+      key,
+      label: categoryLabels[key] || key,
+      insights: items.filter(item => item.selected).map(item => item.text),
+    }))
+    .filter(group => group.insights.length > 0)
+  const totalInsights = groupedInsights.reduce((sum, g) => sum + g.insights.length, 0)
 
   // Get structure blocks from Step 4
   const structureBlocks = stepFourData.blocks.map(b => b.name)
@@ -193,7 +206,8 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
             stepFiveData: {
               campaignData, // Current edited campaign data
               topic, // Current edited topic
-            }
+            },
+            model: selectedModel,
           }),
         })
       }
@@ -500,63 +514,101 @@ export function StepFive({ onBack, onGenerate, onJumpToStep, stepOneData, stepTw
                 )}
               </div>
             )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Link className="h-4 w-4 text-[#0dadb7]" />
-              Reference Pages
-              <EditButton onClick={() => setShowRefWarning(true)} />
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {referenceUrls.length > 0 ? (
-              referenceUrls.map((ref, index) => (
-                <div key={index} className="space-y-1">
-                  <div className="flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="h-4 w-4 text-[#0dadb7] shrink-0" />
-                    <span className="text-muted-foreground truncate">{ref.url.replace(/^https?:\/\//, '')}</span>
-                  </div>
-                  {ref.description && (
-                    <p className="text-xs text-muted-foreground ml-6 italic">{ref.description}</p>
-                  )}
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-muted-foreground">No reference pages added</p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Selected Insights */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Target className="h-4 w-4 text-[#0dadb7]" />
-              Selected Insights
-              <EditButton onClick={() => onJumpToStep(4)} />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {selectedInsights.length > 0 ? (
-                selectedInsights.map((insight, index) => (
-                  <span 
-                    key={index}
-                    className="inline-flex items-center rounded-md bg-[#F6F6F6] px-2.5 py-1 text-xs font-medium text-muted-foreground"
-                  >
-                    {insight.length > 50 ? `${insight.substring(0, 50)}...` : insight}
-                  </span>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground">No insights selected</p>
-              )}
+            <div className="flex items-center gap-2 pt-2 border-t border-border mt-2">
+              <span className="text-xs text-muted-foreground w-24 shrink-0">
+                <span className="flex items-center gap-1">
+                  <Cpu className="h-3 w-3" />
+                  AI Model
+                </span>
+              </span>
+              <Select value={selectedModel} onValueChange={onModelChange}>
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(
+                    LLM_MODELS.reduce((acc, model) => {
+                      if (!acc[model.provider]) acc[model.provider] = []
+                      acc[model.provider].push(model)
+                      return acc
+                    }, {} as Record<string, typeof LLM_MODELS>)
+                  ).map(([provider, models]) => (
+                    <div key={provider}>
+                      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{provider}</div>
+                      {models.map((model) => (
+                        <SelectItem key={model.id} value={model.id} className="text-xs">
+                          {model.name}
+                        </SelectItem>
+                      ))}
+                    </div>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Link className="h-4 w-4 text-[#0dadb7]" />
+            Reference Pages
+            <EditButton onClick={() => setShowRefWarning(true)} />
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {referenceUrls.length > 0 ? (
+            referenceUrls.map((ref, index) => (
+              <div key={index} className="space-y-1">
+                <div className="flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="h-4 w-4 text-[#0dadb7] shrink-0" />
+                  <span className="text-muted-foreground truncate">{ref.url.replace(/^https?:\/\//, '')}</span>
+                </div>
+                {ref.description && (
+                  <p className="text-xs text-muted-foreground ml-6 italic">{ref.description}</p>
+                )}
+              </div>
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">No reference pages added</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Selected Insights */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Target className="h-4 w-4 text-[#0dadb7]" />
+            Selected Insights
+            <span className="inline-flex items-center rounded-md bg-[#F6F6F6] px-2.5 py-1 text-xs font-medium text-muted-foreground">
+              {totalInsights} selected
+            </span>
+            <EditButton onClick={() => onJumpToStep(4)} />
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {groupedInsights.length > 0 ? (
+            <div className="space-y-3">
+              {groupedInsights.map((group) => (
+                <div key={group.key} className="flex gap-3">
+                  <span className="text-xs font-medium text-muted-foreground w-28 shrink-0 pt-1">{group.label}</span>
+                  <div className="flex-1 space-y-1.5">
+                    {group.insights.map((insight, index) => (
+                      <p key={index} className="text-xs text-muted-foreground leading-relaxed rounded-md bg-[#F6F6F6] px-2.5 py-1.5">
+                        {insight}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">No insights selected</p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Structure Preview */}
       <Card>

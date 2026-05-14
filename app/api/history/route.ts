@@ -17,12 +17,12 @@ export async function GET(request: Request) {
     const supabaseKey = process.env.SUPABASE_SECRET_KEY!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Fetch completed campaigns for this user
+    // Fetch drafted and completed campaigns for this user
     const { data: campaigns, error, count } = await supabase
       .from('campaigns')
-      .select('id, doc_name, niche, country, campaign_type, created_at, generated_content, mode', { count: 'exact' })
+      .select('id, doc_name, niche, country, campaign_type, created_at, generated_content, generated_html, editor_content, mode, status', { count: 'exact' })
       .eq('user_id', userId)
-      .eq('status', 'completed')
+      .in('status', ['drafted', 'completed'])
       .order('created_at', { ascending: false })
       .range(offset, offset + ITEMS_PER_PAGE - 1)
 
@@ -41,6 +41,8 @@ export async function GET(request: Request) {
       createdAt: formatDate(campaign.created_at),
       docUrl: campaign.generated_content,
       mode: campaign.mode ?? null,
+      status: campaign.status,
+      hasEditor: !!(campaign.generated_html || campaign.editor_content),
     }))
 
     return NextResponse.json({
@@ -92,6 +94,6 @@ function formatDate(dateString: string | null): string {
   const hours = date.getHours().toString().padStart(2, '0')
   const minutes = date.getMinutes().toString().padStart(2, '0')
   
-  return `${month} ${day}, ${year} - ${hours}:${minutes}`
+  return `${day} ${month} ${year}, ${hours}:${minutes}`
 }
 

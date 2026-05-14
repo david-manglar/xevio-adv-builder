@@ -3,8 +3,9 @@
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { MessageSquareText, Link, Globe, FileText, CheckCircle2, Loader2 } from "lucide-react"
-import { LazyModeState, CampaignData } from "@/lib/types"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { MessageSquareText, Link, Globe, FileText, CheckCircle2, Loader2, Cpu } from "lucide-react"
+import { LazyModeState, CampaignData, LLM_MODELS } from "@/lib/types"
 
 interface LazyModeReviewProps {
   data: LazyModeState
@@ -13,9 +14,11 @@ interface LazyModeReviewProps {
   onBack: () => void
   onGenerate: () => void
   setCampaignData: (updater: (prev: CampaignData) => CampaignData) => void
+  selectedModel: string
+  onModelChange: (model: string) => void
 }
 
-export function LazyModeReview({ data, campaignData, userId, onBack, onGenerate, setCampaignData }: LazyModeReviewProps) {
+export function LazyModeReview({ data, campaignData, userId, onBack, onGenerate, setCampaignData, selectedModel, onModelChange }: LazyModeReviewProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const additionalLinks = data.referenceUrls
@@ -27,28 +30,50 @@ export function LazyModeReview({ data, campaignData, userId, onBack, onGenerate,
   const handleGenerate = async () => {
     setIsSubmitting(true)
     try {
-      const response = await fetch("/api/lazy-generate", {
+      const response = await fetch("/api/scrape", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lazyModeData: data, userId }),
+        body: JSON.stringify({
+          stepOneData: {
+            topic: data.instructions,
+            campaignType: data.campaignType,
+            niche: data.niche,
+            country: data.country,
+            language: data.language,
+            length: data.keepOriginalLength ? "keep_original" : data.length,
+            paragraphLength: data.paragraphLength,
+            guidelines: data.guidelines,
+            customGuidelines: data.customGuidelines,
+          },
+          stepTwoData: {
+            referenceUrls: [
+              { url: data.advertorialUrl, description: "Reference advertorial" },
+              ...data.referenceUrls.filter((r) => r.url.trim()),
+            ],
+          },
+          userId,
+          mode: "lazy",
+          advertorialUrl: data.advertorialUrl,
+          model: selectedModel,
+        }),
       })
 
       const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to start generation")
+        throw new Error(result.error || "Failed to start scraping")
       }
 
       setCampaignData((prev) => ({
         ...prev,
         id: result.campaignId,
         mode: "lazy",
-        status: "generating",
+        status: "scraping",
       }))
 
       onGenerate()
     } catch (error) {
-      console.error("Failed to start lazy generation:", error)
+      console.error("Failed to start lazy scraping:", error)
     } finally {
       setIsSubmitting(false)
     }
@@ -181,6 +206,37 @@ export function LazyModeReview({ data, campaignData, userId, onBack, onGenerate,
                 <span className="inline-flex items-center rounded-md bg-[#F6F6F6] px-2.5 py-1 text-xs font-medium text-muted-foreground">
                   {data.paragraphLength}
                 </span>
+              </div>
+              <div className="flex items-center gap-2 pt-2 border-t border-border mt-2">
+                <span className="text-xs text-muted-foreground w-24 shrink-0">
+                  <span className="flex items-center gap-1">
+                    <Cpu className="h-3 w-3" />
+                    AI Model
+                  </span>
+                </span>
+                <Select value={selectedModel} onValueChange={onModelChange}>
+                  <SelectTrigger className="h-8 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(
+                      LLM_MODELS.reduce((acc, model) => {
+                        if (!acc[model.provider]) acc[model.provider] = []
+                        acc[model.provider].push(model)
+                        return acc
+                      }, {} as Record<string, typeof LLM_MODELS>)
+                    ).map(([provider, models]) => (
+                      <div key={provider}>
+                        <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{provider}</div>
+                        {models.map((model) => (
+                          <SelectItem key={model.id} value={model.id} className="text-xs">
+                            {model.name}
+                          </SelectItem>
+                        ))}
+                      </div>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </CardContent>

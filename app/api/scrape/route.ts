@@ -21,12 +21,15 @@ interface ScrapeRequestBody {
   campaignId?: string        // Existing campaign to update
   newUrlsOnly?: string[]     // Only scrape these URLs (incremental)
   isFullRescrape?: boolean   // Clear existing results first
+  mode?: 'full' | 'lazy'    // Defaults to 'full'
+  advertorialUrl?: string    // Main advertorial URL (lazy mode)
+  model?: string             // LLM model for later generation
 }
 
 export async function POST(request: Request) {
   try {
     const body: ScrapeRequestBody = await request.json()
-    const { stepOneData, stepTwoData, userId, campaignId, newUrlsOnly, isFullRescrape } = body
+    const { stepOneData, stepTwoData, userId, campaignId, newUrlsOnly, isFullRescrape, mode, advertorialUrl, model } = body
 
     // 1. Validate data
     const validUrls = stepTwoData?.referenceUrls?.filter((ref: any) => {
@@ -118,6 +121,7 @@ export async function POST(request: Request) {
           length: stepOneData.length,
           paragraph_length: stepOneData.paragraphLength,
           guidelines: stepOneData.guidelines,
+          custom_guidelines: stepOneData.customGuidelines || null,
         })
         .eq('id', campaignId)
 
@@ -135,7 +139,7 @@ export async function POST(request: Request) {
         .from('campaigns')
         .insert({
           user_id: userId,
-          mode: 'full',
+          mode: mode || 'full',
           topic: stepOneData.topic,
           campaign_type: stepOneData.campaignType,
           niche: stepOneData.niche,
@@ -144,8 +148,10 @@ export async function POST(request: Request) {
           length: stepOneData.length,
           paragraph_length: stepOneData.paragraphLength,
           guidelines: stepOneData.guidelines,
+          custom_guidelines: stepOneData.customGuidelines || null,
           reference_urls: urlsWithContext,
-          status: 'scraping'
+          status: 'scraping',
+          ...(model ? { llm_model: model } : {}),
         })
         .select()
         .single()
@@ -177,9 +183,11 @@ export async function POST(request: Request) {
         : urlsWithContext
 
       // Determine scraping mode for n8n
-      const mode = (newUrlsOnly && newUrlsOnly.length > 0 && !isFullRescrape) 
-        ? 'incremental' 
-        : 'full'
+      const webhookMode = mode === 'lazy'
+        ? 'lazy'
+        : (newUrlsOnly && newUrlsOnly.length > 0 && !isFullRescrape)
+          ? 'incremental'
+          : 'full'
 
       // Must be awaited — on Vercel the lambda is killed after the response is sent,
       // so an unawaited fetch would be silently aborted.
@@ -190,8 +198,9 @@ export async function POST(request: Request) {
           body: JSON.stringify({
             campaignId: finalCampaignId,
             urls: urlsToScrape,
-            mode: mode,
-            existingInsights: mode === 'incremental' ? existingInsights : null,
+            mode: webhookMode,
+            advertorialUrl: webhookMode === 'lazy' ? advertorialUrl : undefined,
+            existingInsights: webhookMode === 'incremental' ? existingInsights : null,
             context: {
               topic: stepOneData.topic,
               niche: stepOneData.niche,
