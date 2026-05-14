@@ -377,18 +377,12 @@ SUPABASE_SECRET_KEY=
 # ─── OpenRouter (server-side only — AI rewrite feature in the editor) ─────────
 OPENROUTER_API_KEY=
 
-# ─── n8n webhooks — PRODUCTION ────────────────────────────────────────────────
+# ─── n8n webhooks (server-side only) ─────────────────────────────────────────
 N8N_SCRAPE_WEBHOOK_URL=
-N8N_GENERATE_WEBHOOK_URL=
+N8N_FULL_MODE_WEBHOOK_URL=
 N8N_LAZY_MODE_WEBHOOK_URL=
+N8N_CREATE_DOC_WEBHOOK_URL=
 N8N_WEBHOOK_SECRET=
-
-# ─── n8n webhooks — DEV (optional, takes priority over production when set) ───
-# Leave blank to use production webhooks in local dev.
-N8N_DEV_SCRAPE_WEBHOOK_URL=
-N8N_DEV_FULL_MODE_WEBHOOK_URL=
-N8N_DEV_LAZY_MODE_WEBHOOK_URL=
-N8N_DEV_CREATE_DOC_WEBHOOK_URL=
 ```
 
 ### 4. Start the dev server
@@ -422,12 +416,11 @@ Open each workflow, click its **Webhook trigger node**, and copy the **Productio
 
 | Variable | Workflow |
 |---|---|
-| `N8N_SCRAPE_WEBHOOK_URL` | Unified Scraper |
-| `N8N_GENERATE_WEBHOOK_URL` | Full Writer |
-| `N8N_LAZY_MODE_WEBHOOK_URL` | Lazy Writer |
-| `N8N_WEBHOOK_SECRET` | Shared secret set in each workflow's webhook auth — must match in all workflows |
-
-The DEV webhook URLs point at test versions of the same workflows (same names prefixed with `dev-`). Use them locally to avoid triggering production workflows.
+| `N8N_SCRAPE_WEBHOOK_URL` | ADVB - Unified Scraper |
+| `N8N_FULL_MODE_WEBHOOK_URL` | ADVB - Full Writer |
+| `N8N_LAZY_MODE_WEBHOOK_URL` | ADVB - Lazy Writer |
+| `N8N_CREATE_DOC_WEBHOOK_URL` | ADVB - Google Doc Creator |
+| `N8N_WEBHOOK_SECRET` | Shared secret set in each workflow's webhook auth — must match across all workflows |
 
 #### OpenRouter
 **Platform:** [openrouter.ai](https://openrouter.ai) → Dashboard → Keys
