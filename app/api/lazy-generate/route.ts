@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     }
 
     // 4. Trigger lazy writer webhook
-    const webhookUrl = process.env.N8N_DEV_LAZY_MODE_WEBHOOK_URL || process.env.N8N_LAZY_MODE_WEBHOOK_URL
+    const webhookUrl = process.env.N8N_LAZY_MODE_WEBHOOK_URL
     if (!webhookUrl) {
       console.error('[Lazy Generate] N8N_LAZY_MODE_WEBHOOK_URL is not set.')
       return NextResponse.json(

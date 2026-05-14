@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     }
 
     // 2. Trigger n8n Google Doc Creator webhook
-    const webhookUrl = process.env.N8N_DEV_CREATE_DOC_WEBHOOK_URL || process.env.N8N_CREATE_DOC_WEBHOOK_URL
+    const webhookUrl = process.env.N8N_CREATE_DOC_WEBHOOK_URL
     const webhookSecret = process.env.N8N_WEBHOOK_SECRET
 
     if (!webhookUrl) {
